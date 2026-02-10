@@ -1,0 +1,231 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "aspen",
+  "name": "Solana Mobile Docs",
+  "colors": {
+    "primary": "#000000",
+    "light": "#EF5C6F",
+    "dark": "#EF5C6F"
+  },
+  "background": {
+    "decoration": "gradient"
+  },
+  "appearance": {
+    "default": "dark"
+  },
+  "metadata": {
+    "timestamp": true
+  },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude"]
+  },
+  "fonts": {
+    "body": {
+      "family": "__ppMori_c9a5a4",
+      "source": "https://mintlify-assets.b-cdn.net/EHeAzD6gM8HDt9NQftiBgWSV3A.woff2",
+      "format": "woff2"
+    },
+    "heading": {
+      "family": "__ppMori_c9a5a4",
+      "source": "https://mintlify-assets.b-cdn.net/EHeAzD6gM8HDt9NQftiBgWSV3A.woff2",
+      "format": "woff2"
+    }
+  },
+  "favicon": "/favicon.ico",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Home",
+        "icon": "house",
+        "groups": [
+          {
+            "group": " ",
+            "pages": ["index"]
+          }
+        ]
+      },
+      {
+        "tab": "Basics",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "developers/overview",
+              "developers/development-setup",
+              "developers/mobile-scaffold-apps",
+              "developers/community"
+            ]
+          },
+          {
+            "group": "Mobile Wallet Adapter SDK",
+            "pages": [
+              "mobile-wallet-adapter/overview",
+              {
+                "group": "React Native",
+                "pages": [
+                  "react-native/overview",
+                  "react-native/setup",
+                  "react-native/quickstart",
+                  {
+                    "group": "Advanced",
+                    "pages": ["react-native/using_mobile_wallet_adapter"]
+                  }
+                ]
+              },
+              {
+                "group": "Web",
+                "pages": [
+                  "mobile-wallet-adapter/web-installation",
+                  "mobile-wallet-adapter/web-apps",
+                  "mobile-wallet-adapter/ux-guidelines"
+                ]
+              },
+              {
+                "group": "Kotlin",
+                "pages": [
+                  "android-native/overview",
+                  "android-native/setup",
+                  "android-native/quickstart"
+                ]
+              },
+              {
+                "group": "Community SDKs",
+                "pages": [
+                  "flutter/overview",
+                  "unity/unity_sdk",
+                  "unreal/unreal_sdk"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": ["dapp-publishing/faq"]
+          }
+        ]
+      },
+      {
+        "tab": "dApp Store",
+        "icon": "store",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["dapp-publishing/intro"]
+          },
+          {
+            "group": "Publishing",
+            "pages": [
+              "dapp-publishing/building-expo-apk",
+              "dapp-publishing/publishing-a-pwa",
+              "dapp-publishing/publishing-from-google-play",
+              "dapp-publishing/submit-new-app",
+              "dapp-publishing/submit-an-update",
+              {
+                "group": "Publishing CLI",
+                "pages": [
+                  "dapp-publishing/overview",
+                  "dapp-publishing/setup",
+                  "dapp-publishing/prepare",
+                  "dapp-publishing/app-nft",
+                  "dapp-publishing/submit",
+                  "dapp-publishing/publishing-updates"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Terms and Agreements",
+            "pages": [
+              "dapp-publishing/publisher-policy",
+              "dapp-publishing/agreement",
+              "dapp-publishing/tou",
+              "dapp-publishing/privacy-policy"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": ["dapp-publishing/support"]
+          }
+        ]
+      },
+      {
+        "tab": "Recipes",
+        "icon": "utensils",
+        "groups": [
+          {
+            "group": "General",
+            "pages": [
+              "react-native/detecting-seeker-users",
+              "react-native/test-with-any-android-device"
+            ]
+          },
+          {
+            "group": "Mobile Wallet Adapter",
+            "pages": [
+              "react-native/storing_mwa_auth",
+              "mobile-wallet-adapter/migrating-to-wallet-standard"
+            ]
+          },
+          {
+            "group": "Solana Development",
+            "pages": [
+              "react-native/anchor_integration",
+              "android-native/using-anchor-programs"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Sample Apps",
+        "icon": "grid-2",
+        "groups": [
+          {
+            "group": "Samples and Templates",
+            "pages": ["sample-apps/sample_app_overview"]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Support",
+          "href": "https://intercom.help/solana-mobile/en/",
+          "icon": "headset"
+        },
+        {
+          "anchor": "Community",
+          "href": "https://discord.gg/solanamobile",
+          "icon": "discord"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.svg",
+    "href": "https://solanamobile.com/"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Discord",
+        "href": "https://discord.gg/solanamobile"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Publish",
+      "href": "https://publish.solanamobile.com/"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://discord.gg/solanamobile",
+      "github": "https://docs.solanamobile.com/blog",
+      "discord": "https://discord.gg/solanamobile",
+      "youtube": "https://www.youtube.com/@solanamobileyt"
+    }
+  }
+}

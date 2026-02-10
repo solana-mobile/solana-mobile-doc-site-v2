@@ -1,0 +1,430 @@
+---
+title: Mobile Wallet Adapter Typescript Reference
+sidebarTitle: Mobile Wallet Adapter
+description: "Connect to wallet apps and sign transactions and messages with the Mobile Wallet Adapter API."
+---
+
+import { Button } from '/snippets/button.mdx';
+
+<Button href="#mobile-wallet-api-methods">API Reference</Button>
+
+<Tip>
+**TIP**
+
+Mobile Wallet Adapter 2.0 is the newest and current version of the Mobile Wallet Adapter protocol.
+
+The complete 2.0 spec is viewable [here](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html) and the legacy API is viewable [here](/reference/typescript/mobile-wallet-adapter-legacy).
+</Tip>
+
+### Install dependencies
+
+- [**`@solana-mobile/mobile-wallet-adapter-protocol`**](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol)
+
+  - Base library that implements the MWA client. Include this, but only import `transact` from the wrapper library.
+
+- [**`@solana-mobile/mobile-wallet-adapter-protocol-web3js`**](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol-web3js)
+  - A convenience wrapper for the base library that enables with `web3.js` primitives like `Transaction`.
+
+<CodeGroup>
+
+```shell yarn
+yarn add \
+  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+```
+
+```shell npm
+npm install \
+  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+```
+
+</CodeGroup>
+
+### Import into a file
+
+```tsx
+import {
+  transact,
+  Web3MobileWallet,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
+```
+
+## Mobile Wallet API Methods
+
+Reference for the Mobile Wallet API for dApps to connect to wallets and receive signing services.
+
+### transact
+
+This is the first step in using the Mobile Wallet API.
+
+Starts a Mobile Wallet Adapter session with a locally installed MWA-compatible wallet.
+
+### Parameters
+
+`callback: (wallet: Web3MobileWallet) => TReturn` required
+
+A callback triggered after session establishment, in which the dApp can issue MWA requests to the wallet app, using the `wallet` object.
+
+`config: WalletAssociationConfig` optional
+
+Configuration object containing the following fields:
+
+baseUri `string` optional
+
+URI used for custom wallet association.
+
+<Accordion title="Details">
+As per [spec](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html#endpoint-specific-uris), during session establishment, the wallet may return a custom URI scheme to use for future session establishments. The dApp can choose to use this custom URI by suppyling it through this parameter.
+</Accordion>
+
+### Result
+
+The result will be a `Promise<TReturn>` with `TReturn` equal to what is returned from the `callback` parameter.
+
+### Code sample
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {    /* ...Issue MWA requests... */    return "done";});
+```
+
+### Return:
+
+```
+console.log(result) // "done"
+```
+
+## Web3MobileWallet.authorize
+
+Non-privileged method. Requests authorization from the connected wallet for access to privileged methods within the session.
+
+### Parameters
+
+`chain: string` optional
+
+The [chain identifier](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html#chain-identifiers) for the chain with which the dapp intends to interact;
+
+Supported values include "solana:mainnet", "solana:testnet", "solana:devnet", "mainnet-beta", "testnet", "devnet". If not set, defaults to "solana:mainnet".
+
+`identity: object` optional
+
+A JSON object containing the following fields:
+
+uri `string` optional
+
+A URI representing the web address associated with the dapp making this authorization request. If present, it must be an absolute, hierarchical URI.
+
+icon `string` optional
+
+A relative path (from `uri`) to an image asset file of an icon identifying the dapp making this authorization request.
+
+name `string` optional
+
+the display name for this dapp.
+
+`features: string[]` optional
+
+A list of [feature identifiers](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html#feature-identifiers) that the dapp intends to use in the session. Defaults to null.
+
+`addresses: string[]` optional
+
+A list of base64 encoded account addresses that the dapp wishes to be included in the authorized scope. Defaults to null.
+
+`auth_token: string` optional
+
+A string representing a unique identifying token previously issued by the wallet to the dapp from a previous call to `authorize` or `clone_authorization`. If present, the wallet should attempt to reauthorize the dapp silently without prompting the user.
+
+`sign_in_payload: SignInPayload` optional
+
+An object containing the Sign-In input fields as described by the [Sign In With Solana specification](https://github.com/phantom/sign-in-with-solana?tab=readme-ov-file#sign-in-input-fields). If present, the wallet should present the SIWS message to the user and include the `sign_in_result` in the response.
+
+### Result:
+
+The result will be a JSON object containing the following fields:
+
+- `auth_token: string`: A string representing a unique identifying token issued by the wallet to the dapp. Use this on future connections to reauthorize access to privileged methods.
+- `accounts`: one or more value objects that represent the accounts to which this auth token corresponds. These objects hold the following properties:
+	- `address: string`:a base64-encoded public key for this account.
+	- `chains`: a list of chain identifiers supported by this account. These should be a subset of the chains supported by the wallet.
+	- `label: string (optional)`: a human-readable string that describes the account.
+	- `display_address: string (optional)`: the address for this account. The format of this string will depend on the chain, and is specified by the display\_address\_format field
+	- `display_address_format: string (optional)`: the format of the display\_address.
+	- `features: string[] (optional)`: a list of [feature identifiers](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html#feature-identifiers) that represent the features that are supported by this account. These features must be a subset of the features returned by get\_capabilities. If this parameter is not present the account has access to all available features (both mandatory and optional) supported by the wallet.
+	- `icon: string (optional)`: a data URI containing a base64-encoded SVG, WebP, PNG, or GIF image of an icon for the account. This may be displayed by the app.
+- `wallet_uri_base: string (optional)`: A custom URI specified by the wallet that the dapp should use for subsequent connections.
+- `sign_in_result: object (optional)`: If the authorize request included the SIWS `sign_in_payload`, the result will be returned here as an object containing the following:
+	- `address: string`: the address of the account that was signed in. The address of the account may be different from the provided input address, but must be the address of one of the accounts returned in the accounts field.
+	- `signed_message: string`: the base64-encoded signed message payload
+	- `signature: string`: the base64-encoded signature
+	- `signature_type: string (optional)`: the type of the message signature produced. If not provided in this response, the signature must be "ed25519".
+
+### Code sample:
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {
+    const authResult = wallet.authorize({
+      chain: 'solana:devnet',
+      identity: {
+        name: 'Example dApp',
+        uri:  'https://yourdapp.com'
+        icon: "favicon.ico", // Resolves to https://yourdapp.com/favicon.ico
+      },
+    }));
+    return authResult;
+});
+```
+
+### Result:[​](/reference/typescript/mobile-wallet-adapter/#result-1 "Direct link to Result:")
+
+```json
+{
+  "auth_token": "<auth_token>",
+  "accounts": [
+      {
+          "address": "<address>", 
+          "display_address": "<display_address>",
+          "display_address_format": "<display_address_format>",
+          "label": "<label>", 
+          "icon": "<icon>",
+          "chains": ["<chain_id>", "..."], 
+          "features": ["<feature_id>", "..."]
+      },
+      "..."
+  ],
+  "wallet_uri_base": "<wallet_uri_base>",
+  "sign_in_result": {
+      "address": "<address>", 
+      "signed_message": "<signed_message>"
+      "signature": "<signature>"
+      "signature_type": "<signature_type>"
+  }
+}
+```
+
+## Web3MobileWallet.deauthorize
+
+Non-privileged method. This method will make the provided `auth_token` invalid for use (if it ever was valid).
+
+If, during the current session, the specified auth token was returned by the most recent call to authorize or reauthorize, the session will be placed into the unauthorized state.
+
+### Parameters
+
+`auth_token: string` required
+
+An auth token string previously returned by a call to `authorize`, `reauthorize`, or `clone_authorization`, which will be deauthorized.
+
+### Result:
+
+The result will be an empty JSON object.
+
+### Code sample:
+
+```tsx
+const authToken = getPreviouslyStoredAuthToken()
+const result = await transact(async (wallet: Web3MobileWallet) => {
+  return await wallet.deauthorize({auth_token: authToken});
+});
+```
+
+### Result:
+
+```json
+{}
+```
+
+## Web3MobileWallet.getCapabilities
+
+Non-privileged method. This method enumerates the capabilities and limits of the wallet's MWA implementation.
+
+### Parameters
+
+**None**
+
+### Result:
+
+The result will be a JSON object as defined in `authorize`, but the values may be updated and differ from the values originally provided in the `authorize` response for the auth token.
+
+- `max_transactions_per_request`: (optional) if present, the max number of transaction payloads which can be signed by a single `sign_transactions` or `sign_and_send_transactions` request. If absent, the implementation doesn’t publish a specific limit for this parameter.
+- `max_messages_per_request`: (optional) if present, the max number of transaction payloads which can be signed by a single sign\_messages request. If absent, the implementation doesn’t publish a specific limit for this parameter.
+- `supported_transaction_versions`: the Solana network transaction formats supported by this wallet endpoint. Allowed values are those defined for `TransactionVersion` (for e.g., "legacy", 0, etc).
+- `features`: a list of [feature identifiers](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html#feature-identifiers) for the optional features supported by the wallet. Dapps can assume that mandatory features are supported by the wallet.
+
+### Code sample:
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {
+  return await wallet.getCapabilities();
+});
+```
+
+### Result:[​](/reference/typescript/#result-1 "Direct link to Result:")
+
+```json
+{
+    "max_transactions_per_request": 10,
+    "max_messages_per_request": 10,
+    "supported_transaction_versions": ["legacy", 0],
+    "features": ["<feature_id>"]
+}
+```
+
+## Web3MobileWallet.signAndSendTransactions
+
+Privileged method.
+
+This method requests the wallet to sign the specified transactions with the private keys for the authorized addresses, submit the transactions to the network, and return the transaction signatures to the dapp.
+
+### Parameters
+
+`transactions: Transaction[]` required
+
+An array of one or more transactions to sign and send. The transaction are of type `Transaction` or `VersionedTransaction` from the [web3.js library](/reference/typescript/web3js).
+
+`minContextSlot: number`
+
+The minimum slot number at which to perform preflight transaction checks.
+
+### Result:
+
+- `string[]` - the corresponding base64-encoded transaction signatures.
+
+### Code sample:
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {
+  const authResult = await wallet.authorize({
+    cluster: 'devnet',
+    identity: APP_IDENTITY,
+  }));
+  
+  const publicKey = getPublicKeyFromAuth(authResult)
+
+  // Create a web3.js Transaction that transfers
+  // lamports to a randomly created address.
+  const keypair = Keypair.generate();
+  const randomTransferTransaction = new Transaction({
+    ...latestBlockhash,
+    feePayer: publicKey,
+  }).add(
+    SystemProgram.transfer({
+      fromPubkey: publicKey,
+      toPubkey: keypair.publicKey,
+      lamports: 1_000_000,
+    }),
+  );
+
+  // Signs the Transactions with the private key of the account 
+  // corresponding to `publicKey` and submits to the network.
+  const transactionSignatures = await wallet.signAndSendTransactions({
+    transactions: [randomTransferTransaction],
+  });
+  return transactionSignatures;
+});
+```
+
+### Result:
+
+```json
+["<transaction_signature>", ...],
+```
+
+## Web3MobileWallet.signTransactions
+
+Privileged method. Request to sign the given transactions with the private keys for the requested authorized account.
+
+### Parameters
+
+`transactions: Transaction[]` required
+
+An array of one or more transactions to sign. The transaction are of type `Transaction` or `VersionedTransaction` from the [web3.js library](/reference/typescript/web3js).
+
+### Result:
+
+- `Transaction[]` - the corresponding Transactions signed with the private keys for the requested authorized account addresses.
+
+### Code sample:
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {
+  const authResult = await wallet.authorize({
+    cluster: 'devnet',
+    identity: APP_IDENTITY,
+  }));
+  
+  const publicKey = getPublicKeyFromAuth(authResult)
+
+  // Create a web3.js Transaction that transfers
+  // lamports to a randomly created address.
+  const keypair = Keypair.generate();
+  const randomTransferTransaction = new Transaction({
+    ...latestBlockhash,
+    feePayer: publicKey,
+  }).add(
+    SystemProgram.transfer({
+      fromPubkey: publicKey,
+      toPubkey: keypair.publicKey,
+      lamports: 1_000,
+    }),
+  );
+
+  // Signs the Transactions with the private key of the account 
+  // corresponding to `publicKey`
+  const signedTransactions = await wallet.signTransactions({
+        transactions: [randomTransferTransaction],
+  });
+  return signedTransactions;
+});
+```
+
+### Result:
+
+```json
+[<signed_transaction>, ...],
+```
+
+## Web3MobileWallet.signMessages
+
+Privileged method. Request to sign the given messages payloads with the private keys for the requested authorized account.
+
+### Parameters
+
+`addresses: string[]` required
+
+One or more base64-encoded addresses of the accounts which should be used to sign message. These should be a subset of the addresses returned by authorize or reauthorize for the current session's authorization.
+
+`payloads: Uint8Array[]` required
+
+One or more byte arrays where each byte array is a message payload to sign.
+
+### Result:
+
+- `Uint8Array[]` - the corresponding base64-encoded signed message payloads.
+
+### Code sample:
+
+```tsx
+ const result = return await transact(async (wallet: Web3MobileWallet) => {
+  // First, request for authorization from the wallet.
+  const authorizationResult = await authorizeSession(wallet);
+
+  // Construct a message byte array
+  const message = 'Hello world!';
+  const messageBuffer = new Uint8Array(
+    message.split('').map(c => c.charCodeAt(0)),
+  );
+
+  // Sign the payload with the provided address from authorization.
+  const signedMessages = await wallet.signMessages({
+    addresses: [authorizationResult.address],
+    payloads: [messageBuffer],
+  });
+
+  return signedMessages;
+});
+```
+
+### Result:
+
+```json
+[<signed_messages>, ...],
+```

@@ -1,0 +1,30 @@
+---
+title: MWA Kotlin Reference
+description: "Connect to wallet apps and sign transactions and messages with the Mobile Wallet Adapter API."
+sidebarTitle: "Mobile Wallet Adapter"
+---
+
+import { Button } from '/snippets/button.mdx';
+
+<Button href="https://www.javadoc.io/doc/com.solanamobile/mobile-wallet-adapter-clientlib-ktx/latest/index.html">API Reference</Button>
+
+### Install dependencies
+
+- [**`mobile-wallet-adapter-clientlib-ktx`**](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/android/clientlib-ktx)
+
+    - A Kotlin library that provides a Mobile Wallet Adapter client implemented in Kotlin.
+
+Add the library as a dependency in your project's `build.gradle` file:
+<CodeGroup>
+```kotlin Kotlin
+dependencies {
+    implementation 'com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.5'
+}
+```
+</CodeGroup>
+
+### Import into a file
+
+```kotlin
+import com.solana.mobilewalletadapter.clientlib.*
+```

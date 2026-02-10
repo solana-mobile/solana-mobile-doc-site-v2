@@ -1,0 +1,19 @@
+li[id="topbar-cta-button"] > a > div > span {
+    color: #000000 !important;
+   }
+   img.no-zoom {
+  cursor: default !important;
+  touch-action: manipulation;
+  pointer-events: auto;
+}
+
+li[id="topbar-cta-button"] > a > div > span {
+    color: #000000 !important;
+   }
+   li[id="topbar-cta-button"] > a > div > svg > path {
+    stroke: #000000 !important;
+   }
+
+   .dark li[id="topbar-cta-button"] > a > div > span {
+    color: #000000 !important;
+   }

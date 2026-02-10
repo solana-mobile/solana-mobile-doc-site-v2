@@ -1,0 +1,75 @@
+---
+title: "MWA for Mobile Apps"
+---
+
+<Tabs>
+  <Tab title="SV Wallet">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="w-full aspect-video rounded-xl"
+      src="/images/static/videos/svw_mwa.mp4"
+    ></video>
+  </Tab>
+  <Tab title="Solflare">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="w-full aspect-video rounded-xl"
+      src="/images/static/videos/solflare_mwa.mp4"
+    ></video>
+  </Tab>
+  <Tab title="Phantom">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="w-full aspect-video rounded-xl"
+      src="/images/static/videos/phantom_mwa.mp4"
+    ></video>
+  </Tab>
+</Tabs>
+
+## Overview
+
+Solana Mobile maintains an open-source **Android** SDK for Mobile Wallet Adapter that enables mobile apps to connect to wallet apps on the same device.
+
+**<Icon icon="download" /> Installation**
+
+<CardGroup cols={2}>
+  <Card horizontal title="React Native" icon="react" href="/react-native/using_mobile_wallet_adapter" />
+  <Card horizontal title="Kotlin" icon="/images/static/img/kotlin-icon-32.svg" href="/android-native/using_mobile_wallet_adapter" />
+  <Card horizontal title="Mobile Web" icon="globe" href="/mobile-wallet-adapter/web-installation" />
+  <Card horizontal title="Flutter" icon="flutter" href="/flutter/overview" />
+  <Card horizontal title="Unity" icon="unity" href="/unity/unity_sdk" />
+  <Card horizontal title="Unreal" icon="/images/static/img/unreal-logo.png" href="/unreal/unreal_sdk" />
+</CardGroup>
+
+<Info>
+**NOTE:**
+
+These SDKs are only supported on Android because MWA is incompatible with iOS. View this [blog post](/blog/ios-wallet-signing) to learn why.
+</Info>
+
+### SDK Compatibility
+
+| Mobile Platform                            | Is MWA Supported? | Notes                                                                 |
+| :------------------------------------------ | :---------------- | :-------------------------------------------------------------------- |
+| Android                                    | ✅                | Full support for dApps and Wallet apps.                               |
+| Mobile Web - Chrome (Android)              | ✅                | Automatic integration if using `@solana/wallet-adapter-react`.        |
+| iOS                                        | ❌                | MWA is not currently available for any iOS platform (app or browser). |
+| Mobile Web - Safari, Firefox, Opera, Brave | ❌                | These browsers currently do not support MWA on Android or iOS.        |
+
+## Supported Wallets
+
+These wallets support MWA and are compatible on Android with any dApp using the Mobile Wallet Adapter SDK.
+
+- Seed Vault Wallet (Coming soon!)
+- Solflare
+- Phantom
+

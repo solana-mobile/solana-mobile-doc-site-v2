@@ -1,0 +1,107 @@
+---
+title: "Development Setup"
+description: "This section covers the steps to:"
+---
+
+- Set up your local environment for Android development.
+- Configure a device or emulator for building apps for the dApp Store.
+- Install an MWA-compliant wallet app for development purposes.
+
+## Set up Android development environment
+
+To build apps for the dApp Store, you need to setup your environment for Android development.
+
+<Note>
+**Supported Frameworks**
+
+<Tabs>
+<Tab title= "Expo / React Native">
+  For both Expo or React Native Android development:
+
+  - View the Expo [**setup documentation**](https://docs.expo.dev/get-started/set-up-your-environment/?platform=android\&device=physical\&mode=development-build\&buildEnv=local) (Choose custom development build instead of Expo Go).
+</Tab>
+<Tab title= "Kotlin (Native)">
+For Kotlin Android development:
+
+  - Install [Android Studio](https://developer.android.com/studio/install).
+</Tab>
+<Tab title= "Flutter">
+  For Flutter Android development:
+
+  - View the official Flutter [**setup documentation**](https://docs.flutter.dev/get-started/install/macos/mobile-android#configure-android-development).
+</Tab>
+</Tabs>
+</Note>
+
+## Setup Device/Emulator
+
+You can test your app during development on any Android device or emulator. A Solana Mobile device is **not** required for dApp Store development—testing on a standard Android device is typically sufficient.
+
+For detailed device setup instructions, refer to Android's official documentation:
+
+<Columns cols={2}>
+  <Card title="Setting up a physical device" icon="mobile-notch" href="https://developer.android.com/studio/run/device" horizontal/>
+  <Card title="Configuring the Android Emulator" icon="android" href="https://developer.android.com/studio/run/emulator" horizontal/>
+</Columns>
+
+## Install a development wallet app
+
+The [Mobile Wallet Adapter](/mobile-wallet-adapter/overview) (MWA) library allows your app to connect and interact with compatible wallet apps on your device.
+
+Install an MWA-compatible wallet app to test your app's Mobile Wallet Adapter integration.
+
+### Mock MWA Wallet
+
+Solana Mobile provides a mock development wallet for you to test your app with and get a feel of what Seed Vault Wallet interactions on the Seeker will look like.
+
+The mock wallet features:
+
+- Mobile Wallet Adapter support
+- Simulate connection or signing errors
+- QR Code Scanning for MWA Remote Connections
+
+It is intended for development purposes only, so it does not store a persistent keypair and the wallet is reset each time the app is exited.
+
+<Accordion title="Installation:">
+  <Steps>
+    <Step>
+      Clone the Mock MWA Wallet repo from the [github repository](https://github.com/solana-mobile/mock-mwa-wallet)
+
+    ```bash
+    git clone https://github.com/solana-mobile/mock-mwa-wallet.git
+    ```
+  </Step>
+  <Step>
+    In Android Studio, `Open project > Navigate to the directory > Select mock-mwa-wallet/android/build.gradle`
+  </Step>
+  <Step>
+    After Android Studio finishes loading the project, select `fakewallet` in the build/run configuration dropdown in the top right
+    <Frame>
+    <img src="/images/static/img/mock-mwa-wallet-install.png" alt="Mock MWA Wallet build"/>
+    </Frame>
+  </Step>
+  <Step>
+    After it builds successfully, you should see the app on your connected Android device or emulator.
+  </Step>
+</Steps>
+</Accordion>
+
+### Other MWA-compliant wallet apps
+
+You can also install and test with these popular MWA-compatible wallet apps:
+
+<Columns cols={2}>
+  <Card title="Phantom" icon="/images/phantom.ico" href="https://phantom.com/" horizontal/>
+  <Card title="Solflare" icon="https://www.solflare.com/favicon.ico" href="https://www.solflare.com/" horizontal/>
+</Columns>
+
+## Next steps
+
+You have a development environment and testing device, and are now ready to start developing.
+
+Check out these links to quickly get an app running:
+
+<Columns cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/react-native/quickstart" horizontal/>
+  <Card title="Sample Apps" icon="puzzle-piece" href="/sample-apps/sample_app_overview" horizontal/>
+</Columns>

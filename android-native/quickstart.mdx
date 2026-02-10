@@ -1,0 +1,75 @@
+---
+title: "Kotlin Quickstart"
+description: "The quickest way to start building Solana Kotlin dApps is to build off the [Solana Jetpack Compose Scaffold](https://github.com/solana-mobile/solana-kotlin-compose-scaffold)."
+sidebarTitle: "Quickstart"
+---
+
+
+## Solana Jetpack Compose Scaffold
+
+The scaffold app serves as both a starting implementation and an example reference of how to use the core Kotlin SDKs, like `web3-core`, `rpc-core`, and Mobile Wallet Adapter.
+
+It includes:
+
+- Core Solana kotlin libraries
+- Pre-built Compose UI components
+- Code examples of transaction building and RPC requests
+
+<CardGroup cols={3}>
+  <Frame>
+    <img src="/images/static/kotlin_images/scaffoldScreenshot1.png" alt="Scaffold dApp Screenshot 1" />
+  </Frame>
+  <Frame>
+    <img src="/images/static/kotlin_images/scaffoldScreenshot2.png" alt="Scaffold dApp Screenshot 2" />
+  </Frame>
+  <Frame>
+    <img src="/images/static/kotlin_images/scaffoldScreenshot3.png" alt="Scaffold dApp Screenshot 3" />
+  </Frame>
+</CardGroup>
+
+## Prerequisites
+
+Follow the [prerequisite setup](/developers/development-setup#prerequisite-setup) guide to set up Android Studio, your [Android Device/Emulator](/developers/development-setup#2-setup-deviceemulator) and install a MWA-compatible wallet, like [fakewallet](/developers/development-setup#3-install-a-wallet-app).
+
+## Install the Jetpack Compose Scaffold
+
+**Clone the repo**
+
+The scaffold app is open source and can be fetched from [Github](https://github.com/solana-mobile/solana-kotlin-compose-scaffold).
+
+```shell
+git clone https://github.com/solana-mobile/solana-kotlin-compose-scaffold.git
+```
+
+**Open the project in Android Studio**
+
+In Android Studio, open the project with `File > Open > SolanaKotlinComposeScaffold/build.gradle.kts`
+
+**Build and run**
+
+Ensure you have connected an Android emulator or device and it is detected by Android Studio. If not, follow this [guide](/developers/development-setup#2-setup-deviceemulator) to setup your emulator/device.
+
+In the top bar of Android Studio, select `"app"` as the configuration and your emulator/device, then click run.
+<Frame>
+  <img src="/images/static/kotlin_images/compose-build-run.png" alt="Build and run the app" />
+</Frame>
+
+If successful, the scaffold app will launch on your emulator/device.
+
+Connect with a locally installed wallet app to start interacting with the Solana network! 🎉
+
+## Further learning
+
+To learn how to better use the core Solana Kotlin SDKs, check out these developer guides.
+
+<CardGroup cols={3}>
+  <Card title="JSON RPC Requests" icon="globe" href="/android-native/rpc-requests">
+    Learn the rpc-core library to create and send Solana RPC Requests.
+  </Card>
+  <Card title="Transaction building" icon="wrench" href="/android-native/building_transactions">
+    Use the web3-core library to construct Solana transactions and Program instructions.
+  </Card>
+  <Card title="Mobile Wallet Adapter" icon="mobile" href="/android-native/using_mobile_wallet_adapter">
+    Learn how to connect to mobile wallets and request signing services.
+  </Card>
+</CardGroup>

@@ -1,0 +1,55 @@
+---
+title: "Installing Mobile Wallet Standard"
+description: "Use the **Mobile Wallet Standard** library to register Mobile Wallet Adapter as a wallet option into your web application."
+sidebarTitle: "Installation"
+---
+
+
+## Installation
+
+### 1. Install the package
+
+You can add Mobile Wallet Adapter to your web application by installing:
+
+```shell    
+npm install @solana-mobile/wallet-standard-mobile
+```
+
+### 2. Register the wallet
+
+In the root of your web application, invoke the `registerMwa` function.
+
+<Warning>
+**CAUTION**
+
+Ensure `registerMwa` is invoked in a non-SSR context. if you're using a framework with Server Side Rendering (e.g Next.js), 
+</Warning>
+
+```typescript expandable
+// 'use client' - If using Next.js, ensure it is registered in a non-SSR context.
+
+import { 
+    createDefaultAuthorizationCache, 
+    createDefaultChainSelector, 
+    createDefaultWalletNotFoundHandler,
+    registerMwa, 
+} from '@solana-mobile/wallet-standard-mobile';
+
+registerMwa({
+    appIdentity: {
+      name: 'My app',
+      uri: 'https://myapp.io',
+      icon: 'relative/path/to/icon.png', // resolves to https://myapp.io/relative/path/to/icon.png
+    },    
+    authorizationCache: createDefaultAuthorizationCache(),
+    chains: ['solana:devnet', 'solana:mainnet'],
+    chainSelector: createDefaultChainSelector(),
+    onWalletNotFound: createDefaultWalletNotFoundHandler(),
+})
+```
+
+Once registered, the wallet behavior automatically adapts to the user's device:
+
+- **Mobile**: Local connection via Android Intents (same as native Android apps).
+- **Desktop** (Not available yet): If `remoteHostAuthority` is provided, remote connection via QR Code. 
+

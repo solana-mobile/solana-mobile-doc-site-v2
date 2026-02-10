@@ -1,0 +1,61 @@
+---
+title: "MWA for Web Apps"
+sidebarTitle: "Overview"
+---
+
+<Tabs>
+  <Tab title="Mobile Web">
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="w-full aspect-video rounded-xl"
+      src="/images/static/videos/svw_mwa.mp4"
+    ></video>
+  </Tab>
+  <Tab title="Desktop Web">
+    <Frame>
+      <img src="/images/static/img/RemoteModal.png" alt="Desktop Web" />
+    </Frame>
+  </Tab>
+</Tabs>
+
+## Overview
+
+Mobile Wallet Adapter works on both Desktop Web and Mobile Web applications through two different connection methods:
+
+- **Desktop Web Apps** connect remotely to wallet apps via QR code scanning.
+- **Mobile Web Apps**, including PWAs, connect locally to wallet apps on the same device.
+
+## SDK
+
+Use the **Mobile Wallet Standard** library to register MWA as a wallet option in your web app for both desktop and mobile users.
+
+The library handles both connection types automatically and presents the correct user experience based on the user's platform. It is compatible with any web app using the `@anza/wallet-adapter` libraries.
+
+### Reference
+
+<CardGroup cols={3}>
+  <Card horizontal title="Installation" icon="download" href="/mobile-wallet-adapter/web-installation" />
+  <Card horizontal title="Demo" icon="qrcode" href="https://solana-mobile.github.io/mobile-wallet-adapter/example-web-app/" />
+  <Card horizontal title="Github" icon="github" href="https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/wallet-standard-mobile" />
+</CardGroup>
+
+## Wallet Compatibility 
+
+| Wallet (Android only) | QR Code (Remote) | Mobile Web (Local) |
+| :-------------------- | :--------------- | :----------------- |
+| Seed Vault Wallet     | ✅               | ✅                 |
+| Solflare              | ✅ (Planned)     | ✅                 |
+| Phantom               | ❌               | ✅                 |
+
+## Browser Compatibility
+
+| Platform                 | QR Code (Remote) | Mobile Web (Local) | Notes                                                 |
+| :----------------------- | :--------------- | :----------------- | :---------------------------------------------------- |
+| Desktop - All Browsers   | ✅               | N/A                | QR Code display works on all desktop browsers.        |
+| Android - Chrome         | N/A              | ✅                 | Primary Android browser; also works with Chrome PWAs. |
+| Android - Other Browsers | N/A              | ❌                 | Firefox, Opera, Brave, etc. do not support MWA.       |
+| iOS - All Browsers       | N/A              | ❌                 | MWA is not available on any iOS browser.              |
+
