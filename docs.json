@@ -53,7 +53,6 @@
             "pages": [
               "get-started/overview",
               "get-started/development-setup",
-              "get-started/mobile-scaffold-apps",
               "get-started/community"
             ]
           },
@@ -70,7 +69,8 @@
                   {
                     "group": "Advanced",
                     "pages": [
-                      "get-started/react-native/invoke-mwa-sessions-directly"
+                      "get-started/react-native/invoke-mwa-sessions-directly",
+                      "get-started/react-native/mobile-wallet-adapter"
                     ]
                   }
                 ]
@@ -113,26 +113,24 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["dapp-publishing/intro"]
+            "pages": ["dapp-store/intro"]
           },
           {
             "group": "Publishing",
             "pages": [
-              "dapp-publishing/build-and-sign-an-apk",
-              "dapp-publishing/building-expo-apk",
-              "dapp-publishing/publishing-a-pwa",
-              "dapp-publishing/publishing-from-google-play",
-              "dapp-publishing/submit-new-app",
-              "dapp-publishing/submit-an-update",
+              "dapp-store/build-and-sign-an-apk",
+              "dapp-store/publishing-from-google-play",
+              "dapp-store/submit-new-app",
+              "dapp-store/submit-an-update",
               {
                 "group": "Publishing CLI",
                 "pages": [
-                  "dapp-publishing/overview",
-                  "dapp-publishing/setup",
-                  "dapp-publishing/prepare",
-                  "dapp-publishing/app-nft",
-                  "dapp-publishing/submit",
-                  "dapp-publishing/publishing-updates"
+                  "dapp-store/publishing-cli/overview",
+                  "dapp-store/publishing-cli/setup",
+                  "dapp-store/publishing-cli/prepare",
+                  "dapp-store/publishing-cli/app-nft",
+                  "dapp-store/publishing-cli/submit",
+                  "dapp-store/publishing-cli/publishing-updates"
                 ]
               }
             ]
@@ -140,15 +138,15 @@
           {
             "group": "Terms and Agreements",
             "pages": [
-              "dapp-publishing/publisher-policy",
-              "dapp-publishing/agreement",
-              "dapp-publishing/tou",
-              "dapp-publishing/privacy-policy"
+              "dapp-store/publisher-policy",
+              "dapp-store/agreement",
+              "dapp-store/tou",
+              "dapp-store/privacy-policy"
             ]
           },
           {
             "group": "Support",
-            "pages": ["dapp-publishing/support"]
+            "pages": ["dapp-store/support"]
           }
         ]
       },
@@ -161,7 +159,8 @@
             "pages": [
               "recipes/general/detecting-seeker-users",
               "recipes/general/test-with-any-android-device",
-              "recipes/general/publishing-from-google-play"
+              "recipes/general/publishing-from-google-play",
+              "recipes/general/publishing-a-pwa"
             ]
           },
           {

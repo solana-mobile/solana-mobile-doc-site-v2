@@ -1,7 +1,6 @@
 ---
-title: "Publish a dApp update"
-description: "When you're ready to publish an updated release of your dApp, follow these steps."
-sidebarTitle: "Update a Published dApp"
+title: "Publishing subsequent dApp releases"
+description: "When you're ready to publish additional releases of your dApp, follow these steps."
 ---
 
 
@@ -15,7 +14,7 @@ It is **very** important that each new APK file include the following updates:
 - The `versionCode` value in `build.gradle` must be incremented by one monotonically between each update.
 
 <Tip>
-**TIP**
+**Tip**
 
 You can learn more about APK versioning in the [Android developer docs](https://developer.android.com/studio/publish/versioning).
 </Tip>
@@ -25,7 +24,7 @@ You can learn more about APK versioning in the [Android developer docs](https://
 Edit the `release` and `solana_mobile_dapp_publisher_portal` sections of your configuration file to reflect any changes.
 
 <Tip>
-**TIP**
+**Tip**
 
 Be sure to include `new_in_version` details so users can know what to expect with the update!
 </Tip>
@@ -34,15 +33,13 @@ Be sure to include `new_in_version` details so users can know what to expect wit
 
 The Solana dApp store requires each new release of your dApp to be minted as a release NFT with all the changes discussed in this section.
 
-Run the same CLI command as the "Create the release NFT" step from the [Mint a release NFT](/dapp-publishing/submit#mint-a-release-nft) section in these docs.
+Run the same CLI command as the "Create the release NFT" step from the [Mint a release NFT](/dapp-store/publishing-cli/submit#mint-a-release-nft) section in these docs.
 
 ## 4. Submit an update to the Publisher Portal
 
 Submit the update to the Solana dApp Publisher Portal, where the new release will enter a review queue for inclusion in the dApp store catalog:
 
 ```bash
-npx dapp-store publish update -k <path_to_your_keypair> -u <mainnet_beta_rpc_url> --requestor-is-authorized --complies-with-solana-dapp-store-policies
+npx dapp-store publish update -k <path_to_your_keypair> --requestor-is-authorized --complies-with-solana-dapp-store-policies
 ```
-
-By submitting this command  you agree to, and represent that you have read, (i) the [Solana Mobile dApp Store Developer Agreement](/dapp-publishing/agreement), including the arbitration clause linked [here](/dapp-publishing/agreement#disputes), meaning that, where enforceable, any dispute related to the dApp Store will be resolved through BINDING ARBITRATION on an individual, non-class basis, and (ii) the [Solana Mobile Publisher Policy](/dapp-publishing/publisher-policy).
 

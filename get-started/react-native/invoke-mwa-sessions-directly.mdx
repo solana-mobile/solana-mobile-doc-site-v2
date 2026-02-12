@@ -31,7 +31,7 @@ npm install @solana-mobile/mobile-wallet-adapter-protocol-web3js \
 
 ## Establishing an MWA session
 
-<Button href="/reference/typescript/mobile-wallet-adapter#transact">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#transact">API Reference</Button>
 
 To establish a session, or request to 'connect', with an MWA wallet, use the `transact` method provided by `@solana-mobile/mobile-wallet-adapter-protocol-web3js`.
 
@@ -58,9 +58,9 @@ The former provides convenient wrappers around common `web3.js` Solana types lik
 
 ## Connecting to a wallet
 
-<Button href="/reference/typescript/mobile-wallet-adapter#web3mobilewalletauthorize">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize">API Reference</Button>
 
-After session establishment, you can connect to the wallet by issuing an [`authorize`](/reference/typescript/mobile-wallet-adapter#web3mobilewalletauthorize) request. This authorization step is required if you want to request signing services from the wallet.
+After session establishment, you can connect to the wallet by issuing an [`authorize`](/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize) request. This authorization step is required if you want to request signing services from the wallet.
 
 Define the _App Identity_ of your dApp so that the wallet app can properly display your dApp info to the user.
 
@@ -106,7 +106,7 @@ type AuthorizationResult = Readonly<{
 }>;
 ```
 
-See the [SDK reference](/reference/typescript/mobile-wallet-adapter#web3mobilewalletauthorize) for a full explanation of the `AuthorizationResult` response type.
+See the [SDK reference](/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize) for a full explanation of the `AuthorizationResult` response type.
 
 ### Connecting with an `auth_token`
 
@@ -140,7 +140,7 @@ await transact(async (wallet: Web3MobileWallet) => {
 
 ### Deauthorizing a wallet
 
-<Button href="/reference/typescript/mobile-wallet-adapter#web3mobilewalletdeauthorize">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletdeauthorize">API Reference</Button>
 
 A dApp can revoke authorization or "disconnect" from a wallet by sending a `deauthorize` request.
 The wallet invalidate the provided `authToken`.
@@ -214,7 +214,7 @@ See the [Phantom SIWS docs](https://github.com/phantom/sign-in-with-solana?tab=r
 
 ## Signing and sending a transaction
 
-<Button href="/reference/typescript/mobile-wallet-adapter#web3mobilewalletsignandsendtransactions">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignandsendtransactions">API Reference</Button>
 
 To request a wallet to sign and then send a Solana transaction, use the `signAndSendTransactions` method. With this method,
 the wallet will handle both signing the transactions then submitting them to the Solana network.
@@ -347,7 +347,7 @@ Using `confirmTransaction`, you can check that the transaction was `confirmed` b
 
 ## Signing Transactions
 
-<Button href="/reference/typescript/mobile-wallet-adapter#web3mobilewalletsigntransactions">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsigntransactions">API Reference</Button>
 
 Alternatively, you can request the wallet to just sign a transaction by issuing a `signTransactions` request.
 
@@ -413,7 +413,7 @@ The response returned will be a signed `Transaction` that can be submitted to an
 
 ## Signing messages
 
-<Button href="/reference/typescript/mobile-wallet-adapter#web3mobilewalletsignmessages">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignmessages">API Reference</Button>
 
 To request off-chain message signing, issue a `signMessages` request. In this case, a _message_ is any payload of bytes.
 
