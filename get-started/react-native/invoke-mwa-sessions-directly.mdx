@@ -1,7 +1,7 @@
 ---
-title: "Using Mobile Wallet Adapter"
+title: "Invoke MWA Sessions Directly"
 description: "The Mobile Wallet Adapter protocol is a spec that enables a secure communication exchange between a dApp and an MWA-compliant wallet app installed on the device."
-sidebarTitle: "Connect to wallets and request signing"
+sidebarTitle: "Invoke MWA Sessions Directly"
 ---
 
 import { Button } from '/snippets/button.mdx';
@@ -68,7 +68,7 @@ Define the _App Identity_ of your dApp so that the wallet app can properly displ
 - `uri`: The web URL associated with your app.
 - `icon`: A path to your app icon relative to the app uri above.
 
-```tsx expandable
+```tsx
 import {transact, Web3MobileWallet} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
 export const APP_IDENTITY = {
@@ -114,7 +114,7 @@ For subsequent sessions with the wallet app, you can skip the authorization step
 
 If valid, the user is able to skip the connection approval dialog for authorization.
 
-```tsx expandable
+```tsx
 import {transact, Web3MobileWallet} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
 export const APP_IDENTITY = {
@@ -187,7 +187,7 @@ verify that the `sign_in_result` was correctly signed by the user's wallet.
 
 The `@solana/wallet-standard-util` library provides a `verifySignIn` helper method for SIWS message and signature verification.
 
-```typescript expandable
+```typescript
 import type {
   SolanaSignInInput,
   SolanaSignInOutput,
@@ -224,7 +224,7 @@ This request sends an unsigned transaction to the wallet. If authorized, the wal
 <Tabs>
 <Tab title="Versioned Transactions">
 
-```tsx expandable
+```tsx
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 import {
   sendTransaction,
@@ -291,7 +291,7 @@ if (confirmationResult.value.err) {
 </Tab>
 <Tab title="Legacy Transactions">
 
-```tsx expandable
+```tsx
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 import {
   sendTransaction,
@@ -354,7 +354,7 @@ Alternatively, you can request the wallet to just sign a transaction by issuing 
 <Tabs>
 <Tab title="Versioned Transactions">
 
-```tsx expandable
+```tsx
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 import { toByteArray } from "react-native-quick-base64";
 
@@ -379,7 +379,7 @@ const signedTx = await transact(async (wallet) => {
 </Tab>
 <Tab title="Legacy Transactions">
 
-```tsx expandable
+```tsx
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 import {
   Keypair,
@@ -417,7 +417,7 @@ The response returned will be a signed `Transaction` that can be submitted to an
 
 To request off-chain message signing, issue a `signMessages` request. In this case, a _message_ is any payload of bytes.
 
-```tsx expandable
+```tsx
 import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
 
 // Convert 'Hello world!' to a byte array.
@@ -449,4 +449,4 @@ The response returned will be an `Uint8Array[]`, where each item corresponds to 
 
 - Browse the collection of [Sample Apps](/sample-apps/sample_app_overview) to reference a full Solana React Native app.
 
-- View the [Anchor Integration guide](/react-native/anchor_integration) to learn how to interact with Anchor programs in React Native.
+- View the [Anchor Integration guide](/recipes/solana-development/anchor-integration) to learn how to interact with Anchor programs in React Native.

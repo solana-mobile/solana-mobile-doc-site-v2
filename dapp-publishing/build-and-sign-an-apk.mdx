@@ -1,0 +1,293 @@
+---
+title: "Build and Sign an APK"
+description: "The Solana dApp Store requires a signed APK file for submission. This guide covers how to build one for Expo, native Android, and PWA projects."
+---
+
+The Solana dApp Store accepts **signed APK** files. This guide covers how to build and sign an APK for your project, regardless of framework.
+
+## Create a signing key
+
+Every app needs its own signing key. For a full understanding of how Android app signing works, see the [official Android documentation](https://developer.android.com/studio/publish/app-signing#certificates-keystores).
+
+Generate a keystore for your app:
+
+```bash
+keytool -genkey -v -keystore my-app-name.keystore \
+  -alias my-app-name \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
+```
+
+Replace `my-app-name` with your app's name.
+
+Store the keystore file and passwords securely — losing them means you cannot update your app. All future updates must be signed with the same key.
+
+<Warning>
+If your app is also published on Google Play, you **must** use a separate signing key for the dApp Store. You cannot reuse the same key for both stores.
+</Warning>
+
+<Accordion title="Publishing multiple apps?">
+Each app should have its own signing key. You can keep things organized by storing multiple key aliases in a single keystore file:
+
+```bash
+# First app
+keytool -genkey -v -keystore publisher.keystore -alias my-first-app -keyalg RSA -keysize 2048 -validity 10000
+
+# Second app
+keytool -genkey -v -keystore publisher.keystore -alias my-second-app -keyalg RSA -keysize 2048 -validity 10000
+```
+
+Then reference the appropriate `-alias` when signing each app.
+</Accordion>
+
+<Tabs>
+<Tab title="Expo" icon="react">
+
+By default, EAS builds an Android App Bundle (.aab). The dApp Store requires an APK instead.
+
+For signing, EAS can automatically generate and manage a keystore for you on your first build. Alternatively, you can provide your own keystore created with the [instructions above](#create-a-signing-key).
+
+## 1. Configure EAS for APK builds
+
+Add a `dapp-store` build profile to your `eas.json`:
+
+```json eas.json
+{
+  "build": {
+    "dapp-store": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}
+```
+
+## 2. Build the APK
+
+<Tabs>
+<Tab title="EAS Cloud">
+
+```bash
+eas build --platform android --profile dapp-store
+```
+
+The build runs on EAS servers. Once finished, download the APK from the link provided.
+
+</Tab>
+<Tab title="Local Build">
+
+```bash
+eas build --platform android --profile dapp-store --local
+```
+
+The build runs on your machine. Requires the [Android SDK and NDK](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local) installed locally. The APK is output to the project directory.
+
+</Tab>
+</Tabs>
+
+On your first build, EAS will prompt you to either generate a new keystore automatically or provide an existing one.
+
+## Verify the APK
+
+Confirm your APK is properly signed:
+
+```bash
+apksigner verify --print-certs app-release.apk
+```
+
+</Tab>
+<Tab title="Native Android" icon="android">
+
+## 1. Configure signing in build.gradle
+
+Add a signing config in your `app/build.gradle`:
+
+```kotlin app/build.gradle
+android {
+    signingConfigs {
+        dappStore {
+            storeFile file("keystores/my-app-name.keystore")
+            storePassword "your_keystore_password"
+            keyAlias "my-app-name"
+            keyPassword "your_key_password"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.dappStore
+        }
+    }
+}
+```
+
+## 2. Build the APK
+
+```bash
+./gradlew assembleRelease
+```
+
+Or in Android Studio: **Build** > **Build APK(s)**.
+
+Your signed APK will be at `app/build/outputs/apk/release/app-release.apk`.
+
+## 3. Verify the APK
+
+Confirm your APK is properly signed:
+
+```bash
+apksigner verify --print-certs app-release.apk
+```
+
+</Tab>
+<Tab title="PWA" icon="globe">
+
+[Progressive Web Apps (PWAs)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) can be published on the dApp Store by wrapping them in a [Trusted Web Activity (TWA)](https://developer.chrome.com/docs/android/trusted-web-activity). TWAs use Chrome to render your web app in a full-screen, native-like experience.
+
+### Prerequisite
+
+A PWA [web manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) hosted at `https://your-pwa-url.com/manifest.json`.
+
+<Accordion title="Template: Web Manifest">
+At minimum, a manifest file includes the app's name, icons, and start URL:
+
+```json manifest.json
+{
+    "name": "APP_NAME",
+    "short_name": "APP_NAME",
+    "scope": "/",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "display": "standalone"
+}
+```
+
+For more information, view the [web manifest documentation](https://web.dev/articles/add-manifest).
+</Accordion>
+
+## 1. Install Bubblewrap CLI
+
+[Bubblewrap CLI](https://github.com/GoogleChromeLabs/bubblewrap/tree/main/packages/cli) converts your PWA into an Android app using TWA.
+
+```bash
+npm i -g @bubblewrap/cli
+```
+
+## 2. Initialize the project
+
+In a new directory, run `init` with the URL to your web manifest:
+
+```bash
+bubblewrap init --manifest https://your-pwa-url.com/manifest.json
+```
+
+This will prompt you to configure the domain, display mode, splash screen, icons, and signing keystore.
+
+- If it asks to install additional tooling (e.g. Android SDK, JDK), allow it.
+
+<Warning>
+The `init` command will generate an **Android Keystore**. Keep the keystore file and password secure — losing them means you cannot update your app.
+</Warning>
+
+## 3. Add supported languages
+
+Before building, specify the languages your app supports. By default, Bubblewrap incorrectly declares support for all locales.
+
+In the generated Android project, edit `build.gradle`:
+
+```java build.gradle
+android {
+    defaultConfig {
+        ...
+        resConfigs "en" // Add any locales your app supports
+    }
+}
+```
+
+## 4. Build the APK
+
+```bash
+bubblewrap build
+```
+
+This outputs a signed release APK.
+
+## 5. Publish Digital Asset Links
+
+[Digital Asset Links (DAL)](https://developers.google.com/digital-asset-links/v1/getting-started) establish a connection between your website and the Android app. Without this, the app will show Chrome browser UI instead of a full-screen experience.
+
+<Steps>
+<Step>
+Generate the SHA256 fingerprint from your keystore:
+
+```bash
+keytool -list -v -keystore android.keystore
+```
+</Step>
+<Step>
+Add the fingerprint to your TWA manifest:
+
+```bash
+bubblewrap fingerprint add <SHA256_fingerprint>
+```
+</Step>
+<Step>
+Generate the `assetlinks.json` file:
+
+```bash
+bubblewrap fingerprint generateAssetLinks
+```
+</Step>
+<Step>
+Publish the generated `assetlinks.json` at:
+
+`https://your-domain.com/.well-known/assetlinks.json`
+</Step>
+</Steps>
+
+## 6. Test the APK
+
+Install and test on a device or emulator:
+
+```bash
+bubblewrap install app-release-signed.apk
+```
+
+<Tip>
+If you see the browser navigation bar at the top of the app, your Digital Asset Links may not be configured correctly. Double-check step 5.
+</Tip>
+
+### Updating your TWA
+
+To release a new version, edit `twa-manifest.json` and run:
+
+```bash
+bubblewrap update --manifest=./path/to/twa-manifest.json
+bubblewrap build
+```
+
+</Tab>
+</Tabs>
+
+## Next steps
+
+With your signed APK ready, follow the dApp Store publishing process:
+
+<Card title="Submit your app" icon="rocket" href="/dapp-publishing/submit-new-app">
+  Follow the step-by-step guide to submit your APK to the Solana dApp Store.
+</Card>

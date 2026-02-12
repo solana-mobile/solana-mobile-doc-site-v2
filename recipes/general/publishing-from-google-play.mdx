@@ -1,0 +1,158 @@
+---
+title: "Publishing from Google Play to the dApp Store"
+sidebarTitle: "Publishing from Google Play"
+description: "Already have an app on Google Play? Here's how to publish it on the Solana dApp Store."
+---
+
+If you already have an app on Google Play, publishing it on the dApp Store is straightforward. The key differences are:
+
+- **File format**: The dApp Store requires an APK (Google Play uses AAB)
+- **Signing key**: You must use a **separate** signing key from Google Play
+
+<Warning>
+You cannot reuse your Google Play signing key for the dApp Store. Generate a new one.
+</Warning>
+
+## 1. Create a new signing key
+
+Generate a keystore exclusively for the dApp Store:
+
+```bash
+keytool -genkey -v -keystore my-app-name.keystore \
+  -alias my-app-name \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000
+```
+
+For a full understanding of how Android app signing works, see the [official Android documentation](https://developer.android.com/studio/publish/app-signing#certificates-keystores).
+
+## 2. Build a signed APK
+
+Since you already have a build pipeline for Google Play, you need to configure a **separate** build variant that signs with your dApp Store keystore. Choose your framework below:
+
+<Tabs>
+<Tab title="Expo / EAS">
+
+If you use EAS for Google Play builds, your Google Play keystore is managed by EAS. To use a separate keystore for the dApp Store, use [`credentialsSource: "local"`](https://docs.expo.dev/app-signing/local-credentials/) so EAS reads your dApp Store keystore from a local `credentials.json` file instead.
+
+### 1. Create a `credentials.json`
+
+In your project root, create a `credentials.json` pointing to the dApp Store keystore you generated in step 1:
+
+```json credentials.json
+{
+  "android": {
+    "keystore": {
+      "keystorePath": "./my-app-name.keystore",
+      "keystorePassword": "your_keystore_password",
+      "keyAlias": "my-app-name",
+      "keyPassword": "your_key_password"
+    }
+  }
+}
+```
+
+<Warning>
+Add `credentials.json` to your `.gitignore` to avoid committing sensitive keystore passwords.
+</Warning>
+
+### 2. Add a `dapp-store` build profile
+
+In your `eas.json`, add a `dapp-store` profile that builds an APK using your local credentials:
+
+```json eas.json
+{
+  "build": {
+    "production": {
+      // ... your existing Google Play profile
+    },
+    "dapp-store": {
+      "android": {
+        "buildType": "apk",
+        "credentialsSource": "local"
+      }
+    }
+  }
+}
+```
+
+### 3. Build the APK
+
+```bash
+eas build --platform android --profile dapp-store
+```
+
+EAS will use the keystore from your `credentials.json` instead of the EAS-managed Google Play keystore.
+
+</Tab>
+<Tab title="Native Android">
+
+Use [product flavors](https://developer.android.com/build/build-variants) to maintain both Google Play and dApp Store build variants, each with their own signing key.
+
+### 1. Configure `build.gradle`
+
+In your `app/build.gradle`, set up dual signing configs and product flavors:
+
+```kotlin app/build.gradle
+android {
+    signingConfigs {
+        googlePlay {
+            storeFile file("keystores/googleplay.keystore")
+            storePassword "your_googleplay_keystore_password"
+            keyAlias "googleplay"
+            keyPassword "your_googleplay_key_password"
+        }
+        dappStore {
+            storeFile file("keystores/my-app-name.keystore")
+            storePassword "your_dappstore_keystore_password"
+            keyAlias "my-app-name"
+            keyPassword "your_dappstore_key_password"
+        }
+    }
+
+    flavorDimensions "store"
+
+    productFlavors {
+        googlePlay {
+            dimension "store"
+        }
+        dappStore {
+            dimension "store"
+        }
+    }
+
+    buildTypes {
+        release {
+            productFlavors.googlePlay {
+                signingConfig signingConfigs.googlePlay
+            }
+            productFlavors.dappStore {
+                signingConfig signingConfigs.dappStore
+            }
+        }
+    }
+}
+```
+
+### 2. Build the APK
+
+```bash
+./gradlew assembleDappStoreRelease
+```
+
+Your signed APK will be at:
+```
+app/build/outputs/apk/dappStore/release/app-dappStore-release.apk
+```
+
+</Tab>
+</Tabs>
+
+## 3. Submit to the dApp Store
+
+With your signed APK ready, follow the standard publishing process:
+
+<Card title="Submit your app" icon="rocket" href="/dapp-publishing/submit-new-app">
+  Follow the step-by-step guide to submit your APK to the Solana dApp Store.
+</Card>

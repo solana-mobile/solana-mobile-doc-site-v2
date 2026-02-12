@@ -1,0 +1,87 @@
+---
+title: "Setup"
+description: "Set up the MobileWalletAdapter client to connect to wallets from your Kotlin Android app."
+sidebarTitle: "Setup"
+---
+
+## Instantiate the MobileWalletAdapter client
+
+The `MobileWalletAdapter` object provides methods to connect to wallets and issue MWA requests.
+
+Define the `ConnectionIdentity` of your dApp so that the wallet app can properly display your dApp info to the user.
+
+```kotlin
+import com.solana.mobilewalletadapter.clientlib.*
+
+// Define dApp's identity metadata
+val solanaUri = Uri.parse("https://yourdapp.com")
+val iconUri = Uri.parse("favicon.ico") // resolves to https://yourdapp.com/favicon.ico
+val identityName = "Solana Kotlin dApp"
+
+// Construct the client
+val walletAdapter = MobileWalletAdapter(connectionIdentity = ConnectionIdentity(
+    identityUri = solanaUri,
+    iconUri = iconUri,
+    identityName = identityName
+))
+```
+
+### ConnectionIdentity fields
+
+| Field | Type | Description |
+|---|---|---|
+| `identityUri` | `Uri` | Your app's website URL. |
+| `iconUri` | `Uri` | Path to your app icon, relative to `identityUri`. |
+| `identityName` | `String` | Your app's display name shown to the user during wallet authorization. |
+
+## Establishing an MWA session
+
+To establish a session with an MWA wallet, use the `transact` method. Calling `transact` dispatches an association intent to a locally installed MWA wallet app and prompts the user to approve or reject the connection.
+
+Once connected, you can issue MWA requests within the provided callback:
+
+```kotlin
+import com.solana.mobilewalletadapter.clientlib.*
+
+// `this` is the current Android activity
+val sender = ActivityResultSender(this)
+
+val result = walletAdapter.transact(sender) { authResult ->
+    /* Once connected, send requests to the wallet in this callback */
+}
+```
+
+When the session is complete, `transact` returns a `TransactionResult` that can be checked for success or failure:
+
+```kotlin
+when (result) {
+    is TransactionResult.Success -> {
+        val authResult = result.authResult
+        // Handle success
+    }
+    is TransactionResult.NoWalletFound -> {
+        println("No MWA compatible wallet app found on device.")
+    }
+    is TransactionResult.Failure -> {
+        println("Error: " + result.e.message)
+    }
+}
+```
+
+## Managing the authToken
+
+The `MobileWalletAdapter` client stores an `authToken` from successful connections. If valid, the user can skip the connection approval dialog for subsequent requests.
+
+You can also persist and restore the token across app sessions:
+
+```kotlin
+// Restore a previously persisted authToken
+val previouslyStoredAuthToken = maybeGetStoredAuthToken()
+walletAdapter.authToken = previouslyStoredAuthToken
+```
+
+## Next steps
+
+<Card title="Quickstart" icon="rocket" href="/get-started/kotlin/quickstart">
+  See usage examples for connect, signMessage, signIn, and signAndSendTransaction.
+</Card>

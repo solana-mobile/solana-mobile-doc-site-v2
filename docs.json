@@ -45,63 +45,65 @@
         ]
       },
       {
-        "tab": "Basics",
+        "tab": "Get Started",
         "icon": "book-open",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "developers/overview",
-              "developers/development-setup",
-              "developers/mobile-scaffold-apps",
-              "developers/community"
+              "get-started/overview",
+              "get-started/development-setup",
+              "get-started/mobile-scaffold-apps",
+              "get-started/community"
             ]
           },
           {
             "group": "Mobile Wallet Adapter SDK",
             "pages": [
-              "mobile-wallet-adapter/overview",
+              "get-started/mobile-wallet-adapter",
               {
                 "group": "React Native",
                 "pages": [
-                  "react-native/overview",
-                  "react-native/setup",
-                  "react-native/quickstart",
+                  "get-started/react-native/installation",
+                  "get-started/react-native/setup",
+                  "get-started/react-native/quickstart",
                   {
                     "group": "Advanced",
-                    "pages": ["react-native/using_mobile_wallet_adapter"]
+                    "pages": [
+                      "get-started/react-native/invoke-mwa-sessions-directly"
+                    ]
                   }
                 ]
               },
               {
                 "group": "Web",
                 "pages": [
-                  "mobile-wallet-adapter/web-installation",
-                  "mobile-wallet-adapter/web-apps",
-                  "mobile-wallet-adapter/ux-guidelines"
+                  "get-started/web/installation",
+                  "get-started/web/apps",
+                  "get-started/web/ux-guidelines"
                 ]
               },
               {
                 "group": "Kotlin",
                 "pages": [
-                  "android-native/overview",
-                  "android-native/setup",
-                  "android-native/quickstart"
+                  "get-started/kotlin/installation",
+                  "get-started/kotlin/setup",
+                  "get-started/kotlin/quickstart"
                 ]
               },
               {
                 "group": "Community SDKs",
                 "pages": [
-                  "flutter/overview",
-                  "unity/unity_sdk",
-                  "unreal/unreal_sdk"
+                  "get-started/flutter/overview",
+                  "get-started/unity/overview",
+                  "get-started/unreal/overview"
                 ]
               }
             ]
           },
           {
             "group": "Troubleshooting",
-            "pages": ["dapp-publishing/faq"]
+            "pages": ["get-started/faq"]
           }
         ]
       },
@@ -116,6 +118,7 @@
           {
             "group": "Publishing",
             "pages": [
+              "dapp-publishing/build-and-sign-an-apk",
               "dapp-publishing/building-expo-apk",
               "dapp-publishing/publishing-a-pwa",
               "dapp-publishing/publishing-from-google-play",
@@ -156,22 +159,23 @@
           {
             "group": "General",
             "pages": [
-              "react-native/detecting-seeker-users",
-              "react-native/test-with-any-android-device"
+              "recipes/general/detecting-seeker-users",
+              "recipes/general/test-with-any-android-device",
+              "recipes/general/publishing-from-google-play"
             ]
           },
           {
             "group": "Mobile Wallet Adapter",
             "pages": [
-              "react-native/storing_mwa_auth",
-              "mobile-wallet-adapter/migrating-to-wallet-standard"
+              "recipes/mobile-wallet-adapter/storing-mwa-auth",
+              "recipes/mobile-wallet-adapter/migrating-to-wallet-standard"
             ]
           },
           {
             "group": "Solana Development",
             "pages": [
-              "react-native/anchor_integration",
-              "android-native/using-anchor-programs"
+              "recipes/solana-development/anchor-integration",
+              "recipes/solana-development/using-anchor-programs"
             ]
           }
         ]

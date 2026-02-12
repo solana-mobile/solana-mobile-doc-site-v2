@@ -53,7 +53,6 @@ registerMwa({
     chains: ['solana:devnet', 'solana:mainnet'],
     chainSelector: createDefaultChainSelector(),
     onWalletNotFound: createDefaultWalletNotFoundHandler(),
-    // remoteHostAuthority: '<REPLACE_WITH_URL_>',  Include to enable remote connection option.
 })
 ```
 
@@ -63,7 +62,7 @@ Now, `Mobile Wallet Adapter` will appear as a wallet option.
 
 
 
-For more context, view the **full [installation guide](/mobile-wallet-adapter/web-installation).**
+For more context, view the **full [installation guide](/get-started/web/installation).**
 
 ### 2. Update to wallet-adapter >= 0.15.36
 
@@ -81,12 +80,6 @@ The `@solana/wallet-adapter-react` library will [not include MWA as a default op
 
 This means any web app using `@solana/wallet-adapter-react` will no longer display `Mobile Wallet Adapter` as an option for users
 browsing on Android Chrome, unless explicitly added.
-
-### Enable remote connection
-
-The `@solana-mobile/wallet-standard-mobile` library includes a remote connection option that allows users to connect their mobile wallet app to a desktop web page.
-
-View the [MWA Remote documentation](/mobile-wallet-adapter/web-installation#enable-remote-connection) for more information.
 
 ### Bug fixes and stability
 

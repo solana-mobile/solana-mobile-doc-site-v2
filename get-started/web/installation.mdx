@@ -25,7 +25,7 @@ In the root of your web application, invoke the `registerMwa` function.
 Ensure `registerMwa` is invoked in a non-SSR context. if you're using a framework with Server Side Rendering (e.g Next.js), 
 </Warning>
 
-```typescript expandable
+```typescript
 // 'use client' - If using Next.js, ensure it is registered in a non-SSR context.
 
 import { 
@@ -48,8 +48,5 @@ registerMwa({
 })
 ```
 
-Once registered, the wallet behavior automatically adapts to the user's device:
-
-- **Mobile**: Local connection via Android Intents (same as native Android apps).
-- **Desktop** (Not available yet): If `remoteHostAuthority` is provided, remote connection via QR Code. 
+Once registered, MWA will appear as a wallet option for users browsing on Android Chrome. The connection is handled locally via Android Intents (same as native Android apps).
 

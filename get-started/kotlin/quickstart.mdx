@@ -1,0 +1,179 @@
+---
+title: "Quickstart"
+description: "Usage examples for connecting to wallets, signing messages, and sending transactions with the Kotlin MWA client."
+sidebarTitle: "Quickstart"
+---
+
+This page demonstrates how to use each method from the `MobileWalletAdapter` client. Make sure you have completed the [Installation](/get-started/kotlin/installation) and [Setup](/get-started/kotlin/setup) steps first.
+
+## Connect / Disconnect
+
+Use `connect` to establish a wallet connection. On success, the `TransactionResult` contains an `AuthorizationResult` with the user's wallet address and auth token.
+
+```kotlin
+import com.solana.mobilewalletadapter.clientlib.*
+
+val sender = ActivityResultSender(this)
+val walletAdapter = MobileWalletAdapter(/* ... */)
+
+val result = walletAdapter.connect(sender)
+
+when (result) {
+    is TransactionResult.Success -> {
+        val authResult = result.authResult
+        println("Connected to: " + authResult.accounts.first().publicKey)
+    }
+    is TransactionResult.NoWalletFound -> {
+        println("No MWA compatible wallet app found on device.")
+    }
+    is TransactionResult.Failure -> {
+        println("Error connecting to wallet: " + result.e.message)
+    }
+}
+```
+
+Use `disconnect` to revoke authorization and invalidate the stored auth token:
+
+```kotlin
+val result = walletAdapter.disconnect(sender)
+```
+
+## Sign Message
+
+Use `signMessagesDetached` within a `transact` session to request the wallet to sign an arbitrary byte payload.
+
+```kotlin
+import com.funkatronics.encoders.Base58
+import com.solana.mobilewalletadapter.clientlib.*
+
+val sender = ActivityResultSender(this)
+val walletAdapter = MobileWalletAdapter(/* ... */)
+
+val message = "Sign this message please!"
+val result = walletAdapter.transact(sender) { authResult ->
+    signMessagesDetached(
+        arrayOf(message.toByteArray()),
+        arrayOf(authResult.accounts.first().publicKey)
+    )
+}
+
+when (result) {
+    is TransactionResult.Success -> {
+        val signedMessageBytes = result.successPayload?.messages?.first()?.signatures?.first()
+        signedMessageBytes?.let {
+            println("Message signed: ${Base58.encodeToString(it)}")
+        }
+    }
+    is TransactionResult.NoWalletFound -> {
+        println("No MWA compatible wallet app found on device.")
+    }
+    is TransactionResult.Failure -> {
+        println("Error during message signing: " + result.e.message)
+    }
+}
+```
+
+## Sign In with Solana (SIWS)
+
+Use `signIn` to connect to a wallet and verify ownership in a single step. This combines authorization and message signing into one user interaction.
+
+```kotlin
+import com.solana.mobilewalletadapter.clientlib.*
+
+val sender = ActivityResultSender(this)
+val walletAdapter = MobileWalletAdapter(/* ... */)
+
+val result = walletAdapter.signIn(
+    sender,
+    SignInWithSolana.Payload("yourdomain.com", "Sign in to My App")
+)
+
+when (result) {
+    is TransactionResult.Success -> {
+        val signInResult = result.authResult.signInResult
+        println("Signed in successfully")
+    }
+    is TransactionResult.NoWalletFound -> {
+        println("No MWA compatible wallet app found on device.")
+    }
+    is TransactionResult.Failure -> {
+        println("Error signing in: " + result.e.message)
+    }
+}
+```
+
+To sign in and continue issuing additional requests in the same session, include the `signInPayload` parameter with `transact`:
+
+```kotlin
+val result = walletAdapter.transact(sender,
+    SignInWithSolana.Payload("yourdomain.com", "Sign in to My App")) { authResult ->
+    /* Send additional MWA requests here */
+}
+```
+
+## Sign and Send Transaction
+
+Use `signAndSendTransactions` within a `transact` session to request the wallet to sign a transaction and submit it to the Solana network.
+
+```kotlin
+import com.funkatronics.encoders.Base58
+import com.solana.publickey.SolanaPublicKey
+import com.solana.transaction.*
+import com.solana.mobilewalletadapter.clientlib.*
+import com.solana.rpc.SolanaRpcClient
+import com.solana.networking.KtorNetworkDriver
+
+val sender = ActivityResultSender(this)
+val walletAdapter = MobileWalletAdapter(/* ... */)
+
+val result = walletAdapter.transact(sender) { authResult ->
+    val userAddress = SolanaPublicKey(authResult.accounts.first().publicKey)
+
+    // Fetch latest blockhash
+    val rpcClient = SolanaRpcClient("https://api.devnet.solana.com", KtorNetworkDriver())
+    val blockhashResponse = rpcClient.getLatestBlockhash()
+
+    // Build a SOL transfer transaction
+    val transferTx = Transaction(
+        Message.Builder()
+            .addInstruction(
+                SystemProgram.transfer(
+                    userAddress,
+                    SolanaPublicKey("<address_of_recipient>"),
+                    1_000_000L // lamports
+                )
+            )
+            .setRecentBlockhash(blockhashResponse.result!!.blockhash)
+            .build()
+    )
+
+    // Sign and send the transaction
+    signAndSendTransactions(arrayOf(transferTx.serialize()))
+}
+
+when (result) {
+    is TransactionResult.Success -> {
+        val txSignatureBytes = result.successPayload?.signatures?.first()
+        txSignatureBytes?.let {
+            println("Transaction signature: " + Base58.encodeToString(it))
+        }
+    }
+    is TransactionResult.NoWalletFound -> {
+        println("No MWA compatible wallet app found on device.")
+    }
+    is TransactionResult.Failure -> {
+        println("Error during signing and sending: " + result.e.message)
+    }
+}
+```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Sample Apps" icon="code" href="/sample-apps/sample_app_overview">
+    Browse reference apps to jumpstart your development.
+  </Card>
+  <Card title="JSON RPC Requests" icon="globe" href="/android-native/rpc-requests">
+    Learn the rpc-core library to create and send Solana RPC Requests.
+  </Card>
+</CardGroup>
