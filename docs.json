@@ -53,7 +53,7 @@
             "pages": [
               "get-started/overview",
               "get-started/development-setup",
-              "get-started/community"
+              "get-started/react-native/create-solana-mobile-app"
             ]
           },
           {
@@ -102,8 +102,8 @@
             ]
           },
           {
-            "group": "Troubleshooting",
-            "pages": ["get-started/faq"]
+            "group": "Resources",
+            "pages": ["get-started/community", "get-started/faq"]
           }
         ]
       },
@@ -146,7 +146,7 @@
           },
           {
             "group": "Support",
-            "pages": ["dapp-store/support"]
+            "pages": ["dapp-store/support", "get-started/faq"]
           }
         ]
       },
@@ -160,13 +160,13 @@
               "recipes/general/detecting-seeker-users",
               "recipes/general/test-with-any-android-device",
               "recipes/general/publishing-from-google-play",
-              "recipes/general/publishing-a-pwa"
+              "recipes/general/publishing-a-web-app"
             ]
           },
           {
             "group": "Mobile Wallet Adapter",
             "pages": [
-              "recipes/mobile-wallet-adapter/storing-mwa-auth",
+              "recipes/mobile-wallet-adapter/caching-wallet-authorization",
               "recipes/mobile-wallet-adapter/migrating-to-wallet-standard"
             ]
           },
@@ -189,21 +189,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Support",
-          "href": "https://intercom.help/solana-mobile/en/",
-          "icon": "headset"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://discord.gg/solanamobile",
-          "icon": "discord"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/light.png",

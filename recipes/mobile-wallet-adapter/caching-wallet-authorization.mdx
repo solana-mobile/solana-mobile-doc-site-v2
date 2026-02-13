@@ -1,0 +1,224 @@
+---
+title: "Caching MWA Authorization"
+description: "Customize the authorization caching layer used by MobileWalletProvider to persist wallet connections across app sessions."
+sidebarTitle: "Cache wallet authorization"
+---
+
+<Note>
+This guide is for **advanced users** who want to customize how wallet authorization details are cached and persisted.
+If you're using `MobileWalletProvider` with the default settings, authorization caching is already handled for you with `AsyncStorage`.
+</Note>
+
+## Overview
+
+When a user authorizes your dApp with their wallet via MWA, the session returns an `auth_token` and account details. By caching these details, your app can stay "connected" across app restarts without prompting the user to re-authorize every time.
+
+The [`MobileWalletProvider`](https://github.com/wallet-ui/wallet-ui) from `@wallet-ui/react-native-web3js` handles this automatically with a built-in `AsyncStorage` cache. You can swap in your own cache implementation (e.g for encrypted storage) by passing a custom `cache` prop.
+
+## The `Cache` interface
+
+The `cache` prop on `MobileWalletProvider` accepts any object that implements the `Cache<T>` interface:
+
+```tsx
+interface Cache<T> {
+    clear(): Promise<void>;
+    get(): Promise<T | undefined>;
+    set(value: T): Promise<void>;
+}
+```
+
+- **`get()`** — Retrieves the cached authorization on app startup.
+- **`set(value)`** — Stores the authorization after the user authorizes.
+- **`clear()`** — Removes cached authorization on disconnect/deauthorize.
+
+## Default: `AsyncStorage`
+
+By default, `MobileWalletProvider` uses `@react-native-async-storage/async-storage` to persist authorization data. You don't need to configure anything for this to work:
+
+```tsx
+import { MobileWalletProvider } from '@wallet-ui/react-native-web3js';
+
+function App() {
+  return (
+    <MobileWalletProvider
+      endpoint="https://api.mainnet-beta.solana.com"
+      chain="solana:mainnet"
+      identity={{
+        name: 'My App',
+        uri: 'https://myapp.com',
+        icon: 'favicon.ico',
+      }}
+    >
+      {/* cache defaults to AsyncStorage */}
+      {children}
+    </MobileWalletProvider>
+  );
+}
+```
+
+## Custom cache: `expo-secure-store`
+
+If you want to store authorization details in encrypted storage (e.g for sensitive auth tokens), you can create a custom cache using `expo-secure-store`.
+
+### Install `expo-secure-store`
+
+```shell
+npx expo install expo-secure-store
+```
+
+### Create a Secure Store cache
+
+```tsx
+import * as SecureStore from 'expo-secure-store';
+import { Cache } from '@wallet-ui/react-native-web3js';
+import { PublicKey, PublicKeyInitData } from '@solana/web3.js';
+
+const STORAGE_KEY = 'authorization-cache';
+
+function cacheReviver(key: string, value: unknown) {
+  if (key === 'publicKey') {
+    return new PublicKey(value as PublicKeyInitData);
+  }
+  return value;
+}
+
+export function createSecureStoreCache<T>(): Cache<T> {
+  return {
+    async get(): Promise<T | undefined> {
+      const result = await SecureStore.getItemAsync(STORAGE_KEY);
+      if (!result) return undefined;
+      try {
+        return JSON.parse(result, cacheReviver) as T;
+      } catch {
+        return undefined;
+      }
+    },
+    async set(value: T): Promise<void> {
+      await SecureStore.setItemAsync(STORAGE_KEY, JSON.stringify(value));
+    },
+    async clear(): Promise<void> {
+      await SecureStore.deleteItemAsync(STORAGE_KEY);
+    },
+  };
+}
+```
+
+<Note>
+The `cacheReviver` function is needed to properly deserialize `PublicKey` objects from the cached JSON string.
+</Note>
+
+### Pass it to `MobileWalletProvider`
+
+```tsx
+import { MobileWalletProvider } from '@wallet-ui/react-native-web3js';
+import { createSecureStoreCache } from './secure-store-cache';
+
+const secureCache = createSecureStoreCache();
+
+function App() {
+  return (
+    <MobileWalletProvider
+      endpoint="https://api.mainnet-beta.solana.com"
+      chain="solana:mainnet"
+      identity={{
+        name: 'My App',
+        uri: 'https://myapp.com',
+        icon: 'favicon.ico',
+      }}
+      cache={secureCache}
+    >
+      {children}
+    </MobileWalletProvider>
+  );
+}
+```
+
+---
+
+## Using the bare MWA library
+
+<Accordion title="Manual caching with @solana-mobile/mobile-wallet-adapter-protocol-web3js">
+
+If you're using the lower-level `@solana-mobile/mobile-wallet-adapter-protocol-web3js` library directly (without `MobileWalletProvider`), you'll need to manage authorization caching yourself.
+
+### Check for cached authorization
+
+When the dApp boots up, check the cache for a prior authorization:
+
+```tsx expandable
+const App = () => {
+    const [currentAccount, setCurrentAccount] = useState<{
+        authToken: string;
+        pubkey: PublicKey;
+    } | null>(null);
+
+    useEffect(() => {
+        (async () => {
+            const [cachedAuthToken, cachedBase64Address] = await Promise.all([
+                AsyncStorage.getItem('authToken'),
+                AsyncStorage.getItem('base64Address'),
+            ]);
+            if (cachedBase64Address && cachedAuthToken) {
+                const pubkeyAsByteArray = toByteArray(cachedBase64Address);
+                const cachedCurrentAccount = {
+                    authToken: cachedAuthToken,
+                    pubkey: new PublicKey(pubkeyAsByteArray),
+                };
+                setCurrentAccount(cachedCurrentAccount);
+            }
+        })();
+    }, []);
+
+    /* ...*/
+}
+```
+
+### Cache on authorize
+
+Cache the authorization details when the user completes an `authorize` request:
+
+```tsx expandable
+const [currentAccount, setCurrentAccount] = useState<{
+    authToken: string;
+    pubkey: PublicKey;
+} | null>(null);
+
+const handleConnectPress = useCallback(() => {
+    transact(async wallet => {
+        const {accounts, auth_token} = await wallet.authorize({
+            cluster: 'devnet',
+            identity: {
+                name: 'My amazing app',
+            },
+        });
+        const firstAccount = accounts[0];
+        AsyncStorage.setItem('authToken', auth_token);
+        AsyncStorage.setItem('base64Address', firstAccount.address);
+        const pubkeyAsByteArray = toByteArray(firstAccount.address);
+        const nextCurrentAccount = {
+            authToken: auth_token,
+            pubkey: new PublicKey(pubkeyAsByteArray),
+        };
+        setCurrentAccount(nextCurrentAccount);
+    });
+}, []);
+```
+
+### Clear cache on deauthorize
+
+When the user disconnects, invalidate the cache:
+
+```tsx
+const handleDisconnectPress = useCallback(() => {
+    transact(async wallet => {
+        if (currentAccount == null) {
+            throw new Error('There is no current account to deauthorize');
+        }
+        await wallet.deauthorize({auth_token: currentAccount.authToken});
+        AsyncStorage.clear();
+        setCurrentAccount(null);
+    });
+}, [currentAccount]);
+```
+
+</Accordion>

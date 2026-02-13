@@ -38,20 +38,28 @@ import { install } from 'react-native-quick-crypto';
 install();
 ```
 
-**2. Import the polyfill at the top of your `index.js`:**
+**2. Create an `index.js` entry point that imports the polyfill first:**
 
 ```javascript index.js
 import './polyfill';
-// ... rest of your app entry
+import 'expo-router/entry'; // If using Expo Router
+```
+
+**3. Update `package.json` to use the new entry point:**
+
+```json package.json
+{
+  "main": "./index.js"
+}
 ```
 
 <Warning>
 The polyfill must be imported **before** any other code that uses `@solana/web3.js`.
 </Warning>
 
-## Build scripts
+## Custom Development Build
 
-Since `react-native-quick-crypto` includes native code, you must use a custom Expo development build instead of Expo Go.
+MWA uses Kotlin native modules, so you must use a [custom Expo development build](https://docs.expo.dev/develop/development-builds/create-a-build/) instead of Expo Go.
 
 Update your `package.json` build scripts:
 
