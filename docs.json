@@ -155,6 +155,10 @@
         "icon": "utensils",
         "groups": [
           {
+            "group": "Recipes",
+            "pages": ["recipes/overview"]
+          },
+          {
             "group": "General",
             "pages": [
               "recipes/general/detecting-seeker-users",
@@ -194,7 +198,7 @@
   "logo": {
     "light": "/logo/light.png",
     "dark": "/logo/dark.svg",
-    "href": "https://solanamobile.com/"
+    "href": "/"
   },
   "navbar": {
     "links": [

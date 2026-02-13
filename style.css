@@ -1,3 +1,9 @@
+/* Normalize card image heights in sample app collection */
+img[src*="sample_app_imgs"] {
+  min-height: 200px;
+  object-fit: cover;
+}
+
 li[id="topbar-cta-button"] > a > div > span {
     color: #000000 !important;
    }
