@@ -213,6 +213,12 @@
       "href": "https://publish.solanamobile.com/"
     }
   },
+  "redirects": [
+    {
+      "source": "/hackathon",
+      "destination": "https://solanamobile.radiant.nexus/"
+    }
+  ],
   "footer": {
     "socials": {
       "x": "https://discord.gg/solanamobile",
