@@ -132,7 +132,8 @@
                   "dapp-store/publishing-cli/submit",
                   "dapp-store/publishing-cli/publishing-updates"
                 ]
-              }
+              },
+              "dapp-store/link-to-dapp-listing-page"
             ]
           },
           {
