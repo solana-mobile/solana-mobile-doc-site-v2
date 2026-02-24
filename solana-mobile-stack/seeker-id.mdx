@@ -1,0 +1,52 @@
+---
+title: "Seeker ID"
+sidebarTitle: "Seeker ID"
+description: "Seeker ID is an onchain identity system combining the Seeker Genesis Token and .skr addresses."
+toc: false
+---
+
+Seeker ID is the onchain identity layer for [Seeker](/solana-mobile-stack/seeker) owners. It combines two primitives — the **Seeker Genesis Token** and a **[.skr address](/solana-mobile-stack/skr)** — to give every Seeker user a verifiable, device-linked identity on Solana.
+
+## Seeker Genesis Token
+
+The Seeker Genesis Token (SGT) is an NFT that is minted once per Seeker device when the owner first activates their [Seed Vault Wallet](/solana-mobile-stack/seed-vault). It serves as cryptographic proof that a wallet belongs to a verified Seeker owner.
+
+### Key properties
+
+- **One per device** — Each Seeker device produces exactly one SGT, tied to the primary account in the Seed Vault Wallet.
+- **Token-2022 standard** — The SGT uses Solana's Token Extensions program (Token-2022) with Metadata Pointer and Token Group Member extensions.
+- **Limited transferability** — The SGT can only be transferred between a user's own wallet accounts within the Seed Vault Wallet (e.g., when switching the primary account). It cannot be freely traded or sent to other users.
+
+### Why it matters for developers
+
+The SGT enables a reliable way to identify Seeker users onchain. Common use cases include:
+
+- **Exclusive features** — Gate access to features, content, or rewards for verified Seeker owners.
+- **Anti-sybil** — Use the one-per-device property to prevent users from claiming rewards multiple times across multiple wallets.
+- **Airdrops and distributions** — Target Seeker owners for token distributions or NFT drops.
+
+### Verification
+
+To verify a user holds an SGT, combine wallet ownership proof with an onchain token check:
+
+1. **Prove wallet ownership** — Use [Sign In With Solana (SIWS)](https://github.com/phantom/sign-in-with-solana) to confirm the user controls the wallet.
+2. **Check for SGT** — Query the wallet's token accounts to verify it holds a valid Seeker Genesis Token.
+3. **Track mint addresses** — Record which SGT mint addresses have been used to prevent re-use after transfers.
+
+<Card title="Detecting Seeker Users" icon="magnifying-glass" href="/recipes/general/detecting-seeker-users">
+  Step-by-step guide with code examples for verifying SGT ownership.
+</Card>
+
+## .skr address
+
+Every Seeker owner also receives a [`.skr` address](/solana-mobile-stack/skr) — a human-readable domain name tied to their wallet. Together with the SGT, this forms a complete onchain identity: the SGT proves device ownership, and the `.skr` address provides a recognizable name.
+
+## Comparison with Saga Genesis Token
+
+The Seeker Genesis Token builds on the concept introduced with the original [Saga Genesis Token](/marketing/engaging-saga-users), but with key differences:
+
+| | Seeker Genesis Token | Saga Genesis Token |
+|---|---|---|
+| **Token standard** | Token-2022 (Token Extensions) | Metaplex Token Standard |
+| **Transferability** | Transferable within user's own Seed Vault accounts | Soulbound (non-transferable) |
+| **Verification** | Token-2022 account queries | DAS API (Metaplex collection) |
