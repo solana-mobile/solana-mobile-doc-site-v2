@@ -108,6 +108,39 @@
         ]
       },
       {
+        "tab": "Solana Mobile Stack",
+        "icon": "layer-group",
+        "groups": [
+          {
+            "group": "Solana Mobile Stack",
+            "pages": [
+              "solana-mobile-stack/overview"
+            ]
+          },
+          {
+            "group": "Hardware",
+            "pages": [
+              "solana-mobile-stack/seeker",
+              "solana-mobile-stack/seed-vault"
+            ]
+          },
+          {
+            "group": "Software",
+            "pages": [
+              "solana-mobile-stack/dapp-store",
+              "solana-mobile-stack/mobile-wallet-adapter"
+            ]
+          },
+          {
+            "group": "Onchain",
+            "pages": [
+              "solana-mobile-stack/skr",
+              "solana-mobile-stack/seeker-id"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "dApp Store",
         "icon": "store",
         "groups": [

@@ -1,0 +1,33 @@
+---
+title: "SKR"
+sidebarTitle: "SKR"
+description: "SKR is the native domain name system for Seeker users, providing human-readable .skr addresses."
+toc: false
+---
+
+SKR is the domain name system for [Seeker](/solana-mobile-stack/seeker) users. Every Seeker owner receives a `.skr` address — a human-readable name that maps to their Solana wallet address, similar to how ENS domains work on Ethereum or `.sol` domains on Solana.
+
+## What is a .skr address?
+
+A `.skr` address replaces a long base58 wallet address with a simple, memorable name. Instead of sharing `7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU`, a user can share something like `alice.skr`.
+
+This makes it easier to:
+
+- **Send and receive tokens** — Use a `.skr` name instead of copying and pasting wallet addresses.
+- **Identify users** — Display readable names in your app's UI instead of truncated addresses.
+- **Build social features** — Reference users by their `.skr` identity across dApps.
+
+## How it works
+
+SKR is built on [AllDomains](https://alldomains.id/), a Solana naming service. The `.skr` top-level domain (TLD) is reserved for Seeker users and resolves bidirectionally:
+
+- **Forward resolution** — Given a `.skr` name, look up the associated wallet address.
+- **Reverse resolution** — Given a wallet address, look up the associated `.skr` name.
+
+## For developers
+
+You can integrate `.skr` address resolution into your app to display human-readable names and accept `.skr` addresses as input.
+
+<Card title="SKR Address Resolution Sample" icon="code" href="https://github.com/solana-mobile/tutorial-apps/tree/main/skr-address-resolution">
+  A sample app demonstrating bidirectional domain lookup with AllDomains integration.
+</Card>

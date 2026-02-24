@@ -1,0 +1,59 @@
+---
+title: "Mobile Wallet Adapter"
+sidebarTitle: "Mobile Wallet Adapter"
+description: "Mobile Wallet Adapter is an open protocol for connecting mobile dApps to wallets on Solana."
+toc: false
+---
+
+Mobile Wallet Adapter (MWA) is an open protocol that defines how mobile dApps communicate with wallet apps on the same device. It provides a standardized way to request transaction signing, message signing, and wallet authorization — regardless of which wallet the user has installed.
+
+## Why it matters
+
+On desktop, dApps connect to wallets through browser extensions. On mobile, there are no browser extensions. MWA solves this by providing a direct, local communication channel between dApps and wallet apps:
+
+- **Implement once, support all wallets** — Your dApp works with any MWA-compliant wallet (Phantom, Solflare, Seed Vault Wallet, etc.) without per-wallet integration code.
+- **User choice** — Users pick the wallet they prefer. Your app doesn't need to know or care which one they use.
+- **Simple integration** — The MWA SDK abstracts the protocol details. For most developers, integration is a few lines of code.
+
+## How it works
+
+When your dApp needs the user to sign a transaction, MWA handles the flow:
+
+1. **Your dApp sends a request** — The MWA SDK dispatches an Android intent to the user's wallet app.
+2. **The wallet app opens** — A wallet UI (typically a bottom sheet) appears, showing the transaction details for user review.
+3. **The user approves** — The wallet signs the transaction using the user's private key and returns the signed transaction to your dApp.
+4. **Your dApp submits** — The signed transaction is submitted to the Solana network.
+
+The entire session runs over a local connection on the device. No data is sent to external servers during the signing process.
+
+## Platform support
+
+| Platform | Support |
+|---|---|
+| Android | Full support |
+| Mobile web (Chrome for Android) | Supported |
+| iOS | Not supported |
+
+<Info>
+  iOS does not support MWA due to platform restrictions on inter-app communication. See the [wallet-adapter-react](/get-started/web/apps) package for web-based alternatives that work across platforms.
+</Info>
+
+## SDKs
+
+MWA client SDKs are available for multiple frameworks:
+
+<Columns cols={3}>
+  <Card title="React Native" icon="react" href="/get-started/react-native/installation">
+    The most popular integration path.
+  </Card>
+
+  <Card title="Kotlin" icon="code" href="/get-started/kotlin/installation">
+    For native Android development.
+  </Card>
+
+  <Card title="Web" icon="globe" href="/get-started/web/installation">
+    For mobile web apps in the browser.
+  </Card>
+</Columns>
+
+Community-maintained SDKs are also available for [Flutter](/get-started/flutter/overview), [Unity](/get-started/unity/overview), and [Unreal Engine](/get-started/unreal/overview).
