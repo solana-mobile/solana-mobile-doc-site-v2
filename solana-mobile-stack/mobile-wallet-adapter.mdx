@@ -1,30 +1,28 @@
 ---
 title: "Mobile Wallet Adapter"
 sidebarTitle: "Mobile Wallet Adapter"
-description: "Mobile Wallet Adapter is an open protocol for connecting mobile dApps to wallets on Solana."
+description: "Mobile Wallet Adapter is an open protocol for connecting mobile apps to wallets on Solana."
 toc: false
 ---
 
-Mobile Wallet Adapter (MWA) is an open protocol that defines how mobile dApps communicate with wallet apps on the same device. It provides a standardized way to request transaction signing, message signing, and wallet authorization — regardless of which wallet the user has installed.
+Mobile Wallet Adapter (MWA) is an open protocol that defines how mobile apps communicate with wallet apps on the same device. It provides a standardized way to request transaction signing, message signing, and wallet authorization — regardless of which wallet the user has installed.
 
 ## Why it matters
 
-On desktop, dApps connect to wallets through browser extensions. On mobile, there are no browser extensions. MWA solves this by providing a direct, local communication channel between dApps and wallet apps:
+On desktop, apps connect to wallets through browser extensions. On mobile, there are no browser extensions. MWA solves this by providing a direct, local communication channel between apps and wallet apps:
 
-- **Implement once, support all wallets** — Your dApp works with any MWA-compliant wallet (Phantom, Solflare, Seed Vault Wallet, etc.) without per-wallet integration code.
+- **Implement once, support all wallets** — Your app works with any MWA-compliant wallet (Phantom, Solflare, Seed Vault Wallet, etc.) without per-wallet integration code.
 - **User choice** — Users pick the wallet they prefer. Your app doesn't need to know or care which one they use.
 - **Simple integration** — The MWA SDK abstracts the protocol details. For most developers, integration is a few lines of code.
 
 ## How it works
 
-When your dApp needs the user to sign a transaction, MWA handles the flow:
+- The client app initiates a session by sending an Android intent to the wallet app.
+- A local WebSocket connection is established between the client and wallet.
+- The client sends MWA requests (authorization, transaction signing, message signing) over the connection.
+- The wallet surfaces an approval UI (e.g., a bottom sheet) for the user to review and approve.
 
-1. **Your dApp sends a request** — The MWA SDK dispatches an Android intent to the user's wallet app.
-2. **The wallet app opens** — A wallet UI (typically a bottom sheet) appears, showing the transaction details for user review.
-3. **The user approves** — The wallet signs the transaction using the user's private key and returns the signed transaction to your dApp.
-4. **Your dApp submits** — The signed transaction is submitted to the Solana network.
-
-The entire session runs over a local connection on the device. No data is sent to external servers during the signing process.
+See the [MWA protocol specification](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html) for more detail.
 
 ## Platform support
 
@@ -35,7 +33,7 @@ The entire session runs over a local connection on the device. No data is sent t
 | iOS | Not supported |
 
 <Info>
-  iOS does not support MWA due to platform restrictions on inter-app communication. See the [wallet-adapter-react](/get-started/web/apps) package for web-based alternatives that work across platforms.
+  iOS does not support MWA due to platform restrictions on inter-app communication.
 </Info>
 
 ## SDKs

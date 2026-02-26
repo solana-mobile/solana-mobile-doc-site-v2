@@ -1,33 +1,52 @@
 ---
 title: "SKR"
 sidebarTitle: "SKR"
-description: "SKR is the native domain name system for Seeker users, providing human-readable .skr addresses."
-toc: false
+description: "SKR is the native asset of the Solana Mobile ecosystem."
 ---
 
-SKR is the domain name system for [Seeker](/solana-mobile-stack/seeker) users. Every Seeker owner receives a `.skr` address — a human-readable name that maps to their Solana wallet address, similar to how ENS domains work on Ethereum or `.sol` domains on Solana.
+SKR is the native asset of the Solana Mobile ecosystem. It distributes control, powers curation, and aligns incentives across builders, users, and hardware partners.
 
-## What is a .skr address?
+Via SKR, the community governs, builders keep what they earn, and users own a stake in the value they create.
 
-A `.skr` address replaces a long base58 wallet address with a simple, memorable name. Instead of sharing `7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU`, a user can share something like `alice.skr`.
+## Token details
 
-This makes it easier to:
+- **Mint address**: `SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3`
+- **Token type**: SPL Token
 
-- **Send and receive tokens** — Use a `.skr` name instead of copying and pasting wallet addresses.
-- **Identify users** — Display readable names in your app's UI instead of truncated addresses.
-- **Build social features** — Reference users by their `.skr` identity across dApps.
+## Staking
 
-## How it works
+SKR holders can stake their tokens to participate in the ecosystem. Stakers delegate their stake to a **Guardian**,
+an onchain component of the Solana Mobile Stack.
 
-SKR is built on [AllDomains](https://alldomains.id/), a Solana naming service. The `.skr` top-level domain (TLD) is reserved for Seeker users and resolves bidirectionally:
+<CardGroup cols={2}>
+<Card title="SKR Staking Portal" icon="arrow-up-right-from-square" href="https://stake.solanamobile.com/">
+  Stake your SKR tokens.
+</Card>
+<Card title="SKR Staking Sample App" icon="github" href="https://github.com/solana-mobile/react-native-samples/tree/main/skr-staking">
+  View a sample app for SKR staking.
+</Card>
+</CardGroup>
 
-- **Forward resolution** — Given a `.skr` name, look up the associated wallet address.
-- **Reverse resolution** — Given a wallet address, look up the associated `.skr` name.
+### Inflation
 
-## For developers
+- Inflation starts at **10%** and decays **25% per year** until reaching a **2% terminal rate**.
+- Inflation is linear (not compounding).
 
-You can integrate `.skr` address resolution into your app to display human-readable names and accept `.skr` addresses as input.
+### Epochs & cooldown
 
-<Card title="SKR Address Resolution Sample" icon="code" href="https://github.com/solana-mobile/tutorial-apps/tree/main/skr-address-resolution">
-  A sample app demonstrating bidirectional domain lookup with AllDomains integration.
+- Staking epochs are **2 days**.
+- Stakers are locked for **one epoch** before unstaking.
+- There is a **48-hour cooldown** to withdraw after unstaking.
+
+### Program addresses
+
+| Component | Address |
+|-----------|---------|
+| Staking Program | `SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ` |
+| Stake Config | `4HQy82s9CHTv1GsYKnANHMiHfhcqesYkK6sB3RDSYyqw` |
+| Stake Vault | `8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8` |
+| Guardian Pool | `DPJ58trLsF9yPrBa2pk6UaRkvqW8hWUYjawe788WBuqr` |
+
+<Card title="SKR White Paper" icon="file-lines" href="https://solanamobile.com/whitepaper">
+  Read the full SKR white paper.
 </Card>
