@@ -231,3 +231,64 @@ const incrementCounter = async () => {
 ```
 
 Calling the `rpc()` will generate and sign the transaction using the interface methods (`signTransaction`, `signAllTransactions`) of the Anchor Wallet that the program was instantiated with.
+
+## Generating Clients with Codama
+
+Use [Codama](https://github.com/codama-idl/codama) to generate TypeScript client code from your Anchor IDL.
+
+### 1. Ensure your Anchor IDL exists
+
+```shell
+anchor build
+```
+
+This should produce an IDL under `target/idl/...`.
+Place the file where your `codama.json` points (example below uses `program/idl.json`).
+
+### 2. Install dependencies
+
+```shell
+npm install -D codama @codama/renderers-js
+```
+
+### 3. Add `codama.json` (project root)
+
+```json
+{
+  "idl": "program/idl.json",
+  "before": [],
+  "scripts": {
+    "js": {
+      "from": "@codama/renderers-js",
+      "args": ["src/generated/your-program"]
+    }
+  }
+}
+```
+
+Why these fields exist:
+
+- `idl`: Tells Codama which Anchor IDL file to read.
+- `scripts.js.from`: Tells Codama which renderer to run (TypeScript/JS client renderer).
+- `scripts.js.args`: Renderer arguments. For `@codama/renderers-js`, the first value is the output directory for generated files.
+- `before`: Optional transform pipeline before rendering (empty here).
+
+### 4. Generate code
+
+```shell
+npx codama run js
+```
+
+### 5. Output structure
+
+Generated files are written to the output directory set in `scripts.js.args`.
+With the config above:
+
+```text
+src/generated/your-program/
+  accounts/
+  instructions/
+  programs/
+  types/
+  errors/
+```
