@@ -1,0 +1,27 @@
+---
+title: "Seed Vault"
+sidebarTitle: "Seed Vault"
+description: "Seed Vault is a hardware-level secure key custody system built into Seeker."
+toc: false
+---
+
+The Seed Vault is a system service providing secure key custody to Wallet apps. By integrating with secure execution environments available on mobile devices (such as secure operating modes of the processor and/or secure auxiliary coprocessors), Seed Vault helps to keep your secrets safe, by moving them to the highest privileged environment available on the device. Your keys, seeds, and secrets never leave the secure execution environment, while UI components built into Android handle interaction with the user to provide a secure transaction signing experience to users.
+
+## How it works
+
+- **Secure key storage** — Leverages the Android Keystore backed by the device's secure execution environment to store and sign with your keys.
+- **User-authorized signing** — Every signing operation requires explicit user approval via secure biometric fingerprint or PIN code entry.
+- **System service** — Available as an Android system service to wallet apps, providing transaction signing for users.
+
+
+## Seed Vault Wallet
+
+Users create their primary wallet during device onboarding that holds their [Seeker Genesis Token](/solana-mobile-stack/seeker-genesis-token). The Seed Vault Wallet is the built-in wallet app on Seeker that interfaces directly with Seed Vault.
+
+## For developers
+
+Most developers interact with Seed Vault indirectly through the [Mobile Wallet Adapter](/solana-mobile-stack/mobile-wallet-adapter) protocol. MWA handles the communication between your app, the wallet app, and Seed Vault.
+
+<Info>
+  The [Seed Vault SDK](https://github.com/solana-mobile/seed-vault-sdk) is designed for **wallet developers** building apps that interface directly with Seed Vault. It also includes a simulator for testing on standard Android devices. If you're building a dApp, use the [MWA SDK](/get-started/mobile-wallet-adapter) instead.
+</Info>

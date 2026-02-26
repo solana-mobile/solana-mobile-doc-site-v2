@@ -108,6 +108,40 @@
         ]
       },
       {
+        "tab": "Solana Mobile Stack",
+        "icon": "layer-group",
+        "groups": [
+          {
+            "group": "Solana Mobile Stack",
+            "pages": [
+              "solana-mobile-stack/overview"
+            ]
+          },
+          {
+            "group": "Software",
+            "pages": [
+              "solana-mobile-stack/dapp-store",
+              "solana-mobile-stack/mobile-wallet-adapter"
+            ]
+          },
+          {
+            "group": "Onchain",
+            "pages": [
+              "solana-mobile-stack/skr",
+              "solana-mobile-stack/seeker-genesis-token",
+              "solana-mobile-stack/skr-domain"
+            ]
+          },
+          {
+            "group": "Hardware",
+            "pages": [
+              "solana-mobile-stack/seeker",
+              "solana-mobile-stack/seed-vault"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "dApp Store",
         "icon": "store",
         "groups": [
@@ -218,12 +252,43 @@
     {
       "source": "/hackathon",
       "destination": "https://solanamobile.radiant.nexus/"
+    },
+    {
+      "source": "/solana-mobile-stack/seeker-id",
+      "destination": "/solana-mobile-stack/seeker-genesis-token"
     }
   ],
   "footer": {
+    "links": [
+      {
+        "header": "Community",
+        "items": [
+          { "label": "Stack Exchange", "href": "https://solana.stackexchange.com/" },
+          { "label": "Discord", "href": "https://discord.gg/solanamobile" },
+          { "label": "Twitter", "href": "https://twitter.com/solanamobile" }
+        ]
+      },
+      {
+        "header": "More",
+        "items": [
+          { "label": "GitHub", "href": "https://github.com/solana-mobile" },
+          { "label": "Seeker Release Notes", "href": "/seeker/release-notes/index" }
+        ]
+      },
+      {
+        "header": "Legal",
+        "items": [
+          { "label": "Terms of Service", "href": "https://legal.solanamobile.com/tos-homepage-web" },
+          { "label": "Privacy Policy", "href": "https://legal.solanamobile.com/privacy-policy-homepage-web" },
+          { "label": "Developer Agreement", "href": "https://docs.solanamobile.com/dapp-publishing/agreement" },
+          { "label": "dApp Store Terms of Use", "href": "https://docs.solanamobile.com/dapp-publishing/tou" },
+          { "label": "Cookie Policy", "href": "https://legal.solanamobile.com/en/cookie-policy-web" }
+        ]
+      }
+    ],
     "socials": {
-      "x": "https://discord.gg/solanamobile",
-      "github": "https://docs.solanamobile.com/blog",
+      "x": "https://twitter.com/solanamobile",
+      "github": "https://github.com/solana-mobile",
       "discord": "https://discord.gg/solanamobile",
       "youtube": "https://www.youtube.com/@solanamobileyt"
     }
