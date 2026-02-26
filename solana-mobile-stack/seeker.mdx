@@ -7,25 +7,17 @@ toc: false
 
 Seeker is Solana Mobile's flagship Android device, designed from the ground up for crypto. It's the successor to the Saga and represents the next generation of crypto-native mobile hardware.
 
-## What makes Seeker different
+## Key features
 
-Unlike general-purpose smartphones, Seeker integrates Solana-specific technology at the hardware and OS level:
+- **[Seed Vault](/solana-mobile-stack/seed-vault)** — A secure key custody system that keeps your private keys in a hardware-protected environment.
+- **[dApp Store](/solana-mobile-stack/dapp-store)** — An alternative crypto friendly app store for discovering Solana apps.
+- **[Seeker Genesis Token](/solana-mobile-stack/seeker-genesis-token)** — An NFT minted once per device as proof of verified Seeker ownership.
+- **[.skr Domain](/solana-mobile-stack/skr-domain)** — A human-readable name that maps to your Solana wallet address.
 
-- **[Seed Vault](/solana-mobile-stack/seed-vault)** — A secure key custody system that keeps your private keys in a hardware-protected environment, separate from the rest of the operating system.
-- **[dApp Store](/solana-mobile-stack/dapp-store)** — A pre-installed, open app marketplace where users can discover and install Solana dApps without the restrictions of traditional app stores.
-- **[Seeker ID](/solana-mobile-stack/seeker-id)** — An onchain identity system that gives each Seeker owner a verifiable, device-linked identity on Solana.
-- **[SKR domains](/solana-mobile-stack/skr)** — A native naming system that provides every Seeker user with a human-readable `.skr` address.
+## Build for Seeker
 
-## Built for developers
+You don't need a Seeker to build for Seeker — testing on any Android device is sufficient.
 
-Seeker runs Android and supports all standard Android development tools and frameworks. Any existing Android or React Native app can run on Seeker. The Solana-specific capabilities are additive — you can integrate them incrementally:
-
-1. **Start with Mobile Wallet Adapter** — Add wallet connectivity to your app with a few lines of code using the [MWA SDK](/get-started/mobile-wallet-adapter).
-2. **Detect Seeker users** — Use the [Seeker Genesis Token](/solana-mobile-stack/seeker-id) or platform APIs to identify Seeker owners and offer tailored experiences.
+1. **[Development Setup](/get-started/development-setup)** — Set up your environment for Solana Mobile development.
+2. **Start with Mobile Wallet Adapter** — Seeker users prefer a seamless wallet connection to their Seed Vault Wallet. Add wallet connectivity to your app using the [MWA SDK](/get-started/mobile-wallet-adapter).
 3. **Publish on the dApp Store** — [Submit your app](/dapp-store/submit-new-app) to reach Seeker's user base directly.
-
-## Seeker release notes
-
-<Card title="Release Notes" icon="clock-rotate-left" href="/seeker/release-notes/index">
-  View the latest Seeker software updates.
-</Card>

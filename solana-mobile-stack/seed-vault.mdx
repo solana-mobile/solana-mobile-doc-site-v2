@@ -5,32 +5,23 @@ description: "Seed Vault is a hardware-level secure key custody system built int
 toc: false
 ---
 
-Seed Vault is a secure key management system integrated into every Seeker device. It leverages the device's secure execution environment — isolated hardware that operates independently from the main operating system — to ensure that your private keys, seed phrases, and secrets never leave the protected hardware boundary.
+The Seed Vault is a system service providing secure key custody to Wallet apps. By integrating with secure execution environments available on mobile devices (such as secure operating modes of the processor and/or secure auxiliary coprocessors), Seed Vault helps to keep your secrets safe, by moving them to the highest privileged environment available on the device. Your keys, seeds, and secrets never leave the secure execution environment, while UI components built into Android handle interaction with the user to provide a secure transaction signing experience to users.
 
 ## How it works
 
-Seed Vault takes advantage of the secure processor built into Seeker's hardware. This secure environment is physically and logically separated from the Android operating system, which means:
+- **Secure key storage** — Leverages the Android Keystore backed by the device's secure execution environment to store and sign with your keys.
+- **User-authorized signing** — Every signing operation requires explicit user approval via secure biometric fingerprint or PIN code entry.
+- **System service** — Available as an Android system service to wallet apps, providing transaction signing for users.
 
-- **Keys never leave the secure environment** — Signing operations happen inside the secure processor. The private key is never exposed to the Android OS, apps, or even the Seed Vault UI itself.
-- **User authorization is required** — Every signing request requires explicit user approval through a trusted UI rendered by the secure environment.
-- **Resistant to software attacks** — Even if the Android OS were compromised, an attacker cannot extract keys from the secure processor.
 
 ## Seed Vault Wallet
 
-The Seed Vault Wallet is the built-in wallet app on Seeker that interfaces directly with the Seed Vault hardware. It serves as the default wallet for MWA transactions and is the wallet that holds the user's [Seeker Genesis Token](/solana-mobile-stack/seeker-id).
+Users create their primary wallet during device onboarding that holds their [Seeker Genesis Token](/solana-mobile-stack/seeker-genesis-token). The Seed Vault Wallet is the built-in wallet app on Seeker that interfaces directly with Seed Vault.
 
 ## For developers
 
-Most developers interact with Seed Vault indirectly through the [Mobile Wallet Adapter](/solana-mobile-stack/mobile-wallet-adapter) protocol. When a user approves a transaction in their Seed Vault Wallet, MWA handles the communication between your dApp and the secure signing environment.
+Most developers interact with Seed Vault indirectly through the [Mobile Wallet Adapter](/solana-mobile-stack/mobile-wallet-adapter) protocol. MWA handles the communication between your app, the wallet app, and Seed Vault.
 
 <Info>
-  The Seed Vault SDK is designed for **wallet developers** building apps that interface directly with the secure hardware. If you're building a dApp, use the [MWA SDK](/get-started/mobile-wallet-adapter) instead.
+  The [Seed Vault SDK](https://github.com/solana-mobile/seed-vault-sdk) is designed for **wallet developers** building apps that interface directly with Seed Vault. It also includes a simulator for testing on standard Android devices. If you're building a dApp, use the [MWA SDK](/get-started/mobile-wallet-adapter) instead.
 </Info>
-
-## Seed Vault Simulator
-
-For wallet developers, a Seed Vault Simulator is available for testing on standard Android devices (Android 12+). The simulator mimics the Seed Vault API surface but does **not** provide real hardware-backed security.
-
-<Warning>
-  The simulator is for development and testing only. It does not provide secure signing or key custody.
-</Warning>

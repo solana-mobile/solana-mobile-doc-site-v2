@@ -1,21 +1,21 @@
 ---
 title: "Seeker ID"
 sidebarTitle: "Seeker ID"
-description: "Seeker ID is an onchain identity system combining the Seeker Genesis Token and .skr addresses."
+description: "Seeker ID is an onchain identity for Seeker owners, consisting of a Seeker Genesis Token and a .skr domain."
 toc: false
 ---
 
-Seeker ID is the onchain identity layer for [Seeker](/solana-mobile-stack/seeker) owners. It combines two primitives — the **Seeker Genesis Token** and a **[.skr address](/solana-mobile-stack/skr)** — to give every Seeker user a verifiable, device-linked identity on Solana.
+Seeker ID is the onchain identity for [Seeker](/solana-mobile-stack/seeker) owners. It consists of two components — a **Seeker Genesis Token** and a **.skr domain** — held in the user's [Seed Vault Wallet](/solana-mobile-stack/seed-vault).
 
 ## Seeker Genesis Token
 
-The Seeker Genesis Token (SGT) is an NFT that is minted once per Seeker device when the owner first activates their [Seed Vault Wallet](/solana-mobile-stack/seed-vault). It serves as cryptographic proof that a wallet belongs to a verified Seeker owner.
+The Seeker Genesis Token (SGT) is an NFT minted once per Seeker device when the owner first activates their Seed Vault Wallet. It serves as proof that a wallet belongs to a verified Seeker owner.
 
 ### Key properties
 
 - **One per device** — Each Seeker device produces exactly one SGT, tied to the primary account in the Seed Vault Wallet.
 - **Token-2022 standard** — The SGT uses Solana's Token Extensions program (Token-2022) with Metadata Pointer and Token Group Member extensions.
-- **Limited transferability** — The SGT can only be transferred between a user's own wallet accounts within the Seed Vault Wallet (e.g., when switching the primary account). It cannot be freely traded or sent to other users.
+- **Limited transferability** — The SGT can only be transferred between a user's own wallet accounts within the Seed Vault Wallet. It cannot be freely traded or sent to other users.
 
 ### Why it matters for developers
 
@@ -37,13 +37,26 @@ To verify a user holds an SGT, combine wallet ownership proof with an onchain to
   Step-by-step guide with code examples for verifying SGT ownership.
 </Card>
 
-## .skr address
+## .skr domain
 
-Every Seeker owner also receives a [`.skr` address](/solana-mobile-stack/skr) — a human-readable domain name tied to their wallet. Together with the SGT, this forms a complete onchain identity: the SGT proves device ownership, and the `.skr` address provides a recognizable name.
+Every Seeker owner receives a `.skr` domain — a human-readable name that maps to their Solana wallet address, similar to how `.sol` domains work on Solana.
+
+Instead of sharing a long base58 wallet address, a user can share something like `alice.skr`. This makes it easier to send and receive tokens, display readable names in your app's UI, and reference users across apps.
+
+### Resolution
+
+SKR domains are built on [AllDomains](https://alldomains.id/) and support bidirectional resolution:
+
+- **Forward resolution** — Given a `.skr` name, look up the associated wallet address.
+- **Reverse resolution** — Given a wallet address, look up the associated `.skr` name.
+
+<Card title="SKR Address Resolution Sample" icon="code" href="https://github.com/solana-mobile/tutorial-apps/tree/main/skr-address-resolution">
+  A sample app demonstrating bidirectional domain lookup with AllDomains integration.
+</Card>
 
 ## Comparison with Saga Genesis Token
 
-The Seeker Genesis Token builds on the concept introduced with the original [Saga Genesis Token](/marketing/engaging-saga-users), but with key differences:
+The Seeker Genesis Token builds on the concept introduced with the original Saga Genesis Token, but with key differences:
 
 | | Seeker Genesis Token | Saga Genesis Token |
 |---|---|---|
