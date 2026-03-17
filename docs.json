@@ -206,7 +206,8 @@
             "group": "Mobile Wallet Adapter",
             "pages": [
               "recipes/mobile-wallet-adapter/caching-wallet-authorization",
-              "recipes/mobile-wallet-adapter/migrating-to-wallet-standard"
+              "recipes/mobile-wallet-adapter/migrating-to-wallet-standard",
+              "recipes/mobile-wallet-adapter/local-network-access"
             ]
           },
           {
