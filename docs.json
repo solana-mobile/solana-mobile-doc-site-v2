@@ -228,6 +228,19 @@
             "pages": ["sample-apps/sample_app_overview"]
           }
         ]
+      },
+      {
+        "tab": "Blog",
+        "icon": "newspaper",
+        "groups": [
+          {
+            "group": "Blog",
+            "pages": [
+              "blog/cause-pots-guide",
+              "blog/ios-wallet-signing"
+            ]
+          }
+        ]
       }
     ]
   },
