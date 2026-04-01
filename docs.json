@@ -156,17 +156,7 @@
               "dapp-store/publishing-from-google-play",
               "dapp-store/submit-new-app",
               "dapp-store/submit-an-update",
-              {
-                "group": "Publishing CLI",
-                "pages": [
-                  "dapp-store/publishing-cli/overview",
-                  "dapp-store/publishing-cli/setup",
-                  "dapp-store/publishing-cli/prepare",
-                  "dapp-store/publishing-cli/app-nft",
-                  "dapp-store/publishing-cli/submit",
-                  "dapp-store/publishing-cli/publishing-updates"
-                ]
-              },
+              "dapp-store/publishing-cli",
               "dapp-store/link-to-dapp-listing-page"
             ]
           },
