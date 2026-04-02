@@ -1,55 +1,88 @@
 ---
 title: "Anchor Integration Guide"
-description: "This guide will show you how to integrate an Anchor Program into your React Native dApp, using the [Anchor Counter dApp](https://github.com/solana-mobile/tutorial-apps/tree/main/AnchorCounterDapp) as reference."
+description: "This guide shows how to integrate an Anchor Program into your React Native dApp. For a complete working example, see the [Cause Pots sample app](https://github.com/solana-mobile/react-native-samples/tree/main/cause-pots)."
 ---
 
 import { Button } from '/snippets/button.mdx';
 
-<Button href="https://github.com/solana-mobile/tutorial-apps/tree/main/AnchorCounterDapp">Example App Repo</Button>
+<Button href="https://github.com/solana-mobile/react-native-samples/tree/main/cause-pots">Example App Repo</Button>
 
 ## What you will learn
 
-- How to import an Anchor Program into a React Native project
-- How to create an Anchor Wallet and Provider with Mobile Wallet Adapter
-- How to sign and submit transactions with an Anchor Program IDL
-- How to generate instructions with an Anchor Program IDL
+- How to set up Anchor with required polyfills
+- How to import and instantiate an Anchor Program
+- How to build and execute transactions with Mobile Wallet Adapter
+- How to structure your code with the service/hook pattern
 
 ## Prerequisites
 
-- [React Native setup](/get-started/react-native/setup) and [Anchor setup](https://book.anchor-lang.com/getting_started/installation.html)
+- [React Native setup](/get-started/react-native/setup) and [Anchor setup](https://www.anchor-lang.com/docs/installation)
 - Basic understanding of [Anchor Programs](https://book.anchor-lang.com/) and IDL.
-- An existing [deployed](https://book.anchor-lang.com/anchor_in_depth/milestone_project_tic-tac-toe.html#deployment) Anchor Program.
+- An existing [deployed](https://www.anchor-lang.com/docs/quickstart/local#deploy-to-devnet) Anchor Program.
 
 ## Installation
 
-Add the Anchor library to your React Native Project:
-
-<Warning>
-**CAUTION**
-
-React Native apps should use Anchor v0.28.0 because later versions of the library have a polyfill issue on React Native.
-</Warning>
+Add the required dependencies to your React Native project:
 
 <CodeGroup>
 ```shell yarn
-yarn add @coral-xyz/anchor@0.28.0
+yarn add @coral-xyz/anchor@^0.32.1 @solana/web3.js
+yarn add expo-crypto buffer
 ```
 
 ```shell npm
-npm install @coral-xyz/anchor@0.28.0
+npm install @coral-xyz/anchor@^0.32.1 @solana/web3.js
+npm install expo-crypto buffer
 ```
 
 </CodeGroup>
 
+### Crypto Polyfills (Required)
+
+React Native lacks `crypto.getRandomValues()` which is required for generating transaction IDs. You must set up polyfills before importing any Solana packages.
+
+Create a `polyfill.js` file:
+
+```javascript
+import { getRandomValues as expoCryptoGetRandomValues } from 'expo-crypto'
+import { Buffer } from 'buffer'
+
+global.Buffer = Buffer
+
+class Crypto {
+  getRandomValues = expoCryptoGetRandomValues
+}
+
+const webCrypto = typeof crypto !== 'undefined' ? crypto : new Crypto()
+
+;(() => {
+  if (typeof crypto === 'undefined') {
+    Object.defineProperty(window, 'crypto', {
+      configurable: true,
+      enumerable: true,
+      get: () => webCrypto,
+    })
+  }
+})()
+```
+
+Import it as the **first line** in your entry file (`index.js`):
+
+```javascript
+import './polyfill'
+import 'expo-router/entry'
+```
+
+<Warning>
+Solana Web3.js checks for crypto on module load. If the polyfill is imported after Solana packages, the app will crash.
+</Warning>
+
 ## Create an Anchor Wallet with Mobile Wallet Adapter
 
 <Tip>
-**TIP**
+The Cause Pots sample app shows how to create an Anchor wallet integrated with a more complex state management framework.
 
-The Anchor Counter Program example app shows how to create an Anchor wallet that is integrated
-with a more complex state management framework.
-
-<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/utils/useAnchorWallet.tsx#L23">View sample</Button>
+<Button href="https://github.com/solana-mobile/react-native-samples/blob/main/cause-pots/frontend/hooks/use-mobile-wallet.tsx">View sample</Button>
 </Tip>
 
 To create an `AnchorWallet`, use Mobile Wallet Adapter `transact` to implement the required signing functions.
@@ -68,9 +101,9 @@ const anchorWallet = useMemo(() => {
     signTransaction: async (transaction: Transaction) => {
       return transact(async (wallet: Web3MobileWallet) => {
         const authorizationResult = await wallet.authorize({
-              cluster: RPC_ENDPOINT,
-              identity: APP_IDENTITY,
-        }));
+          cluster: RPC_ENDPOINT,
+          identity: APP_IDENTITY,
+        });
 
         const signedTransactions = await wallet.signTransactions({
           transactions: [transaction],
@@ -81,9 +114,9 @@ const anchorWallet = useMemo(() => {
     signAllTransactions: async (transactions: Transaction[]) => {
       return transact(async (wallet: Web3MobileWallet) => {
         const authorizationResult = await wallet.authorize({
-              cluster: RPC_ENDPOINT,
-              identity: APP_IDENTITY,
-        }));
+          cluster: RPC_ENDPOINT,
+          identity: APP_IDENTITY,
+        });
 
         const signedTransactions = await wallet.signTransactions({
           transactions: transactions,
@@ -98,17 +131,30 @@ const anchorWallet = useMemo(() => {
 }, []);
 ```
 
-## Importing an Anchor Program in Typescript
+## Anchor Framework & IDL
+
+This guide uses Anchor 0.32.1. In Anchor 0.30+, the program ID is embedded directly in the IDL file, so you don't need to specify it separately when creating a Program instance.
 
 ### Generating an Anchor Program IDL
 
-If you have an Anchor project in your local workspace, build the program and generate the Typescript IDL with:
+If you have an Anchor project in your local workspace, build the program to generate the IDL:
 
 ```shell
 anchor build
 ```
 
-If the Anchor program is already deployed and you know its address, you can use the [Anchor CLI](https://book.anchor-lang.com/anchor_references/cli.html?highlight=idl#idl) to fetch it:
+This generates two files:
+- `target/idl/contract.json` — Runtime IDL with embedded program address
+- `target/types/contract.ts` — TypeScript types (camelCase)
+
+Copy both files to your frontend project:
+
+```shell
+cp target/idl/contract.json ../frontend/idl/contract.json
+cp target/types/contract.ts ../frontend/idl/idl.ts
+```
+
+If the Anchor program is already deployed, you can fetch the IDL using the Anchor CLI:
 
 ```shell
 anchor idl fetch GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv
@@ -116,109 +162,114 @@ anchor idl fetch GrAkKfEpTKQuVHG2Y97Y2FF4i7y7Q5AHLK94JBy7Y5yv
 
 ### Instantiate your Anchor Program
 
-Once your IDL has been generated, you can import it and create an instance of your `Program` in Typescript.
+The recommended pattern separates the program service from wallet integration. Since the service only builds transactions (not signs them), no real wallet is needed at instantiation time.
 
-- Import your generated IDL file, in this case from `/target/types/basic_counter.ts`
-- Use the `anchorWallet` from the previous step to create an `AnchorProvider`.
-
-<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/components/counter/counter-data-access.tsx#L15">See example</Button>
+<Button href="https://github.com/solana-mobile/react-native-samples/blob/main/cause-pots/frontend/services/pot-program.ts">See example</Button>
 
 ```tsx expandable
-import { BasicCounter as BasicCounterProgram } from "../../basic-counter/target/types/basic_counter";
+import { Contract, IDL } from '@/idl'
 import { AnchorProvider, Program } from "@coral-xyz/anchor";
+import { Connection } from "@solana/web3.js";
 
-const COUNTER_PROGRAM_ID = "ADraQ2ENAbVoVZhvH5SPxWPsF2hH5YmFcgx61TafHuwu";
+export class MyProgramService {
+  private program: Program<Contract>
 
-// Address of the devnet-deployed Counter Program
-const counterProgramId = useMemo(() => {
-  return new PublicKey(COUNTER_PROGRAM_ID);
-}, []);
-
-// Create an AnchorProvider with the anchorWallet.
-const provider = useMemo(() => {
-  if (!anchorWallet) {
-    return null;
+  constructor(connection: Connection) {
+    // Wallet not needed for building transactions
+    const provider = new AnchorProvider(
+      connection,
+      {} as any,
+      { commitment: 'confirmed' }
+    )
+    this.program = new Program<Contract>(IDL as Contract, provider)
   }
-  return new AnchorProvider(connection, anchorWallet, {
-    preflightCommitment: "confirmed",
-    commitment: "processed",
-  });
-}, [anchorWallet, connection]);
-
-// Create an instance of your Program.
-const counterProgram = useMemo(() => {
-  if (!provider) {
-    return null;
-  }
-
-  return new Program<BasicCounterProgram>(
-    idl as BasicCounterProgram,
-    counterProgramId,
-    provider
-  );
-}, [counterProgramId, provider]);
-```
-
-## Sign transactions manually with Mobile Wallet Adapter
-
-With an instantiated `Program`, you can:
-
-- Generate serialized program instructions.
-- Construct a `Transaction` with the generated instructions.
-- Manually sign the `Transaction` with Mobile Wallet Adapter.
-
-In the following example, we generate an `incrementInstruction` from the program then sign it within a Mobile Wallet Adapter
-session.
-
-```tsx expandable
-const {counterProgram, counterPDA} = useCounterProgram();
-
-const signIncrementTransaction = async () => {
-  return await transact(async (wallet: Web3MobileWallet) => {
-    const authorizationResult = wallet.authorize({
-      cluster: RPC_ENDPOINT,
-      identity: APP_IDENTITY,
-    }));
-
-    const latestBlockhash = await connection.getLatestBlockhash();
-
-    // Generate the increment ix from the Anchor program
-    const incrementInstruction = await counterProgram.methods
-        .increment(new anchor.BN(amount))
-        .accounts({
-          counter: counterPDA,
-        })
-        .instruction();
-
-    // Build a transaction containing the instruction
-    const incrementTransaction = new Transaction({
-      ...latestBlockhash,
-      feePayer: authorizationResult.publicKey,
-    }).add(incrementInstruction);
-
-    // Sign a transaction and receive
-    const signedTransactions = await wallet.signTransactions({
-      transactions: [incrementTransaction],
-    });
-
-    return signedTransactions[0];
-  });
 }
 ```
 
-This approach is flexible and allows you to fully utilize the Mobile Wallet Adapter session.
+<Tip>
+Separating transaction building from execution makes your service testable without a wallet and keeps signing logic centralized.
+</Tip>
 
-## Sign transactions using a Mobile Wallet Adapter signer
+## Building Transactions with Anchor
 
-With an instantiated `Program`, you can also use the Anchor provided `rpc()` function to sign and submit an Anchor transaction to an RPC.
+### Service Pattern: Build Instructions
 
-<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/components/counter/counter-data-access.tsx#L89">See example</Button>
+Extend your service class with methods that build transactions using Anchor's methods API:
+
+<Button href="https://github.com/solana-mobile/react-native-samples/blob/main/cause-pots/frontend/services/pot-program.ts">See example</Button>
+
+```typescript expandable
+import { BN } from "@coral-xyz/anchor";
+import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+
+export class MyProgramService {
+  async buildCreateAccountTx(params: {
+    authority: PublicKey
+    name: string
+    amount: number
+  }): Promise<Transaction> {
+    // Derive PDA addresses
+    const [accountPDA] = PublicKey.findProgramAddressSync(
+      [Buffer.from('account'), params.authority.toBuffer()],
+      this.program.programId
+    )
+
+    // Use Anchor to generate the instruction
+    const instruction = await this.program.methods
+      .createAccount(
+        params.name,
+        new BN(params.amount * LAMPORTS_PER_SOL)
+      )
+      .accounts({
+        account: accountPDA,
+        authority: params.authority,
+        systemProgram: SystemProgram.programId,
+      })
+      .instruction()
+
+    const tx = new Transaction().add(instruction)
+    tx.feePayer = params.authority
+    return tx
+  }
+}
+```
+
+### Hook Pattern: Execute Transactions
+
+Create a hook that takes the unsigned transaction from the service, sends it to MWA for signing, and submits it:
+
+```typescript expandable
+export function useMyProgram() {
+  const { connection, account } = useMobileWallet()
+  const { executeTransaction } = useTransaction()
+  const programService = useMemo(
+    () => new MyProgramService(connection),
+    [connection]
+  )
+
+  const createAccount = async (params: { name: string; amount: number }) => {
+    // 1. Build the transaction
+    const tx = await programService.buildCreateAccountTx({
+      authority: account.publicKey,
+      ...params,
+    })
+
+    // 2. Sign and send via MWA
+    const signature = await executeTransaction(tx)
+
+    return { signature }
+  }
+
+  return { createAccount, programService }
+}
+```
+
+### Using Anchor's `.rpc()` Method
+
+Alternatively, if you've set up an Anchor Wallet (see previous section), you can use Anchor's built-in `.rpc()` to sign and submit in one call:
 
 ```tsx expandable
-const { counterProgram, counterPDA } = useCounterProgram();
-
 const incrementCounter = async () => {
-  // Submit an increment transaction to the RPC endpoint
   const signature = await counterProgram.methods
     .increment(new anchor.BN(amount))
     .accounts({
@@ -230,7 +281,36 @@ const incrementCounter = async () => {
 };
 ```
 
-Calling the `rpc()` will generate and sign the transaction using the interface methods (`signTransaction`, `signAllTransactions`) of the Anchor Wallet that the program was instantiated with.
+Calling `.rpc()` will generate and sign the transaction using the `signTransaction` and `signAllTransactions` methods of the Anchor Wallet the program was instantiated with.
+
+## Common Issues
+
+### "crypto.getRandomValues() not supported"
+
+**Cause**: Missing polyfill.
+**Solution**: Import polyfill as the **first line** in `index.js`, before any Solana imports.
+
+### "Invalid instruction data"
+
+**Cause**: Parameter types don't match IDL.
+**Solution**: Use `BN` for `u64`/`i64` values:
+
+```typescript
+// ❌ Wrong
+program.methods.createAccount(100)
+
+// ✅ Correct
+program.methods.createAccount(new BN(100 * LAMPORTS_PER_SOL))
+```
+
+### "Account does not exist"
+
+**Cause**: PDA not initialized or wrong seeds.
+**Solution**: Verify seeds match your contract exactly.
+
+### IDL sync issues
+
+If you modify the contract and rebuild without copying the new IDL files to the frontend, you'll get "Unknown instruction" or type mismatch errors. Always copy both `contract.json` and `idl.ts` after rebuilding.
 
 ## Generating Clients with Codama
 
