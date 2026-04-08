@@ -210,12 +210,45 @@
         ]
       },
       {
+        "tab": "Saga",
+        "hidden": true,
+        "groups": [
+          {
+            "group": "Release Notes",
+            "pages": [
+              "saga/release-notes/index",
+              "saga/release-notes/mr1",
+              "saga/release-notes/mr2",
+              "saga/release-notes/mr3",
+              "saga/release-notes/mr4",
+              "saga/release-notes/mr5",
+              "saga/release-notes/2023-12-update"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Sample Apps",
         "icon": "grid-2",
         "groups": [
           {
             "group": "Samples and Templates",
             "pages": ["sample-apps/sample_app_overview"]
+          }
+        ]
+      },
+      {
+        "tab": "Seeker",
+        "icon": "mobile",
+        "groups": [
+          {
+            "group": "Release Notes",
+            "pages": [
+              "seeker/release-notes/index",
+              "seeker/release-notes/mr4",
+              "seeker/release-notes/mr5",
+              "seeker/release-notes/mr6"
+            ]
           }
         ]
       }
@@ -263,7 +296,7 @@
         "header": "More",
         "items": [
           { "label": "GitHub", "href": "https://github.com/solana-mobile" },
-          { "label": "Seeker Release Notes", "href": "/seeker/release-notes/index" }
+          { "label": "Seeker Release Notes", "href": "/seeker/release-notes" }
         ]
       },
       {
