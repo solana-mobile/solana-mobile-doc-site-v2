@@ -42,17 +42,17 @@ printf '%s' "$DAPP_STORE_API_KEY" | dapp-store ...
 
 ## Usage
 
-Publish a version by providing an APK and a "what's new" message:
+Publish a version by providing an APK, a signer keypair, and a "what's new" message:
 
 ```bash
 # From a local APK file
-dapp-store --apk-file ./your_apk_name.apk --whats-new "Bug fixes and performance improvements"
+dapp-store --apk-file ./your_apk_name.apk --keypair ./path/to/keypair.json --whats-new "Bug fixes and performance improvements"
 
 # From a remote APK URL
-dapp-store --apk-url https://example.com/your_apk_name.apk --whats-new "Bug fixes and performance improvements"
+dapp-store --apk-url https://example.com/your_apk_name.apk --keypair ./path/to/keypair.json --whats-new "Bug fixes and performance improvements"
 ```
 
-The CLI expects a signer keypair and portal API key to be available.
+The `--keypair` flag is **required** and must point to a Solana CLI keypair file. The CLI also expects your portal API key to be available via `DAPP_STORE_API_KEY` or stdin.
 
 ### App identification
 
@@ -63,9 +63,12 @@ publisher account.
 ## CI/CD Integration
 
 The CLI is designed for use in automated pipelines. Set `DAPP_STORE_API_KEY` as a
-secret in your CI environment and provide the signer keypair file:
+secret in your CI environment and provide the signer keypair file via `--keypair`:
 
 ```bash
 export DAPP_STORE_API_KEY=${{ secrets.DAPP_STORE_API_KEY }}
-dapp-store --apk-file ./app/build/outputs/apk/release/app-release.apk --whats-new "Release v1.2.0"
+dapp-store \
+  --apk-file ./app/build/outputs/apk/release/app-release.apk \
+  --keypair ./path/to/keypair.json \
+  --whats-new "Release v1.2.0"
 ```
