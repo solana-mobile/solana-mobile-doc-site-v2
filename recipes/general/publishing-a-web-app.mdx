@@ -1,25 +1,27 @@
 ---
 title: "Publishing a Web App on the dApp Store"
 sidebarTitle: "Publishing a Web App"
-description: "Learn how to publish a web app on the Solana dApp Store by wrapping it as a Progressive Web App (PWA) inside an Android APK."
+description: "Publish a web app on the Solana dApp Store with Solana Mobile Web Shell."
 ---
 
-Web apps can be published on the dApp Store by wrapping them as a Progressive Web App (PWA) inside an Android APK.
+The [Solana Mobile Web Shell CLI](https://www.npmjs.com/package/@solana-mobile/webshell-cli) helps developers generate an Android app project that wraps an existing web app or website inside an Android WebView. The output is a signed APK ready for the dApp Store.
+
+<Note>
+**Why Web Shell?** Browsers are rolling out [Local Network Access](https://developer.chrome.com/blog/local-network-access) restrictions that can break wallet association flows on Android web, especially flows that rely on local network or loopback communication. Android web apps and native app wrappers that use Custom Chrome Tabs, including Bubblewrap-style APKs, can be affected by this change. Web Shell exists to work around those browser-side restrictions by moving the app into an Android WebView while preserving Solana Mobile wallet flows.
+</Note>
 
 <Steps>
-<Step title="Create a PWA">
-Add a [web manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) to your web app to make it a Progressive Web App.
+<Step title="Host your web app">
+Make sure your web app or website is reachable at a public URL. If you have a [Progressive Web App](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) with a [web manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest), Web Shell auto-fills the app name, icons, theme, and start URL from it.
 </Step>
 <Step title="Wrap into an Android APK">
-Use a tool like Bubblewrap CLI to wrap your PWA in a [Trusted Web Activity (TWA)](/dapp-store/build-and-sign-an-apk) and produce a signed Android APK.
+Use the [Web Shell CLI](/dapp-store/build-and-sign-an-apk) to generate and build a signed Android APK that loads your site.
 </Step>
 <Step title="Publish to the dApp Store">
 Submit your signed APK through the standard dApp Store publishing process.
 </Step>
 </Steps>
 
-See our guide to wrapping a PWA with Bubblewrap:
-
-<Card title="Convert a PWA to an APK" icon="browser" href="/dapp-store/build-and-sign-an-apk">
-  Follow the full step-by-step guide in the PWA tab of the APK building guide.
+<Card title="Build a Web Shell APK" icon="browser" href="/dapp-store/build-and-sign-an-apk">
+  Follow the full step-by-step guide in the Web Shell tab of the APK building guide.
 </Card>
