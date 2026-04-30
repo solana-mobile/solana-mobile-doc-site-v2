@@ -281,6 +281,10 @@
     {
       "source": "/solana-mobile-stack/seeker-id",
       "destination": "/solana-mobile-stack/seeker-genesis-token"
+    },
+    {
+      "source": "/dapp-store/publishing-a-web-app",
+      "destination": "/recipes/general/publishing-a-web-app"
     }
   ],
   "footer": {
