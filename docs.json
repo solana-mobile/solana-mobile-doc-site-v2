@@ -275,12 +275,184 @@
   },
   "redirects": [
     {
+      "source": "/dapp-publishing/agreement",
+      "destination": "/dapp-store/agreement"
+    },
+    {
+      "source": "/dapp-publishing/app-nft",
+      "destination": "/dapp-store/submit-new-app"
+    },
+    {
+      "source": "/dapp-publishing/building-expo-apk",
+      "destination": "/dapp-store/build-and-sign-an-apk"
+    },
+    {
+      "source": "/dapp-publishing/checklist",
+      "destination": "/dapp-store/checklist"
+    },
+    {
+      "source": "/dapp-publishing/faq",
+      "destination": "/get-started/faq"
+    },
+    {
+      "source": "/dapp-publishing/intro",
+      "destination": "/dapp-store/intro"
+    },
+    {
+      "source": "/dapp-publishing/link-to-dapp-listing-page",
+      "destination": "/dapp-store/link-to-dapp-listing-page"
+    },
+    {
+      "source": "/dapp-publishing/listing-page-guidelines",
+      "destination": "/dapp-store/listing-page-guidelines"
+    },
+    {
+      "source": "/dapp-publishing/overview",
+      "destination": "/dapp-store/intro"
+    },
+    {
+      "source": "/dapp-publishing/prepare",
+      "destination": "/dapp-store/checklist"
+    },
+    {
+      "source": "/dapp-publishing/privacy-policy",
+      "destination": "/dapp-store/privacy-policy"
+    },
+    {
+      "source": "/dapp-publishing/publisher-policy",
+      "destination": "/dapp-store/publisher-policy"
+    },
+    {
+      "source": "/dapp-publishing/publishing_releases",
+      "destination": "/dapp-store/publishing_releases"
+    },
+    {
+      "source": "/dapp-publishing/publishing-a-pwa",
+      "destination": "/dapp-store/publishing-a-web-app"
+    },
+    {
+      "source": "/dapp-publishing/publishing-from-google-play",
+      "destination": "/dapp-store/publishing-from-google-play"
+    },
+    {
+      "source": "/dapp-publishing/publishing-updates",
+      "destination": "/dapp-store/publishing_releases"
+    },
+    {
+      "source": "/dapp-publishing/qanda",
+      "destination": "/get-started/faq"
+    },
+    {
+      "source": "/dapp-publishing/setup",
+      "destination": "/dapp-store/publishing-cli"
+    },
+    {
+      "source": "/dapp-publishing/submit",
+      "destination": "/dapp-store/publishing-cli"
+    },
+    {
+      "source": "/dapp-publishing/submit-an-update",
+      "destination": "/dapp-store/submit-an-update"
+    },
+    {
+      "source": "/dapp-publishing/submit-new-app",
+      "destination": "/dapp-store/submit-new-app"
+    },
+    {
+      "source": "/dapp-publishing/support",
+      "destination": "/dapp-store/support"
+    },
+    {
+      "source": "/dapp-publishing/tou",
+      "destination": "/dapp-store/tou"
+    },
+    {
+      "source": "/developers/community",
+      "destination": "/get-started/community"
+    },
+    {
+      "source": "/developers/development-setup",
+      "destination": "/get-started/development-setup"
+    },
+    {
+      "source": "/developers/overview",
+      "destination": "/get-started/overview"
+    },
+    {
+      "source": "/flutter/overview",
+      "destination": "/get-started/flutter/overview"
+    },
+    {
+      "source": "/getting-started/development-setup",
+      "destination": "/get-started/development-setup"
+    },
+    {
+      "source": "/getting-started/mobile-dapp-architecture",
+      "destination": "/developers/mobile-wallet-adapter-deep-dive"
+    },
+    {
       "source": "/hackathon",
       "destination": "https://solanamobile.radiant.nexus/"
     },
     {
+      "source": "/mobile-wallet-adapter/migrating-to-wallet-standard",
+      "destination": "/recipes/mobile-wallet-adapter/migrating-to-wallet-standard"
+    },
+    {
+      "source": "/mobile-wallet-adapter/overview",
+      "destination": "/get-started/mobile-wallet-adapter"
+    },
+    {
+      "source": "/mobile-wallet-adapter/ux-guidelines",
+      "destination": "/get-started/web/ux-guidelines"
+    },
+    {
+      "source": "/mobile-wallet-adapter/web-apps",
+      "destination": "/get-started/web/apps"
+    },
+    {
+      "source": "/mobile-wallet-adapter/web-installation",
+      "destination": "/get-started/web/installation"
+    },
+    {
+      "source": "/react-native/anchor_integration",
+      "destination": "/recipes/solana-development/anchor-integration"
+    },
+    {
+      "source": "/react-native/detecting-seeker-users",
+      "destination": "/recipes/general/detecting-seeker-users"
+    },
+    {
+      "source": "/react-native/quickstart",
+      "destination": "/get-started/react-native/create-solana-mobile-app"
+    },
+    {
+      "source": "/react-native/storing_mwa_auth",
+      "destination": "/recipes/mobile-wallet-adapter/caching-wallet-authorization"
+    },
+    {
+      "source": "/react-native/test-with-any-android-device",
+      "destination": "/recipes/general/test-with-any-android-device"
+    },
+    {
+      "source": "/react-native/using_mobile_wallet_adapter",
+      "destination": "/get-started/react-native/invoke-mwa-sessions-directly"
+    },
+    {
+      "source": "/reference/typescript/mobile-wallet-adapter",
+      "destination": "/get-started/react-native/mobile-wallet-adapter"
+    },
+    {
       "source": "/solana-mobile-stack/seeker-id",
       "destination": "/solana-mobile-stack/seeker-genesis-token"
+    },
+    {
+      "source": "/unity/unity_sdk",
+      "destination": "/get-started/unity/overview"
+    },
+    {
+      "source": "/unreal/unreal_sdk",
+      "destination": "/get-started/unreal/overview"
     }
   ],
   "footer": {
