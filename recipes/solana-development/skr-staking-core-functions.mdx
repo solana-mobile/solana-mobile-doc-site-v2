@@ -1,0 +1,280 @@
+---
+title: "SKR Staking"
+description: "Implement the core SKR staking flow: query balances, read stake state, stake, unstake, and withdraw."
+sidebarTitle: "SKR Staking"
+---
+
+Build the core SKR staking flow for your app: query balances, stake, unstake, and withdraw SKR.
+
+## What you will build
+
+- Query wallet SKR balance
+- Query stake vault balance
+- Fetch user staking state (staked, unstaking, cooldown status)
+- Stake SKR
+- Unstake SKR
+- Withdraw SKR after cooldown
+
+## Prerequisites
+
+- RPC endpoint + client (`createSolanaRpc(...)`)
+- Wallet session that can sign/send transactions
+- Generated staking client (Codama or equivalent instruction builders/account fetchers)
+
+## Shared setup
+
+### On-chain addresses
+
+```ts
+const STAKING_PROGRAM_ADDRESS = 'SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ';
+const SKR_MINT = 'SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3';
+const STAKE_CONFIG_ADDRESS = '4HQy82s9CHTv1GsYKnANHMiHfhcqesYkK6sB3RDSYyqw';
+const STAKE_VAULT_ADDRESS = '8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8';
+const GUARDIAN_POOL_ADDRESS = 'DPJ58trLsF9yPrBa2pk6UaRkvqW8hWUYjawe788WBuqr';
+```
+
+### Full setup (copy/paste)
+
+```ts
+import {
+  address,
+  createSolanaRpc,
+  getAddressEncoder,
+  getProgramDerivedAddress,
+  getUtf8Encoder,
+  type Address,
+  type TransactionSigner,
+} from '@solana/kit';
+
+import { fetchMaybeStakeConfig, fetchMaybeUserStake } from '../generated/staking/accounts';
+import {
+  getStakeInstructionAsync,
+  getUnstakeInstructionAsync,
+  getWithdrawInstructionAsync,
+} from '../generated/staking/instructions';
+import { STAKING_PROGRAM_ADDRESS } from '../generated/staking/programs';
+
+const rpc = createSolanaRpc('https://api.mainnet-beta.solana.com');
+
+// On-chain SKR staking program addresses.
+const SKR_MINT = address('SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3');
+const TOKEN_PROGRAM_ID = address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+const ASSOCIATED_TOKEN_PROGRAM_ID = address('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL');
+const STAKE_CONFIG_ADDRESS = address('4HQy82s9CHTv1GsYKnANHMiHfhcqesYkK6sB3RDSYyqw');
+const STAKE_VAULT_ADDRESS = address('8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8');
+const GUARDIAN_POOL_ADDRESS = address('DPJ58trLsF9yPrBa2pk6UaRkvqW8hWUYjawe788WBuqr');
+
+const SKR_DECIMALS = 6;
+const SHARE_PRICE_SCALE = 1_000_000_000n;
+
+const skrToRaw = (amount: number) => BigInt(Math.round(amount * 10 ** SKR_DECIMALS));
+const rawToSkr = (raw: bigint) => Number(raw) / 10 ** SKR_DECIMALS;
+const sharesToTokens = (shares: bigint, sharePrice: bigint) =>
+  rawToSkr((shares * sharePrice) / SHARE_PRICE_SCALE);
+const tokensToShares = (amount: number, sharePrice: bigint) =>
+  (skrToRaw(amount) * SHARE_PRICE_SCALE) / sharePrice;
+
+function makeDummySigner(addr: Address): TransactionSigner {
+  return { address: addr, signTransactions: async txs => txs } as unknown as TransactionSigner;
+}
+
+async function deriveUserStake(stakeConfig: Address, user: Address, guardianPool: Address) {
+  const encoder = getAddressEncoder();
+  const [pda] = await getProgramDerivedAddress({
+    programAddress: STAKING_PROGRAM_ADDRESS,
+    seeds: [
+      getUtf8Encoder().encode('user_stake'),
+      encoder.encode(stakeConfig),
+      encoder.encode(user),
+      encoder.encode(guardianPool),
+    ],
+  });
+  return pda;
+}
+
+async function findAssociatedTokenAddress(owner: Address, mint: Address) {
+  const encoder = getAddressEncoder();
+  const [pda] = await getProgramDerivedAddress({
+    programAddress: ASSOCIATED_TOKEN_PROGRAM_ID,
+    seeds: [encoder.encode(owner), encoder.encode(TOKEN_PROGRAM_ID), encoder.encode(mint)],
+  });
+  return pda;
+}
+```
+
+## Core functions
+
+### Query balances
+
+```ts
+async function queryBalances(user: Address) {
+  const userAta = await findAssociatedTokenAddress(user, SKR_MINT);
+
+  const userSkr = await rpc
+    .getTokenAccountBalance(userAta, { commitment: 'confirmed' })
+    .send();
+
+  // Staking escrow/vault balance.
+  const vault = await rpc
+    .getTokenAccountBalance(STAKE_VAULT_ADDRESS, { commitment: 'confirmed' })
+    .send();
+
+  return {
+    userSkrBalance: Number(userSkr.value.uiAmount ?? 0),
+    vaultSkrBalance: Number(vault.value.uiAmount ?? 0),
+  };
+}
+```
+
+### Fetch staking state
+
+```ts
+async function fetchStakingState(user: Address) {
+  const config = await fetchMaybeStakeConfig(rpc, STAKE_CONFIG_ADDRESS);
+  const sharePrice = config.exists ? config.data.sharePrice : SHARE_PRICE_SCALE;
+  const cooldownSeconds = config.exists ? Number(config.data.cooldownSeconds) : 172_800;
+
+  const userStakePda = await deriveUserStake(
+    STAKE_CONFIG_ADDRESS,
+    user,
+    GUARDIAN_POOL_ADDRESS,
+  );
+
+  const userStake = await fetchMaybeUserStake(rpc, userStakePda);
+  if (!userStake.exists) {
+    return { staked: 0, unstaking: 0, unstakingReady: false, sharePrice, userStakePda };
+  }
+
+  const data = userStake.data;
+  const staked = sharesToTokens(data.shares, sharePrice);
+  const unstaking = rawToSkr(data.unstakingAmount);
+
+  const now = BigInt(Math.floor(Date.now() / 1000));
+  const unstakingReady =
+    data.unstakingAmount > 0n && now >= data.unstakeTimestamp + BigInt(cooldownSeconds);
+
+  return { staked, unstaking, unstakingReady, sharePrice, userStakePda };
+}
+```
+
+### Stake
+
+```ts
+async function stake(user: Address, amount: number, sendTransaction: (ixs: any[]) => Promise<string>) {
+  const userAta = await findAssociatedTokenAddress(user, SKR_MINT);
+  const payer = makeDummySigner(user);
+
+  const ix = await getStakeInstructionAsync({
+    stakeConfig: STAKE_CONFIG_ADDRESS,
+    guardianPool: GUARDIAN_POOL_ADDRESS,
+    payer,
+    user,
+    userTokenAccount: userAta,
+    stakeVault: STAKE_VAULT_ADDRESS,
+    mint: SKR_MINT,
+    program: STAKING_PROGRAM_ADDRESS,
+    amount: skrToRaw(amount),
+  });
+
+  // Keep only address + role so wallet signing flow can attach signer metadata.
+  return sendTransaction([
+    { ...ix, accounts: ix.accounts?.map(a => ({ address: a.address, role: a.role })) },
+  ]);
+}
+```
+
+### Unstake
+
+```ts
+async function unstake(
+  user: Address,
+  amount: number,
+  sharePrice: bigint,
+  sendTransaction: (ixs: any[]) => Promise<string>,
+) {
+  const userStakePda = await deriveUserStake(
+    STAKE_CONFIG_ADDRESS,
+    user,
+    GUARDIAN_POOL_ADDRESS,
+  );
+  const signer = makeDummySigner(user);
+
+  const ix = await getUnstakeInstructionAsync({
+    userStake: userStakePda,
+    stakeConfig: STAKE_CONFIG_ADDRESS,
+    guardianPool: GUARDIAN_POOL_ADDRESS,
+    user: signer,
+    stakeVault: STAKE_VAULT_ADDRESS,
+    mint: SKR_MINT,
+    program: STAKING_PROGRAM_ADDRESS,
+    shares: tokensToShares(amount, sharePrice),
+  });
+
+  return sendTransaction([
+    { ...ix, accounts: ix.accounts?.map(a => ({ address: a.address, role: a.role })) },
+  ]);
+}
+```
+
+### Withdraw
+
+```ts
+function createIdempotentAtaIx(payer: Address, owner: Address, mint: Address, ata: Address) {
+  return {
+    programAddress: ASSOCIATED_TOKEN_PROGRAM_ID,
+    accounts: [
+      { address: payer, role: 3 }, // writable signer
+      { address: ata, role: 1 },   // writable
+      { address: owner, role: 0 }, // readonly
+      { address: mint, role: 0 },  // readonly
+      { address: address('11111111111111111111111111111111'), role: 0 },
+      { address: TOKEN_PROGRAM_ID, role: 0 },
+    ],
+    data: new Uint8Array([1]), // CreateIdempotent
+  };
+}
+
+async function withdraw(user: Address, sendTransaction: (ixs: any[]) => Promise<string>) {
+  const userAta = await findAssociatedTokenAddress(user, SKR_MINT);
+  const userStakePda = await deriveUserStake(
+    STAKE_CONFIG_ADDRESS,
+    user,
+    GUARDIAN_POOL_ADDRESS,
+  );
+
+  const createAtaIx = createIdempotentAtaIx(user, user, SKR_MINT, userAta);
+
+  const withdrawIx = await getWithdrawInstructionAsync({
+    userStake: userStakePda,
+    user,
+    stakeVault: STAKE_VAULT_ADDRESS,
+    userTokenAccount: userAta,
+    program: STAKING_PROGRAM_ADDRESS,
+  });
+
+  return sendTransaction([
+    createAtaIx,
+    {
+      ...withdrawIx,
+      accounts: withdrawIx.accounts?.map(a => ({ address: a.address, role: a.role })),
+    },
+  ]);
+}
+```
+
+## Error handling + confirmations
+
+- Simulate transactions in development before sending.
+- Confirm signatures (`getSignatureStatuses`) before refreshing balances.
+- Handle common staking program errors:
+  - `6004` cooldown not completed
+  - `6006` insufficient shares
+  - `6019` nothing to withdraw
+- If account fetch fails, default state safely (`0` balances, not ready to withdraw).
+
+## Links
+
+- SKR staking sample folder: [Source code](https://github.com/solana-mobile/react-native-samples/tree/main/skr-staking)
+- SKR staking sample README: [Reference README](https://github.com/solana-mobile/react-native-samples/tree/main/skr-staking#readme)
+- Mobile Wallet Adapter docs: [MWA overview](https://docs.solanamobile.com/get-started/overview)
+- Developer setup docs: [Development setup](https://docs.solanamobile.com/get-started/development-setup)
