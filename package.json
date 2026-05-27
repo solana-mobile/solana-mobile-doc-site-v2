@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "lefthook": "^2.1.8",
+    "mint": "^4.2.578",
+    "prettier": "3.8.3"
+  },
+  "name": "solana-mobile-doc-site-v2",
+  "packageManager": "bun@1.3.14",
+  "private": true,
+  "scripts": {
+    "dev": "mint dev",
+    "format": "prettier --write \"**/*.{css,json,jsonc,md,mdx,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{css,json,jsonc,md,mdx,yaml,yml}\"",
+    "prepare": "lefthook install"
+  }
+}
