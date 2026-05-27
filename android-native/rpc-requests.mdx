@@ -12,13 +12,11 @@ This guide will teach you how to use the `SolanaRpcClient` and send these RPC re
 The [`rpc-core`](https://github.com/solana-mobile/rpc-core) library provides a convenient `SolanaRpcClient` that implements an API to call these RPC methods and return responses.
 
 
-<CodeGroup>
-```java build.gradle.kts
+```kotlin build.gradle.kts
 dependencies {
     implementation("com.solanamobile:rpc-core:0.2.6")
 }
 ```
-</CodeGroup>
 
 ## Create an RPC Client
 
@@ -29,7 +27,7 @@ To create an instance of a `SolanaRpcClient`, pass in:
 
 In this example, we construct an RPC client pointed at devnet and Ktor as a network driver:
 
-```js
+```kotlin
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
 
@@ -44,7 +42,7 @@ Calling the `getLatestBlockhash` method returns an [`RpcResponse`](https://githu
 
 - If an error occured, the response will contain an [`RpcError`](https://github.com/solana-mobile/rpc-core/blob/a6ea1466fb1d79113ca77f2d073d33a85fb5ad5e/rpccore/src/commonMain/kotlin/com/solana/rpccore/RpcResponse.kt#L16).
 
-```js expandable
+```kotlin expandable
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
 
@@ -67,7 +65,7 @@ To submit a transaction to the RPC, use the `sendTransaction` method.
 
 - If an error occured, the response will contain an [`RpcError`](https://github.com/solana-mobile/rpc-core/blob/a6ea1466fb1d79113ca77f2d073d33a85fb5ad5e/rpccore/src/commonMain/kotlin/com/solana/rpccore/RpcResponse.kt#L16).
 
-```js expandable
+```kotlin expandable
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
 
@@ -94,4 +92,3 @@ These examples are just some of the methods supported by `SolanaRpcClient`. Here
 - Read the following guide to learn how to build Solana program instructions and transactions.
 - For a complete reference of the RPC methods supported, view the `SolanaRpcClient` [source code](https://github.com/solana-mobile/rpc-core/blob/main/solanaclient/src/commonMain/kotlin/com/solana/rpc/SolanaRpcClient.kt) and [unit tests](https://github.com/solana-mobile/rpc-core/blob/main/solanaclient/src/commonTest/kotlin/com/solana/rpc/RpcClientTests.kt).
 - Read the [_Building JSON RPC requests_ deep dive](/android-native/building-json-rpc-requests) to learn how to create requests for RPC methods that aren't immediately supported by `SolanaRpcClient`.
-

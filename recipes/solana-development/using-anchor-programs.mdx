@@ -14,17 +14,13 @@ Add the following dependencies to your project:
 - [`rpc-core`](https://github.com/solana-mobile/rpc-core) library provides a `SolanaRpcClient` class with convenient RPC methods.
 - [`kborsh`](https://github.com/Funkatronics/kBorsh/tree/main) library for Borsh serialization of instruction data.
 
-<CodeGroup>
-```js build.gradle.kts
-{
-`dependencies {
+```kotlin build.gradle.kts
+dependencies {
     implementation("com.solanamobile:web3-solana:${versions.KOTLIN_WEB3_SOLANA_VERSION}")
     implementation("com.solanamobile:rpc-core:${versions.KOTLIN_RPC_CORE_VERSION}")
     implementation('io.github.funkatronics:kborsh:${versions.KOTLIN_KBORSH_VERSION}')
-}`
 }
 ```
-</CodeGroup>
 
 ## Example: Counter Program
 
@@ -57,7 +53,7 @@ To derive the Counter PDA, we'll use the `ProgramDerivedAddres` interface in the
 
 Call `ProgramDerivedAddres.find` and pass `"counter"` as a seed and the Counter program ID:
 
-```js
+```kotlin
 import com.solana.publickey.SolanaPublicKey
 import com.solana.publickey.ProgramDerivedAddress
 
@@ -79,7 +75,7 @@ The next step is to build and serialize the instruction data.
 
 Using the `kotlinx` serialization library, define the expected increment arguments as a `@Serializable` class.
 
-```js
+```kotlin
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -88,7 +84,7 @@ class Args_increment(val amount: UInt)
 
 Now, use the `AnchorInstructionSerializer` to serialize the instruction arguments and lastly use the `kBorsh` library to Borsh encode the data.
 
-```js
+```kotlin
 val encodedInstructionData = Borsh.encodeToByteArray(
     AnchorInstructionSerializer("increment"),
     Args_increment(amount)
@@ -108,7 +104,7 @@ The `AnchorInstructionSerializer` will handle this discriminator during serializ
 
 Putting all the inputs together, you can build the full `TransactionInstruction`.
 
-```js
+```kotlin
 import com.solana.publickey.SolanaPublicKey
 import com.solana.transaction.*
 
@@ -123,7 +119,7 @@ val incrementInstruction = TransactionInstruction(
 
 Then build a transaction message and construct the `Transaction` packed with the increment instruction.
 
-```js expandable
+```kotlin expandable
 import com.solana.transaction.*
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
@@ -160,7 +156,7 @@ Read the [_Using Mobile Wallet Adapter_ guide](/android-native/using_mobile_wall
 
 If you have direct access to a keypair, you can serialize the Transaction message, sign the bytes, and construct the signed transaction.
 
-```js expandable
+```kotlin expandable
 import com.solana.transaction.*
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
@@ -191,7 +187,7 @@ val signedTransaction = Transaction(listOf(signature), incrementCounterMessage)
 
 After the transaction is signed, it can be submitted to an RPC using the `SolanaRpcClient` class.
 
-```js
+```kotlin
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
 
@@ -205,4 +201,3 @@ if (response.result) {
     println("Failed to send transaction: ${response.error.message}")
 }
 ```
-

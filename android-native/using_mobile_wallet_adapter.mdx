@@ -13,15 +13,11 @@ The `mobile-wallet-adapter-clientlib-ktx` library is Solana Mobile's implementat
 
 It provides a convenient API to connect, issue signing requests to a locally installed wallet app, and receive responses.
 
-<CodeGroup>
-```js build.gradle.kts
-{
-`dependencies {
+```kotlin build.gradle.kts
+dependencies {
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:${versions.KOTLIN_MWA_CLIENTLIB_KTX_VERSION}")
-}`
 }
 ```
-</CodeGroup>
 
 ## Instantiate `MobileWalletAdapter` client
 
@@ -35,7 +31,7 @@ Parameters:
 - `identityUri`: The web URL associated with your app.
 - `iconUri`: A path to your app icon relative to the app uri above.
 
-```js
+```kotlin
 import com.solana.mobilewalletadapter.clientlib.*
 
 // Define dApp's identity metadata
@@ -61,7 +57,7 @@ the user is able to skip the connection approval dialog for subsequent requests.
 The `authToken` is stored by the `MobileWalletAdapter` client whenever you connect to a wallet, but it can also be
 provided manually:
 
-```js
+```kotlin
 // Retrieve and use a persisted authToken from a previous session of the app.
 val previouslyStoredAuthToken = maybeGetStoredAuthToken()
 walletAdapter.authToken = previouslyStoredAuthToken
@@ -79,7 +75,7 @@ user to approve or reject the connection request.
 Once connected, the user can begin issuing MWA requests and receiving responses from the wallet app. The `MobileWalletAdapter`
 object also stores, in memory, the `authToken` from successful connections to be used automatically subsequent sessions.
 
-```js 
+```kotlin
 import com.solana.mobilewalletadapter.clientlib.*
 
  // `this` is the current Android activity
@@ -100,7 +96,7 @@ When the session is complete, `transact` returns a `TransactionResult` that can 
 
 If you only need to connect to a wallet and do not need to send any additional MWA requests, use the `connect` method from the `MobileWalletAdapter` client.
 
-```js expandable
+```kotlin expandable
 import com.solana.mobilewalletadapter.clientlib.*
 
  // `this` is the current Android activity
@@ -132,7 +128,7 @@ On successful connection, the `TransactionResult` will contain an `Authorization
 
 Under the hood, the `connect` method just calls the `transact` function with an empty callback, immediately returning the `authResult`.
 
-```bash
+```kotlin
 suspend fun connect(sender: ActivityResultSender) = transact(sender) { }
 ```
 
@@ -144,7 +140,7 @@ _SIWS_ combines the `authorize` and `signMessage` step and returns a `SignInResu
 To initiate _SIWS_, use the `signIn` method and pass in a `SignInPayload` parameter. If provided, the wallet
 will display a dedicated _SIWS_ UI and prompt the user to sign in by signing the `statement` message.
 
-```js expandable
+```kotlin expandable
 import com.solana.mobilewalletadapter.clientlib.*
 
  // `this` is the current Android activity
@@ -187,7 +183,7 @@ Similarly to `connect`, the `signIn` method just wraps an empty `transact` call 
 If you want to sign in to the wallet and and continue issuing additional MWA requests, then you can use
 the include the optional `signInPayload` parameter when using the `transact` method.
 
-```js
+```kotlin
 // Sign in to authorize the session, then continue issuing requests.
 val result = walletAdapter.transact(sender,
              SignInWithSolana.Payload("solana.com", "Sign in to Ktx Sample App")) { authResult ->
@@ -199,7 +195,7 @@ val result = walletAdapter.transact(sender,
 
 A dApp can revoke authorization or disconnect from a wallet by sending a disconnect request. The wallet will invalidate the `authToken` stored by the `MobileWalletAdapter`. This will require the user to approve the connection request once again, when connecting to that wallet.
 
-```js expandable
+```kotlin expandable
 import com.solana.mobilewalletadapter.clientlib.*
 
  // `this` is the current Android activity
@@ -225,7 +221,7 @@ when (result) {
 
 Alternatively, you can directly issue a `deauthorize` request to the wallet and provide a specific `authToken` to invalidate.
 
-```js
+```kotlin
 val result = walletAdapter.transact(sender) { authResult ->
     deauthorize(someAuthToken)
 }
@@ -238,7 +234,7 @@ the wallet will handle both signing the transactions then submitting them to the
 
 For an example of building a transaction, see the 'Building transactions' guide.
 
-```js expandable
+```kotlin expandable
 import com.funkatronics.encoders.Base58
 import com.solana.publickey.SolanaPublicKey
 import com.solana.mobilewalletadapter.clientlib.*
@@ -281,7 +277,7 @@ signature serialized as `ByteArray`, in corresponding order to the input.
 
 To request a wallet to sign a message, use the `signMessagesDetached` method. In this case, a _message_ is any payload of bytes.
 
-```js expandable
+```kotlin expandable
 import com.funkatronics.encoders.Base58
 import com.solana.publickey.SolanaPublicKey
 import com.solana.mobilewalletadapter.clientlib.*
@@ -328,7 +324,7 @@ may still support this method for backwards compatibility, but it is recommended
 To request a wallet to sign a Solana transaction, use the `signTransactions` method. For an example
 of building a transaction, see the 'Building transactions' guide.
 
-```js expandable
+```kotlin expandable
 import com.funkatronics.encoders.Base58
 import com.solana.publickey.SolanaPublicKey
 import com.solana.mobilewalletadapter.clientlib.*
