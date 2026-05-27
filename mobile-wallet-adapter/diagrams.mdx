@@ -17,7 +17,11 @@ For an extensive, deep dive into the specifics of the protocol and MWA methods, 
 The following diagram shows a bird's eye view of a mobile dApp's interactions with mobile wallets and the Solana network.
 
 <Frame>
-<img src="/images/static/diagrams/dapp_architecture_full.svg" alt="Full Architecture Diagram" className="diagram-image" />
+  <img
+    src="/images/static/diagrams/dapp_architecture_full.svg"
+    alt="Full Architecture Diagram"
+    className="diagram-image"
+  />
 </Frame>
 
 ### Session Establishment
@@ -27,7 +31,11 @@ With the current SDKs, the MWA session is initiated through Android intents, wit
 with the `solana-wallet://` scheme.
 
 <Frame>
-<img src="/images/static/diagrams/session_establishment.svg" alt="Session Establishment Diagram" className="diagram-image" />
+  <img
+    src="/images/static/diagrams/session_establishment.svg"
+    alt="Session Establishment Diagram"
+    className="diagram-image"
+  />
 </Frame>
 
 A wallet then receives the intent and starts a websocket connection, thus establishing a channel for commmunication.
@@ -42,7 +50,11 @@ This example case outlines an MWA session where the dApp:
 3. Requests transaction signing, receiving a transaction signed by the authorized accounts.
 
 <Frame>
-<img src="/images/static/diagrams/authorize_and_sign.svg" alt="Authorize and Sign Diagram" className="diagram-image" />
+  <img
+    src="/images/static/diagrams/authorize_and_sign.svg"
+    alt="Authorize and Sign Diagram"
+    className="diagram-image"
+  />
 </Frame>
 
 In future sessions, the dApp can initiate with the valid authToken to immediately elevate to an "authorizd state", skipping the "connect" step.
@@ -59,9 +71,12 @@ a cluster and an RPC endpoint then sends the transaction payload, following the 
 For certain usecases, the dApp may choose to communicate with the RPC through the [Websocket API](https://docs.solana.com/api/websocket)
 
 <Frame>
-<img src="/images/static/diagrams/submit_rpc.svg" alt="Submit to RPC Diagram" className="diagram-image" />
+  <img
+    src="/images/static/diagrams/submit_rpc.svg"
+    alt="Submit to RPC Diagram"
+    className="diagram-image"
+  />
 </Frame>
-
 
 ### Sign and Send Transaction
 
@@ -72,6 +87,9 @@ own implementation. Depending on the wallet app, this can include applying its o
 Relying on the wallet reduces the risk of replay attacks with [durable nonce based transactions](https://docs.solana.com/implemented-proposals/durable-tx-nonces), which can be abused with `sign_transactions`.
 
 <Frame>
-<img src="/images/static/diagrams/sign_and_send.svg" alt="Sign and Send Diagram" className="diagram-image" />
+  <img
+    src="/images/static/diagrams/sign_and_send.svg"
+    alt="Sign and Send Diagram"
+    className="diagram-image"
+  />
 </Frame>
-

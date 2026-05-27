@@ -4,7 +4,7 @@ description: "The Mobile Wallet Adapter protocol is a spec that enables a secure
 sidebarTitle: "Invoke MWA Sessions Directly"
 ---
 
-import { Button } from '/snippets/button.mdx';
+import { Button } from "/snippets/button.mdx";
 
 Mobile Wallet Adapter 2.0 is the newest and current version of the Mobile Wallet Adapter protocol. The complete 2.0 spec is viewable [here](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html).
 
@@ -27,11 +27,14 @@ yarn add @solana-mobile/mobile-wallet-adapter-protocol-web3js \
 npm install @solana-mobile/mobile-wallet-adapter-protocol-web3js \
             @solana-mobile/mobile-wallet-adapter-protocol \
 ```
+
 </CodeGroup>
 
 ## Establishing an MWA session
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#transact">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#transact">
+  API Reference
+</Button>
 
 To establish a session, or request to 'connect', with an MWA wallet, use the `transact` method provided by `@solana-mobile/mobile-wallet-adapter-protocol-web3js`.
 
@@ -54,11 +57,14 @@ await transact(async (wallet: Web3MobileWallet) => {
 Use the `transact` function from `@solana-mobile/mobile-wallet-adapter-protocol-web3js` rather than `@solana-mobile/mobile-wallet-adapter-protocol`.
 
 The former provides convenient wrappers around common `web3.js` Solana types like `Transaction` while the latter provides base64 encoded byte payloads.
+
 </Tip>
 
 ## Connecting to a wallet
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize">
+  API Reference
+</Button>
 
 After session establishment, you can connect to the wallet by issuing an [`authorize`](/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize) request. This authorization step is required if you want to request signing services from the wallet.
 
@@ -140,7 +146,9 @@ await transact(async (wallet: Web3MobileWallet) => {
 
 ### Deauthorizing a wallet
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletdeauthorize">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletdeauthorize">
+  API Reference
+</Button>
 
 A dApp can revoke authorization or "disconnect" from a wallet by sending a `deauthorize` request.
 The wallet invalidate the provided `authToken`.
@@ -196,7 +204,7 @@ import { verifySignIn } from "@solana/wallet-standard-util";
 
 export function verifySIWS(
   input: SolanaSignInInput,
-  output: SolanaSignInOutput
+  output: SolanaSignInOutput,
 ): boolean {
   const serialisedOutput: SolanaSignInOutput = {
     account: {
@@ -214,7 +222,9 @@ See the [Phantom SIWS docs](https://github.com/phantom/sign-in-with-solana?tab=r
 
 ## Signing and sending a transaction
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignandsendtransactions">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignandsendtransactions">
+  API Reference
+</Button>
 
 To request a wallet to sign and then send a Solana transaction, use the `signAndSendTransactions` method. With this method,
 the wallet will handle both signing the transactions then submitting them to the Solana network.
@@ -244,7 +254,7 @@ const txSignature = await transact((wallet) => {
 
   // Convert base64 address to web3.js PublicKey class
   const authorizedPubkey = new PublicKey(
-    toByteArray(authorizationResult.accounts[0].address)
+    toByteArray(authorizationResult.accounts[0].address),
   );
 
   // Construct an instruction to transfer 1,000,000 lamports to a randomly generated account
@@ -278,7 +288,7 @@ const txSignature = await transact((wallet) => {
 // Confirm the transaction was successful.
 const confirmationResult = await connection.confirmTransaction(
   txSignature,
-  "confirmed"
+  "confirmed",
 );
 
 if (confirmationResult.value.err) {
@@ -313,7 +323,7 @@ const txSignature = await transact((wallet) => {
       fromPubkey: authorizedPubkey,
       toPubkey: toPublicKey,
       lamports: 1_000_000,
-    })
+    }),
   );
 
   // Send the unsigned transaction, the wallet will sign and submit it to the network,
@@ -328,7 +338,7 @@ const txSignature = await transact((wallet) => {
 // Confirm the transaction was successful.
 const confirmationResult = await connection.confirmTransaction(
   txSignature,
-  "confirmed"
+  "confirmed",
 );
 
 if (confirmationResult.value.err) {
@@ -347,7 +357,9 @@ Using `confirmTransaction`, you can check that the transaction was `confirmed` b
 
 ## Signing Transactions
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsigntransactions">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsigntransactions">
+  API Reference
+</Button>
 
 Alternatively, you can request the wallet to just sign a transaction by issuing a `signTransactions` request.
 
@@ -413,7 +425,9 @@ The response returned will be a signed `Transaction` that can be submitted to an
 
 ## Signing messages
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignmessages">API Reference</Button>
+<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignmessages">
+  API Reference
+</Button>
 
 To request off-chain message signing, issue a `signMessages` request. In this case, a _message_ is any payload of bytes.
 

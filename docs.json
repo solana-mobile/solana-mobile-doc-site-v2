@@ -113,9 +113,7 @@
         "groups": [
           {
             "group": "Solana Mobile Stack",
-            "pages": [
-              "solana-mobile-stack/overview"
-            ]
+            "pages": ["solana-mobile-stack/overview"]
           },
           {
             "group": "Software",
@@ -460,7 +458,10 @@
       {
         "header": "Community",
         "items": [
-          { "label": "Stack Exchange", "href": "https://solana.stackexchange.com/" },
+          {
+            "label": "Stack Exchange",
+            "href": "https://solana.stackexchange.com/"
+          },
           { "label": "Discord", "href": "https://discord.gg/solanamobile" },
           { "label": "Twitter", "href": "https://twitter.com/solanamobile" }
         ]
@@ -475,11 +476,26 @@
       {
         "header": "Legal",
         "items": [
-          { "label": "Terms of Service", "href": "https://legal.solanamobile.com/tos-homepage-web" },
-          { "label": "Privacy Policy", "href": "https://legal.solanamobile.com/privacy-policy-homepage-web" },
-          { "label": "Developer Agreement", "href": "https://docs.solanamobile.com/dapp-store/agreement" },
-          { "label": "dApp Store Terms of Use", "href": "https://docs.solanamobile.com/dapp-store/tou" },
-          { "label": "Cookie Policy", "href": "https://legal.solanamobile.com/en/cookie-policy-web" }
+          {
+            "label": "Terms of Service",
+            "href": "https://legal.solanamobile.com/tos-homepage-web"
+          },
+          {
+            "label": "Privacy Policy",
+            "href": "https://legal.solanamobile.com/privacy-policy-homepage-web"
+          },
+          {
+            "label": "Developer Agreement",
+            "href": "https://docs.solanamobile.com/dapp-store/agreement"
+          },
+          {
+            "label": "dApp Store Terms of Use",
+            "href": "https://docs.solanamobile.com/dapp-store/tou"
+          },
+          {
+            "label": "Cookie Policy",
+            "href": "https://legal.solanamobile.com/en/cookie-policy-web"
+          }
         ]
       }
     ],

@@ -33,7 +33,11 @@ To verify a user holds an SGT, combine wallet ownership proof with an onchain to
 2. **Check for SGT** — Query the wallet's token accounts to verify it holds a valid Seeker Genesis Token.
 3. **Track mint addresses** — Record which SGT mint addresses have been used to prevent re-use after transfers.
 
-<Card title="Detecting Seeker Users" icon="magnifying-glass" href="/recipes/general/detecting-seeker-users">
+<Card
+  title="Detecting Seeker Users"
+  icon="magnifying-glass"
+  href="/recipes/general/detecting-seeker-users"
+>
   Step-by-step guide with code examples for verifying SGT ownership.
 </Card>
 
@@ -50,16 +54,21 @@ SKR domains are built on [AllDomains](https://alldomains.id/) and support bidire
 - **Forward resolution** — Given a `.skr` name, look up the associated wallet address.
 - **Reverse resolution** — Given a wallet address, look up the associated `.skr` name.
 
-<Card title="SKR Address Resolution Sample" icon="code" href="https://github.com/solana-mobile/react-native-samples/tree/main/skr-address-resolution">
-  A sample app demonstrating bidirectional domain lookup with AllDomains integration.
+<Card
+  title="SKR Address Resolution Sample"
+  icon="code"
+  href="https://github.com/solana-mobile/react-native-samples/tree/main/skr-address-resolution"
+>
+  A sample app demonstrating bidirectional domain lookup with AllDomains
+  integration.
 </Card>
 
 ## Comparison with Saga Genesis Token
 
 The Seeker Genesis Token builds on the concept introduced with the original Saga Genesis Token, but with key differences:
 
-| | Seeker Genesis Token | Saga Genesis Token |
-|---|---|---|
-| **Token standard** | Token-2022 (Token Extensions) | Metaplex Token Standard |
-| **Transferability** | Transferable within user's own Seed Vault accounts | Soulbound (non-transferable) |
-| **Verification** | Token-2022 account queries | DAS API (Metaplex collection) |
+|                     | Seeker Genesis Token                               | Saga Genesis Token            |
+| ------------------- | -------------------------------------------------- | ----------------------------- |
+| **Token standard**  | Token-2022 (Token Extensions)                      | Metaplex Token Standard       |
+| **Transferability** | Transferable within user's own Seed Vault accounts | Soulbound (non-transferable)  |
+| **Verification**    | Token-2022 account queries                         | DAS API (Metaplex collection) |

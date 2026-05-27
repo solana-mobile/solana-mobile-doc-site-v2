@@ -11,20 +11,16 @@ This page demonstrates how to use each method from the `useMobileWallet` hook. M
 Use `connect` to initiate a wallet connection and `disconnect` to end it. The `account` field contains the connected wallet's public key.
 
 ```tsx
-import { useMobileWallet } from '@wallet-ui/react-native-web3js';
+import { useMobileWallet } from "@wallet-ui/react-native-web3js";
 
 function ConnectButton() {
   const { account, connect, disconnect } = useMobileWallet();
 
   if (account) {
-    return (
-      <Button title="Disconnect" onPress={disconnect} />
-    );
+    return <Button title="Disconnect" onPress={disconnect} />;
   }
 
-  return (
-    <Button title="Connect Wallet" onPress={connect} />
-  );
+  return <Button title="Connect Wallet" onPress={connect} />;
 }
 ```
 
@@ -33,16 +29,16 @@ function ConnectButton() {
 Use `signMessage` to request the wallet to sign an arbitrary byte payload. This is useful for off-chain signature verification.
 
 ```tsx
-import { useMobileWallet } from '@wallet-ui/react-native-web3js';
+import { useMobileWallet } from "@wallet-ui/react-native-web3js";
 
 function SignMessageButton() {
   const { signMessage } = useMobileWallet();
 
   const handleSignMessage = async () => {
-    const message = 'Verify this message';
+    const message = "Verify this message";
     const messageBytes = new TextEncoder().encode(message);
     const signature = await signMessage(messageBytes);
-    console.log('Signature:', signature);
+    console.log("Signature:", signature);
   };
 
   return <Button title="Sign Message" onPress={handleSignMessage} />;
@@ -54,17 +50,17 @@ function SignMessageButton() {
 Use `signIn` to connect to a wallet and verify ownership in a single step. This combines authorization and message signing into one user interaction.
 
 ```tsx
-import { useMobileWallet } from '@wallet-ui/react-native-web3js';
+import { useMobileWallet } from "@wallet-ui/react-native-web3js";
 
 function SignInButton() {
   const { account, signIn } = useMobileWallet();
 
   const handleSignIn = async () => {
     await signIn({
-      domain: 'your-app-domain.com',
-      statement: 'Sign in to Your App',
+      domain: "your-app-domain.com",
+      statement: "Sign in to Your App",
     });
-    console.log('Signed in:', account?.address);
+    console.log("Signed in:", account?.address);
   };
 
   return <Button title="Sign In" onPress={handleSignIn} />;
@@ -76,12 +72,8 @@ function SignInButton() {
 Use `signAndSendTransaction` to request the wallet to sign a transaction and submit it to the Solana network.
 
 ```tsx
-import { useMobileWallet } from '@wallet-ui/react-native-web3js';
-import {
-  PublicKey,
-  SystemProgram,
-  Transaction,
-} from '@solana/web3.js';
+import { useMobileWallet } from "@wallet-ui/react-native-web3js";
+import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 
 function SendTransactionButton() {
   const { account, signAndSendTransaction, connection } = useMobileWallet();
@@ -97,13 +89,13 @@ function SendTransactionButton() {
     }).add(
       SystemProgram.transfer({
         fromPubkey: new PublicKey(account.address),
-        toPubkey: new PublicKey('11111111111111111111111111111111'),
+        toPubkey: new PublicKey("11111111111111111111111111111111"),
         lamports: 1_000_000,
       }),
     );
 
     const signature = await signAndSendTransaction(transaction);
-    console.log('Transaction signature:', signature);
+    console.log("Transaction signature:", signature);
   };
 
   return <Button title="Send Transaction" onPress={handleSendTransaction} />;
@@ -113,7 +105,11 @@ function SendTransactionButton() {
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Advanced: Invoke MWA Sessions Directly" icon="terminal" href="/get-started/react-native/invoke-mwa-sessions-directly">
+  <Card
+    title="Advanced: Invoke MWA Sessions Directly"
+    icon="terminal"
+    href="/get-started/react-native/invoke-mwa-sessions-directly"
+  >
     Learn the low-level transact() API for direct MWA session control.
   </Card>
   <Card title="Sample Apps" icon="code" href="/sample-apps/sample_app_overview">

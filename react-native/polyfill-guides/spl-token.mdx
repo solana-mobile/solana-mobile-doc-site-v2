@@ -16,6 +16,7 @@ yarn add @solana/spl-token
 ```shell npm
 npm install @solana/spl-token
 ```
+
 </CodeGroup>
 
 ## Polyfills
@@ -40,9 +41,8 @@ npm install react-native-get-random-values
 Then, add this resolver to your project's `metro.config.js`
 
 ```js
-config.resolver.extraNodeModules.crypto = require.resolve(
-  "react-native-get-random-values"
-);
+config.resolver.extraNodeModules.crypto =
+  require.resolve("react-native-get-random-values");
 ```
 
 This configures the Metro bundler to replace instances of `require('crypto')` with `react-native-get-random-values`, thus polyfilling `getRandomValues`.

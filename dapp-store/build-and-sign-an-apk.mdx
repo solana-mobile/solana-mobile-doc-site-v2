@@ -24,7 +24,8 @@ Replace `my-app-name` with your app's name.
 Store the keystore file and passwords securely — losing them means you cannot update your app. All future updates must be signed with the same key.
 
 <Warning>
-If your app is also published on Google Play, you **must** use a separate signing key for the dApp Store. You cannot reuse the same key for both stores.
+  If your app is also published on Google Play, you **must** use a separate
+  signing key for the dApp Store. You cannot reuse the same key for both stores.
 </Warning>
 
 <Accordion title="Publishing multiple apps?">
@@ -39,6 +40,7 @@ keytool -genkey -v -keystore publisher.keystore -alias my-second-app -keyalg RSA
 ```
 
 Then reference the appropriate `-alias` when signing each app.
+
 </Accordion>
 
 <Tabs>
@@ -155,29 +157,30 @@ At minimum, a manifest file includes the app's name, icons, and start URL:
 
 ```json manifest.json
 {
-    "name": "APP_NAME",
-    "short_name": "APP_NAME",
-    "scope": "/",
-    "start_url": "/",
-    "icons": [
-        {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+  "name": "APP_NAME",
+  "short_name": "APP_NAME",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
 }
 ```
 
 For more information, view the [web manifest documentation](https://web.dev/articles/add-manifest).
+
 </Accordion>
 
 ## 1. Install Bubblewrap CLI
@@ -201,7 +204,8 @@ This will prompt you to configure the domain, display mode, splash screen, icons
 - If it asks to install additional tooling (e.g. Android SDK, JDK), allow it.
 
 <Warning>
-The `init` command will generate an **Android Keystore**. Keep the keystore file and password secure — losing them means you cannot update your app.
+  The `init` command will generate an **Android Keystore**. Keep the keystore
+  file and password secure — losing them means you cannot update your app.
 </Warning>
 
 ## 3. Add supported languages
@@ -238,6 +242,7 @@ Generate the SHA256 fingerprint from your keystore:
 ```bash
 keytool -list -v -keystore android.keystore
 ```
+
 </Step>
 <Step>
 Add the fingerprint to your TWA manifest:
@@ -245,6 +250,7 @@ Add the fingerprint to your TWA manifest:
 ```bash
 bubblewrap fingerprint add <SHA256_fingerprint>
 ```
+
 </Step>
 <Step>
 Generate the `assetlinks.json` file:
@@ -252,11 +258,13 @@ Generate the `assetlinks.json` file:
 ```bash
 bubblewrap fingerprint generateAssetLinks
 ```
+
 </Step>
 <Step>
 Publish the generated `assetlinks.json` at:
 
 `https://your-domain.com/.well-known/assetlinks.json`
+
 </Step>
 </Steps>
 
@@ -269,7 +277,8 @@ bubblewrap install app-release-signed.apk
 ```
 
 <Tip>
-If you see the browser navigation bar at the top of the app, your Digital Asset Links may not be configured correctly. Double-check step 5.
+  If you see the browser navigation bar at the top of the app, your Digital
+  Asset Links may not be configured correctly. Double-check step 5.
 </Tip>
 
 ### Updating your TWA

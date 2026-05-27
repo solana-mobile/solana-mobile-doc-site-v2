@@ -4,7 +4,6 @@ description: "The Mobile Wallet Adapter protocol is a spec that enables a secure
 sidebarTitle: "Basic: Usage guide"
 ---
 
-
 Mobile Wallet Adapter 2.0 is the newest and current version and the complete 2.0 spec is viewable [here](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html).
 
 ## Add dependencies
@@ -319,6 +318,7 @@ payload serialized as a `ByteArray`, in corresponding order to the input.
 
 The `signTransactions` method is deprecated according to the Mobile Wallet Adapter 2.0 [specification](https://solana-mobile.github.io/mobile-wallet-adapter/spec/spec.html). Wallet apps
 may still support this method for backwards compatibility, but it is recommended for dApps to use `signAndSendTransactions` instead.
+
 </Warning>
 
 To request a wallet to sign a Solana transaction, use the `signTransactions` method. For an example

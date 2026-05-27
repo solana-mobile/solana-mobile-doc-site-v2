@@ -5,8 +5,10 @@ sidebarTitle: "Cache wallet authorization"
 ---
 
 <Note>
-This guide is for **advanced users** who want to customize how wallet authorization details are cached and persisted.
-If you're using `MobileWalletProvider` with the default settings, authorization caching is already handled for you with `AsyncStorage`.
+  This guide is for **advanced users** who want to customize how wallet
+  authorization details are cached and persisted. If you're using
+  `MobileWalletProvider` with the default settings, authorization caching is
+  already handled for you with `AsyncStorage`.
 </Note>
 
 ## Overview
@@ -21,9 +23,9 @@ The `cache` prop on `MobileWalletProvider` accepts any object that implements th
 
 ```tsx
 interface Cache<T> {
-    clear(): Promise<void>;
-    get(): Promise<T | undefined>;
-    set(value: T): Promise<void>;
+  clear(): Promise<void>;
+  get(): Promise<T | undefined>;
+  set(value: T): Promise<void>;
 }
 ```
 
@@ -36,7 +38,7 @@ interface Cache<T> {
 By default, `MobileWalletProvider` uses `@react-native-async-storage/async-storage` to persist authorization data. You don't need to configure anything for this to work:
 
 ```tsx
-import { MobileWalletProvider } from '@wallet-ui/react-native-web3js';
+import { MobileWalletProvider } from "@wallet-ui/react-native-web3js";
 
 function App() {
   return (
@@ -44,9 +46,9 @@ function App() {
       endpoint="https://api.mainnet-beta.solana.com"
       chain="solana:mainnet"
       identity={{
-        name: 'My App',
-        uri: 'https://myapp.com',
-        icon: 'favicon.ico',
+        name: "My App",
+        uri: "https://myapp.com",
+        icon: "favicon.ico",
       }}
     >
       {/* cache defaults to AsyncStorage */}
@@ -69,14 +71,14 @@ npx expo install expo-secure-store
 ### Create a Secure Store cache
 
 ```tsx
-import * as SecureStore from 'expo-secure-store';
-import { Cache } from '@wallet-ui/react-native-web3js';
-import { PublicKey, PublicKeyInitData } from '@solana/web3.js';
+import * as SecureStore from "expo-secure-store";
+import { Cache } from "@wallet-ui/react-native-web3js";
+import { PublicKey, PublicKeyInitData } from "@solana/web3.js";
 
-const STORAGE_KEY = 'authorization-cache';
+const STORAGE_KEY = "authorization-cache";
 
 function cacheReviver(key: string, value: unknown) {
-  if (key === 'publicKey') {
+  if (key === "publicKey") {
     return new PublicKey(value as PublicKeyInitData);
   }
   return value;
@@ -104,14 +106,15 @@ export function createSecureStoreCache<T>(): Cache<T> {
 ```
 
 <Note>
-The `cacheReviver` function is needed to properly deserialize `PublicKey` objects from the cached JSON string.
+  The `cacheReviver` function is needed to properly deserialize `PublicKey`
+  objects from the cached JSON string.
 </Note>
 
 ### Pass it to `MobileWalletProvider`
 
 ```tsx
-import { MobileWalletProvider } from '@wallet-ui/react-native-web3js';
-import { createSecureStoreCache } from './secure-store-cache';
+import { MobileWalletProvider } from "@wallet-ui/react-native-web3js";
+import { createSecureStoreCache } from "./secure-store-cache";
 
 const secureCache = createSecureStoreCache();
 
@@ -121,9 +124,9 @@ function App() {
       endpoint="https://api.mainnet-beta.solana.com"
       chain="solana:mainnet"
       identity={{
-        name: 'My App',
-        uri: 'https://myapp.com',
-        icon: 'favicon.ico',
+        name: "My App",
+        uri: "https://myapp.com",
+        icon: "favicon.ico",
       }}
       cache={secureCache}
     >
@@ -147,30 +150,30 @@ When the dApp boots up, check the cache for a prior authorization:
 
 ```tsx expandable
 const App = () => {
-    const [currentAccount, setCurrentAccount] = useState<{
-        authToken: string;
-        pubkey: PublicKey;
-    } | null>(null);
+  const [currentAccount, setCurrentAccount] = useState<{
+    authToken: string;
+    pubkey: PublicKey;
+  } | null>(null);
 
-    useEffect(() => {
-        (async () => {
-            const [cachedAuthToken, cachedBase64Address] = await Promise.all([
-                AsyncStorage.getItem('authToken'),
-                AsyncStorage.getItem('base64Address'),
-            ]);
-            if (cachedBase64Address && cachedAuthToken) {
-                const pubkeyAsByteArray = toByteArray(cachedBase64Address);
-                const cachedCurrentAccount = {
-                    authToken: cachedAuthToken,
-                    pubkey: new PublicKey(pubkeyAsByteArray),
-                };
-                setCurrentAccount(cachedCurrentAccount);
-            }
-        })();
-    }, []);
+  useEffect(() => {
+    (async () => {
+      const [cachedAuthToken, cachedBase64Address] = await Promise.all([
+        AsyncStorage.getItem("authToken"),
+        AsyncStorage.getItem("base64Address"),
+      ]);
+      if (cachedBase64Address && cachedAuthToken) {
+        const pubkeyAsByteArray = toByteArray(cachedBase64Address);
+        const cachedCurrentAccount = {
+          authToken: cachedAuthToken,
+          pubkey: new PublicKey(pubkeyAsByteArray),
+        };
+        setCurrentAccount(cachedCurrentAccount);
+      }
+    })();
+  }, []);
 
-    /* ...*/
-}
+  /* ...*/
+};
 ```
 
 ### Cache on authorize
@@ -179,28 +182,28 @@ Cache the authorization details when the user completes an `authorize` request:
 
 ```tsx expandable
 const [currentAccount, setCurrentAccount] = useState<{
-    authToken: string;
-    pubkey: PublicKey;
+  authToken: string;
+  pubkey: PublicKey;
 } | null>(null);
 
 const handleConnectPress = useCallback(() => {
-    transact(async wallet => {
-        const {accounts, auth_token} = await wallet.authorize({
-            cluster: 'devnet',
-            identity: {
-                name: 'My amazing app',
-            },
-        });
-        const firstAccount = accounts[0];
-        AsyncStorage.setItem('authToken', auth_token);
-        AsyncStorage.setItem('base64Address', firstAccount.address);
-        const pubkeyAsByteArray = toByteArray(firstAccount.address);
-        const nextCurrentAccount = {
-            authToken: auth_token,
-            pubkey: new PublicKey(pubkeyAsByteArray),
-        };
-        setCurrentAccount(nextCurrentAccount);
+  transact(async (wallet) => {
+    const { accounts, auth_token } = await wallet.authorize({
+      cluster: "devnet",
+      identity: {
+        name: "My amazing app",
+      },
     });
+    const firstAccount = accounts[0];
+    AsyncStorage.setItem("authToken", auth_token);
+    AsyncStorage.setItem("base64Address", firstAccount.address);
+    const pubkeyAsByteArray = toByteArray(firstAccount.address);
+    const nextCurrentAccount = {
+      authToken: auth_token,
+      pubkey: new PublicKey(pubkeyAsByteArray),
+    };
+    setCurrentAccount(nextCurrentAccount);
+  });
 }, []);
 ```
 
@@ -210,14 +213,14 @@ When the user disconnects, invalidate the cache:
 
 ```tsx
 const handleDisconnectPress = useCallback(() => {
-    transact(async wallet => {
-        if (currentAccount == null) {
-            throw new Error('There is no current account to deauthorize');
-        }
-        await wallet.deauthorize({auth_token: currentAccount.authToken});
-        AsyncStorage.clear();
-        setCurrentAccount(null);
-    });
+  transact(async (wallet) => {
+    if (currentAccount == null) {
+      throw new Error("There is no current account to deauthorize");
+    }
+    await wallet.deauthorize({ auth_token: currentAccount.authToken });
+    AsyncStorage.clear();
+    setCurrentAccount(null);
+  });
 }, [currentAccount]);
 ```
 

@@ -10,7 +10,7 @@ android {
             keyAlias "googleplay"
             keyPassword "your_googleplay_key_password"
         }
-        
+
         // dApp Store signing config
         dappStore {
             storeFile file("keystores/dappstore.keystore")
@@ -21,18 +21,18 @@ android {
     }
 
     flavorDimensions = ['store']
-    
+
     productFlavors {
         googlePlay {
             dimension 'store'
         }
-        
+
         dappStore {
             dimension 'store'
         }
     }
 
-    buildTypes { 
+    buildTypes {
         release {
             // Assign signing configs to each flavor
             productFlavors.googlePlay.signingConfig signingConfigs.googlePlay

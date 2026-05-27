@@ -9,15 +9,15 @@ sidebarTitle: "Setup"
 Wrap your app's root component with `MobileWalletProvider` from `@wallet-ui/react-native-web3js`. This provider manages the wallet connection state and exposes the `useMobileWallet` hook to all child components.
 
 ```tsx App.tsx
-import { MobileWalletProvider } from '@wallet-ui/react-native-web3js';
-import { clusterApiUrl } from '@solana/web3.js';
+import { MobileWalletProvider } from "@wallet-ui/react-native-web3js";
+import { clusterApiUrl } from "@solana/web3.js";
 
-const chain = 'solana:devnet';
-const endpoint = clusterApiUrl('devnet');
+const chain = "solana:devnet";
+const endpoint = clusterApiUrl("devnet");
 const identity = {
-  name: 'My Solana App',
-  uri: 'https://mysolanaapp.com',
-  icon: 'favicon.png',
+  name: "My Solana App",
+  uri: "https://mysolanaapp.com",
+  icon: "favicon.png",
 };
 
 export default function App() {
@@ -31,18 +31,18 @@ export default function App() {
 
 ### Props
 
-| Prop | Type | Description |
-|---|---|---|
-| `chain` | `string` | The Solana cluster to connect to (e.g. `'solana:devnet'`, `'solana:mainnet-beta'`). |
-| `endpoint` | `string` | The RPC endpoint URL for the cluster. |
-| `identity` | `object` | Your app's identity shown to the user during wallet authorization. |
+| Prop       | Type     | Description                                                                         |
+| ---------- | -------- | ----------------------------------------------------------------------------------- |
+| `chain`    | `string` | The Solana cluster to connect to (e.g. `'solana:devnet'`, `'solana:mainnet-beta'`). |
+| `endpoint` | `string` | The RPC endpoint URL for the cluster.                                               |
+| `identity` | `object` | Your app's identity shown to the user during wallet authorization.                  |
 
 ### Identity object
 
-| Field | Type | Description |
-|---|---|---|
-| `name` | `string` | Your app's display name. |
-| `uri` | `string` | Your app's website URL. |
+| Field  | Type     | Description                               |
+| ------ | -------- | ----------------------------------------- |
+| `name` | `string` | Your app's display name.                  |
+| `uri`  | `string` | Your app's website URL.                   |
 | `icon` | `string` | Path to your app icon, relative to `uri`. |
 
 ## useMobileWallet hook
@@ -71,6 +71,10 @@ function MyComponent() {
 
 ## Next steps
 
-<Card title="Quickstart" icon="rocket" href="/get-started/react-native/quickstart">
+<Card
+  title="Quickstart"
+  icon="rocket"
+  href="/get-started/react-native/quickstart"
+>
   See usage examples for all useMobileWallet hook methods.
 </Card>
