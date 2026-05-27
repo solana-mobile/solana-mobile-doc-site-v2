@@ -4,25 +4,28 @@ description: "In this tutorial, you will learn how to build a React Native dApp 
 sidebarTitle: "Build an NFT Minter"
 ---
 
-import { Button } from '/snippets/button.mdx';
+import { Button } from "/snippets/button.mdx";
 
 <CardGroup columns={3}>
-<Frame>
-  <img src="/images/static/tutorial_imgs/nftminter1.png" alt="Saga Photo 3" />
-</Frame>
-<Frame>
-  <img src="/images/static/tutorial_imgs/nftminter2.gif" alt="Saga Photo 3" />
-</Frame>
-<Frame>
-  <img src="/images/static/tutorial_imgs/nftminter3.png" alt="Saga Photo 3" />
-</Frame>
+  <Frame>
+    <img src="/images/static/tutorial_imgs/nftminter1.png" alt="Saga Photo 3" />
+  </Frame>
+  <Frame>
+    <img src="/images/static/tutorial_imgs/nftminter2.gif" alt="Saga Photo 3" />
+  </Frame>
+  <Frame>
+    <img src="/images/static/tutorial_imgs/nftminter3.png" alt="Saga Photo 3" />
+  </Frame>
 </CardGroup>
 
 View or download the complete open-source program on Github, or follow this tutorial to build the application from scratch.
 
-<Button href="https://github.com/solana-mobile/tutorial-apps/tree/main/MobileNFTMinter">View on Github</Button>
+<Button href="https://github.com/solana-mobile/tutorial-apps/tree/main/MobileNFTMinter">
+  View on Github
+</Button>
 
-## What you will learn  
+## What you will learn
+
 - Integrate the Metaplex JS in a React Native project.
 - Use an MWA Identity Signer with Metaplex.
 - How to read image files from the OS file system.
@@ -30,6 +33,7 @@ View or download the complete open-source program on Github, or follow this tuto
 - Create and mint a Metaplex NFT on-chain.
 
 ## Prerequisites
+
 - Complete [prerequisite setup](/get-started/development-setup) for a ready dev environment.
 - An Android device/emulator to build and launch a React Native app
 - An MWA-compatible wallet installed on the same device/emulator.
@@ -55,6 +59,7 @@ cd MobileNFTMinter
 The `--npm` flag is only necessary if you're using newer versions of Yarn (Yarn 2 or Yarn 3).
 After running the command, you can simply delete the `package-lock.json` generated and continue using
 Yarn.
+
 </Info>
 
 Next, install the dependencies:
@@ -68,6 +73,7 @@ yarn install
 ```shell npm
 npm install
 ```
+
 </CodeGroup>
 
 ### 2. Install Metaplex JS SDK
@@ -108,9 +114,8 @@ npm install \
     react-native-config \
     multiformats
 ```
+
 </CodeGroup>
-
-
 
 ### 4. Launch the app
 
@@ -126,24 +131,23 @@ about missing/undefined methods, double check you installed the polyfills correc
 The end to end procedure of minting a photo NFT roughly follows these steps:
 
 <Steps>
-<Step>
-Select a photo and upload it to a storage provider.
-</Step>
-<Step>
-Upload a JSON object containing metadata that conforms to the [Metaplex NFT Standard](https://docs.metaplex.com/programs/token-metadata/token-standard#the-non-fungible-standard), to a storage provider.
-</Step>
-<Step>
-Submit a transaction to the network that creates your NFT on chain.
-</Step>
+  <Step>Select a photo and upload it to a storage provider.</Step>
+  <Step>
+    Upload a JSON object containing metadata that conforms to the [Metaplex NFT
+    Standard](https://docs.metaplex.com/programs/token-metadata/token-standard#the-non-fungible-standard),
+    to a storage provider.
+  </Step>
+  <Step>
+    Submit a transaction to the network that creates your NFT on chain.
+  </Step>
 </Steps>
 
 ## Uploading to IPFS with NFT.storage
 
-In this tutorial, we choose [IPFS](https://ipfs.tech/), a decentralized storage provider, to host the selected photo and the metadata object. 
+In this tutorial, we choose [IPFS](https://ipfs.tech/), a decentralized storage provider, to host the selected photo and the metadata object.
 
 We'll also be using [NFT.storage](https://nft.storage/docs/) to help upload directly to IPFS, through their [HTTP API](https://nft.storage/docs/client/http/).
 You can sign up for a free API key on their website.
-
 
 ### Selecting the photo
 
@@ -155,19 +159,20 @@ You need to select an existing photo from our gallery. To present a picker UI an
 In the example app, this is done within the `NftMinter` component where `handleSelectImage` is called on a [button press](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/components/NftMinter.tsx#L44).
 
 We save the image path as state, to be used in the next step.
+
 </Note>
 
 ```tsx
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from "react-native-image-picker";
 
 const photo = await launchImageLibrary({
-    selectionLimit: 1,
-    mediaType: 'photo',
+  selectionLimit: 1,
+  mediaType: "photo",
 });
 const selectedPhoto = photo?.assets?.[0];
 if (!selectedPhoto?.uri) {
-    console.warn('Selected photo not found');
-    return;
+  console.warn("Selected photo not found");
+  return;
 }
 const imagePath = selectedPhoto.uri;
 ```
@@ -179,22 +184,23 @@ Now that we have the image path, we need to upload the raw bytes of the file to 
 The steps:
 
 <Steps>
-<Step>
-Use the `rn-fetch-blob` library to read the image file into a Base 64 string.
-</Step>
-<Step>
-Convert to raw bytes by decoding the Base64 string with `Buffer`.
-</Step>
-<Step>
-Use `fetch` to send a request containing the image bytes to the upload endpoint.
-</Step>
+  <Step>
+    Use the `rn-fetch-blob` library to read the image file into a Base 64
+    string.
+  </Step>
+  <Step>Convert to raw bytes by decoding the Base64 string with `Buffer`.</Step>
+  <Step>
+    Use `fetch` to send a request containing the image bytes to the upload
+    endpoint.
+  </Step>
 </Steps>
 
 <Note>
 **INFO**
 
 In the example app, this is handled in a separate helper function [`uploadToIPFS`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/ipfs/uploadToIPFS.ts#L7), which is called
-later within the larger the [`mintNft`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/components/NftMinter.tsx#L61) function. 
+later within the larger the [`mintNft`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/components/NftMinter.tsx#L61) function.
+
 </Note>
 
 <Warning>
@@ -202,30 +208,31 @@ later within the larger the [`mintNft`](https://github.com/solana-mobile/tutoria
 
 During this step, you'll need to provide your own API key from NFT.storage. In the example app, the `NFT_STORAGE_API_KEY` value is set through
 an environment variable config, using the `react-native-config` library.
+
 </Warning>
 
 ```tsx expandable
 // Read the image file and get the base64 string.
 const imageBytesInBase64: string = await RNFetchBlob.fs.readFile(
-    imagePath,
-    'base64',
+  imagePath,
+  "base64",
 );
 
 // Convert base64 into raw bytes.
-const bytes = Buffer.from(imageBytesInBase64, 'base64');
+const bytes = Buffer.from(imageBytesInBase64, "base64");
 
 // Upload the image to IPFS by sending a POST request to the NFT.storage upload endpoint.
 const headers = {
-    Accept: 'application/json',
-    Authorization: `Bearer ${Config.NFT_STORAGE_API_KEY}`,
+  Accept: "application/json",
+  Authorization: `Bearer ${Config.NFT_STORAGE_API_KEY}`,
 };
-const imageUpload = await fetch('https://api.nft.storage/upload', {
-    method: 'POST',
-    headers: {
-        ...headers,
-        'Content-Type': 'image/jpg',
-    },
-    body: bytes,
+const imageUpload = await fetch("https://api.nft.storage/upload", {
+  method: "POST",
+  headers: {
+    ...headers,
+    "Content-Type": "image/jpg",
+  },
+  body: bytes,
 });
 
 const imageData = await imageUpload.json();
@@ -233,16 +240,18 @@ console.log(imageData.value.cid);
 ```
 
 If successful, the `imageData.value.cid` will contain a valid [CID (Content Identifier)](https://docs.ipfs.tech/concepts/content-addressing/). This is a string that
-uniquely identifies your uploaded asset. 
+uniquely identifies your uploaded asset.
 
-You can view your uploaded asset on an [IPFS gateway](https://docs.ipfs.tech/concepts/ipfs-gateway/) by passing in the CID in the URL (e.g: `https://ipfs.io/ipfs/<cid>`). 
+You can view your uploaded asset on an [IPFS gateway](https://docs.ipfs.tech/concepts/ipfs-gateway/) by passing in the CID in the URL (e.g: `https://ipfs.io/ipfs/<cid>`).
 View an [example](https://ipfs.io/ipfs/bafkreicdv4jt7oaah73kvjfnm4f2yd5klbnyehlkpi33kxjakdo6encepe) of an uploaded photo on ipfs.io.
 
-### Uploading the metadata 
+### Uploading the metadata
+
 Next, we need to construct a metadata object that conforms to the [Metaplex NFT Standard](https://docs.metaplex.com/programs/token-metadata/token-standard#the-non-fungible-standard), then
 upload it to the same `/upload` endpoint.
 
 Metadata fields:
+
 - Name: The name of the NFT.
 - Description: A description of the NFT.
 - Image: A URL that hosts the photo. In this case, we use an `ipfs.io` URL with the CID of the uploaded photo.
@@ -252,25 +261,26 @@ Metadata fields:
 
 In the example app, the metadata upload step is also handled within the [`uploadToIPFS`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/ipfs/uploadToIPFS.ts#L37) function.
 
-There is a slight difference that should be noted. The `image` field uses a precomputed CID for the photo, rather than waiting for the photo upload to finish. 
+There is a slight difference that should be noted. The `image` field uses a precomputed CID for the photo, rather than waiting for the photo upload to finish.
 This is an optimization that is explained in the next section.
+
 </Note>
 
 ```tsx expandable
 // Construct the metadata fields.
-const metadata = JSON.stringify({ 
-    name,
-    description,
-    image: `https://ipfs.io/ipfs/${imageData.value.cid}`,
+const metadata = JSON.stringify({
+  name,
+  description,
+  image: `https://ipfs.io/ipfs/${imageData.value.cid}`,
 });
 // Upload to IPFS
-const metadataUpload = await fetch('https://api.nft.storage/upload', {
-    method: 'POST',
-    headers: {
-        ...headers,
-        'Content-Type': 'application/json',
-    },
-    body: metadata,
+const metadataUpload = await fetch("https://api.nft.storage/upload", {
+  method: "POST",
+  headers: {
+    ...headers,
+    "Content-Type": "application/json",
+  },
+  body: metadata,
 });
 
 const metadataData = await metadataUpload.json();
@@ -289,11 +299,12 @@ we're able to precompute the CID of the photo asset before actually uploading it
 construct and upload the metadata object, without waiting for the photo upload to complete and return the CID.
 
 We take advantage of this by uploading both the photo and metadata asynchronously.
+
 ```tsx
 // Fire off both uploads aysnc
 return Promise.all([
-    imageUpload.then(response => response.json()),
-    metadataUpload.then(response => response.json()),
+  imageUpload.then((response) => response.json()),
+  metadataUpload.then((response) => response.json()),
 ]);
 ```
 
@@ -302,13 +313,14 @@ return Promise.all([
 
 This is made possible because CIDs are generated deterministically from the binary data of any given asset. This mean we can compute the CID of an asset before
 uploading it to IPFS.
+
 </Tip>
 
 To compute the CID from the bytes of a given asset, see the [`getCid`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/ipfs/getCid.ts) function.
 
 ```tsx expandable
-import {CID, hasher} from 'multiformats';
-const crypto = require('crypto-browserify');
+import { CID, hasher } from "multiformats";
+const crypto = require("crypto-browserify");
 
 const SHA_256_CODE = 0x12;
 const IPLD_RAW_BINARY_CODE = 0x55;
@@ -317,10 +329,10 @@ const getCid = async (bytes: Buffer) => {
   const sha256 = hasher.from({
     // As per multiformats table
     // https://github.com/multiformats/multicodec/blob/master/table.csv#L9
-    name: 'sha2-256',
+    name: "sha2-256",
     code: SHA_256_CODE,
-    encode: input =>
-      new Uint8Array(crypto.createHash('sha256').update(input).digest()),
+    encode: (input) =>
+      new Uint8Array(crypto.createHash("sha256").update(input).digest()),
   });
   const hash = await sha256.digest(bytes);
   const cid = await CID.create(1, IPLD_RAW_BINARY_CODE, hash);
@@ -342,19 +354,23 @@ Follow this [section](../react-native/metaplex_integration#using-mwa-as-an-ident
 this so that the `Metaplex` instance will be able to request wallet signing through MWA.
 
 <Note>
+
 **INFO**
 
-In the example app, this is handled in two files: 
+In the example app, this is handled in two files:
+
 - [`mwaPlugin`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/metaplex-util/mwaPlugin.ts): A helper file that installs a `MetaplexPlugin` using MWA as an identity signer.
 - [`useMetaplex`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/metaplex-util/useMetaplex.tsx): A React hook that vends a `Metaplex` instance with
-the `mobileWalletAdapterIdentity` installed.
+  the `mobileWalletAdapterIdentity` installed.
+
 </Note>
 
 Like in the example app, create the `Metaplex` instance with the `useMetaplex` hook.
-```tsx
-import useMetaplex from '../metaplex-util/useMetaplex';
 
-const {metaplex} = useMetaplex(connection, selectedAccount, authorizeSession);
+```tsx
+import useMetaplex from "../metaplex-util/useMetaplex";
+
+const { metaplex } = useMetaplex(connection, selectedAccount, authorizeSession);
 ```
 
 ### Create the NFT
@@ -369,22 +385,23 @@ This will prompt the user to sign a transaction using MWA, then submit the trans
 <Note>
 **INFO**
 
-In the example app, this step happens at the end of [`mintNft`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/components/NftMinter.tsx#L84C1-L90C59). 
+In the example app, this step happens at the end of [`mintNft`](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/components/NftMinter.tsx#L84C1-L90C59).
 We return the NFT address and present a [clickable explorer link](https://github.com/solana-mobile/tutorial-apps/blob/main/MobileNFTMinter/components/NftMinter.tsx#L159).
+
 </Note>
 
-```tsx 
-const {nft, response} = await metaplex.nfts().create({
-    name: nftName,
-    uri: `https://ipfs.io/ipfs/${metadataUploadData.value.cid}`,
-    sellerFeeBasisPoints: 0,
-    tokenOwner: selectedAccount?.publicKey,
+```tsx
+const { nft, response } = await metaplex.nfts().create({
+  name: nftName,
+  uri: `https://ipfs.io/ipfs/${metadataUploadData.value.cid}`,
+  sellerFeeBasisPoints: 0,
+  tokenOwner: selectedAccount?.publicKey,
 });
 
-console.log(nft.address.toBase58())
-console.log(response.signature)
+console.log(nft.address.toBase58());
+console.log(response.signature);
 ```
 
-**Congrats!** 
+**Congrats!**
 
 Your NFT should now be minted and viewable on chain! You can view it on a block explorer by pasting in the String from `nft.address.toBase58()`.

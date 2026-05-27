@@ -41,7 +41,7 @@ To conform to the updated `authorize` RPC request specification, the `Authorizat
 <Tabs>
 <Tab title="MWA 2.0">
 
-```kotlin
+```java
 AuthorizeRequest {
     @Nullable Uri identityUri;
     @Nullable Uri iconUri;
@@ -57,7 +57,7 @@ AuthorizeRequest {
 </Tab>
 <Tab title="Legacy">
 
-```kotlin
+```java
 AuthorizeRequest {
     @Nullable Uri identityUri;
     @Nullable Uri iconUri;
@@ -89,7 +89,7 @@ An optional object containing the payload portion of a [Sign In With Solana mess
 
 If present, the wallet should present the SIWS message to the user and, if approved, include a `SignInResult` object in the `AuthorizationResult` response to the dapp endpoint.
 
-```kotlin
+```java
 public class SignInResult {
     @NonNull public final byte[] publicKey;
     @NonNull public final byte[] signedMessage;
@@ -109,7 +109,7 @@ Constructor for `AuthorizationResult`:
 <Tabs>
 <Tab title="MWA 2.0">
 
-```kotlin
+```java
 public AuthorizationResult(@NonNull String authToken,
                            @NonNull @Size(min = 1) AuthorizedAccount[] accounts,
                            @Nullable Uri walletUriBase,
@@ -120,7 +120,7 @@ public AuthorizationResult(@NonNull String authToken,
 </Tab>
 <Tab title="Legacy">
 
-```kotlin
+```java
 @Deprecated
 public AuthorizationResult(@NonNull String authToken,
                            @NonNull byte[] publicKey,
@@ -150,7 +150,6 @@ Suport for the `sign_and_send_transactions` request has been made mandatory in t
 The optional transaction parameters have also been expanded to allows dapps to further specify how transactions should be sent to the RPC by the wallet endpoint.
 
 Additional optional parameters in `SignAndSendTransactionRequest`:
-
 
 ```java expandable MWA 2.0
 public class SignAndSendTransactionRequest

@@ -4,24 +4,17 @@ description: "A client interacts with the Solana network by submitting a _transa
 sidebarTitle: "Build a Solana transaction"
 ---
 
-
 For a full explanation, see the core docs overview of a [_transaction_](https://docs.solana.com/developing/programming-model/transactions).
 
 ## Add dependencies
 
 The [`web3-solana`](https://github.com/solana-mobile/web3-core) library provides the abstraction classes like `Transaction` and `AccountMeta` to simplify building Solana transactions.
 
-<CodeGroup>
-
-```js build.gradle.kts
-{
-`dependencies {
+```kotlin build.gradle.kts
+dependencies {
     implementation("com.solanamobile:web3-solana:${versions.KOTLIN_WEB3_SOLANA_VERSION}")
-}`
 }
 ```
-</CodeGroup>
-
 
 ## Example: Memo Program Transaction
 
@@ -34,7 +27,7 @@ A transaction instruction is comprised of a program id, a list of accounts, and 
 To create an instruction, define a list of `AccountMeta` that represent the accounts required by the instruction.
 Then pass the encoded message as `data` into the `TransactionInstruction` constructor.
 
-```js highlight={}
+```kotlin highlight={}
 import com.solana.publickey.*
 import com.solana.transaction.*
 
@@ -60,7 +53,7 @@ pass the transaction message into the `Transaction` constructor.
 
 See the previous _Making RPC Requests_ guide for an example of how to fetch a blockhash.
 
-```js expandable highlight={ 15}
+```kotlin expandable highlight={ 15}
 import com.solana.rpc.SolanaRpcClient
 import com.solana.networking.KtorNetworkDriver
 
@@ -86,4 +79,3 @@ val unsignedTx = Transaction(memoTxMessage)
 ## Next steps
 
 Read the following _Using Mobile Wallet Adapter_ guide to learn how to sign these transactions and submit them to the Solana network.
-

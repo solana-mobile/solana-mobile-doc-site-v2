@@ -4,24 +4,27 @@ sidebarTitle: "Publishing from Google Play"
 description: "Learn how to publish your existing Google Play app to the dApp Store."
 ---
 
-import NativeAndroidInstructions from '/snippets/buildSignedApkNativeAndroid.mdx';
-import ExpoInstructions from '/snippets/buildSignedApkExpo.mdx';
+import NativeAndroidInstructions from "/snippets/buildSignedApkNativeAndroid.mdx";
+import ExpoInstructions from "/snippets/buildSignedApkExpo.mdx";
 
 ## Overview
 
 Publishing your existing Google Play app to the dApp Store requires:
+
 1. A release APK file signed with a **new, unique signing key** (different from Google Play)
 2. Following the standard dApp Store publishing workflow
 
 Key differences from Google Play:
+
 - **File Format**: dApp Store submission requires APK files (Google Play uses AAB)
 - **Signing Key**: Must use a completely separate signing key from Google Play
 - **In-App Purchases**: No 30% tax on in-app purchases or transactions
 
 <Warning>
-**CRITICAL REQUIREMENT**: 
+**CRITICAL REQUIREMENT**:
 
 You cannot use the same signing key for both Google Play and the dApp Store.
+
 </Warning>
 
 ## Build Your APK
@@ -45,15 +48,16 @@ For reference, view the [Android app signing guide](https://developer.android.co
 ### 2. Build Signed APK
 
 <Tabs>
-<Tab title="Native Android" icon="android">
-<NativeAndroidInstructions />
-</Tab>
-<Tab title="Expo" icon="folders">
-<ExpoInstructions />
-</Tab>
+  <Tab title="Native Android" icon="android">
+    <NativeAndroidInstructions />
+  </Tab>
+  <Tab title="Expo" icon="folders">
+    <ExpoInstructions />
+  </Tab>
 </Tabs>
 
 ### 3. Verify APK
+
 Confirm your APK is properly signed before submission:
 
 ```bash
@@ -70,4 +74,3 @@ With your signed APK ready, follow the standard dApp Store publishing process an
 
 - [Publisher Policy](/dapp-store/publisher-policy) - Review dApp Store requirements
 - [Support](/dapp-store/support) - Get help with publishing issues
-

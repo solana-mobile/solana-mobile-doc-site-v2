@@ -6,7 +6,7 @@ title: "Migrating from `clientlib` 1.x to 2.0"
 
 To update to clientlib 2.0, simply add the latest dependency in your gradle file:
 
-```bash
+```groovy
 dependencies {
     implementation 'com.solanamobile:mobile-wallet-adapter-clientlib:2.0.0-alpha5'
 }
@@ -20,9 +20,9 @@ Several methods and fields within the SDK have been updated to conform to the ne
 
 ### `MobileWalletAdapterClient.authorize`
 
-The `MobileWalletAdapterClient.authorize` method accepts some new parameters. 
+The `MobileWalletAdapterClient.authorize` method accepts some new parameters.
 
-```bash
+```java
 authorize(
     @Nullable Uri identityUri,
     @Nullable Uri iconUri,
@@ -31,7 +31,7 @@ authorize(
 )
 ```
 
-```bash
+```java
 authorize(
     @Nullable Uri identityUri,
     @Nullable Uri iconUri,
@@ -47,7 +47,7 @@ authorize(
 
 The result object that is returned by `authorize` now supports multiple accounts. Rather than return the public key and label for a single account, the `AuthorizationResult` now returns a list of `AuthorizedAccount` objects with the following structure:
 
-```bash
+```java
 AuthorizedAccount {
     @NonNull byte[] publicKey
     @Nullable String accountLabel

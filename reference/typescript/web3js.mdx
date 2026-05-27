@@ -4,12 +4,14 @@ description: "Interact with accounts and programs on the Solana network through 
 sidebarTitle: "@solana/web3.js"
 ---
 
-import { Button } from '/snippets/button.mdx';
+import { Button } from "/snippets/button.mdx";
 
-Interact with accounts and programs on the 
+Interact with accounts and programs on the
 Solana network through the Solana [JSON RPC API](https://docs.solana.com/api/http).
 
-<Button href="https://solana-labs.github.io/solana-web3.js/">API Reference</Button>
+<Button href="https://solana-labs.github.io/solana-web3.js/">
+  API Reference
+</Button>
 
 ### Install dependencies
 
@@ -29,6 +31,7 @@ npm install \
   react-native-url-polyfill \
   @craftzdog/react-native-buffer
 ```
+
 </CodeGroup>
 
 ### Polyfills
@@ -36,8 +39,8 @@ npm install \
 Enable all of them in `index.js`
 
 ```typescript
-import 'react-native-get-random-values';
-import 'react-native-url-polyfill/auto';
-import {Buffer} from '@craftzdog/react-native-buffer';
+import "react-native-get-random-values";
+import "react-native-url-polyfill/auto";
+import { Buffer } from "@craftzdog/react-native-buffer";
 global.Buffer = Buffer;
 ```

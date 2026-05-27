@@ -4,8 +4,8 @@ description: "This guide will cover the best practices for using Mobile Wallet A
 sidebarTitle: "UX Guidelines"
 ---
 
-
 This guide assumes:
+
 - You are using `@solana/wallet-adapter-react`
 - The user is browsing on an **Android Web environment**, where MWA is usually the only available wallet.
 
@@ -15,7 +15,7 @@ You should explicitly handle two scenarios:
 
 1. If MWA is already selected, you should always directly call `connect`.
 
-2. If it is not selected, but available, `select` it as early as possible in your UI flow. 
+2. If it is not selected, but available, `select` it as early as possible in your UI flow.
 
 This will also fix connection related issues with Mobile Wallet Adapter.
 
@@ -49,11 +49,11 @@ export default function ConnectButton() {
 
 ## Connect and Sign in a single user action
 
-If your app uses MWA and requires a user to *Sign-in-with-Solana* (e.g`connect` + `signMessage`), it needs to invoke both methods from a single user action.
+If your app uses MWA and requires a user to _Sign-in-with-Solana_ (e.g`connect` + `signMessage`), it needs to invoke both methods from a single user action.
 
 ### Why?
 
-If `signMessage` is invoked programmatically (e.g in a `useEffect`), Android Chrome browser will block the navigation attempt in accordance with it's [trusted event policy](https://developer.chrome.com/docs/android/intents). 
+If `signMessage` is invoked programmatically (e.g in a `useEffect`), Android Chrome browser will block the navigation attempt in accordance with it's [trusted event policy](https://developer.chrome.com/docs/android/intents).
 
 ### Solution
 
@@ -93,7 +93,7 @@ export default function SignInButton() {
 
 ## Change the displayed name
 
-Throughout your UI, use the text `Use Installed Wallet` as the displayed name for the MWA option. 
+Throughout your UI, use the text `Use Installed Wallet` as the displayed name for the MWA option.
 
 This descriptive text helps your users understand that this option will allow them to connect to an installed mobile wallet app (via MWA).
 
@@ -104,7 +104,7 @@ import { SolanaMobileWalletAdapterWalletName } from '@solana-mobile/wallet-stand
 
 export default function WalletListItem({ wallet, onPress }){
     // If we are showing MWA, use a descriptive display name.
-    const displayName = (wallet.adapter.name === SolanaMobileWalletAdapterWalletName) 
+    const displayName = (wallet.adapter.name === SolanaMobileWalletAdapterWalletName)
                         ? `Use Installed Wallet` : wallet.adapter.name
     return (
     <Button onClick={onPress}>
@@ -113,4 +113,3 @@ export default function WalletListItem({ wallet, onPress }){
     );
 };
 ```
-

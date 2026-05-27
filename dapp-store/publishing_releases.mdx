@@ -3,7 +3,6 @@ title: "Publishing subsequent dApp releases"
 description: "When you're ready to publish additional releases of your dApp, follow these steps."
 ---
 
-
 ## 1. Create an updated APK file
 
 Each release of your dApp will require an updated release APK file, signed with the same signing key you used for your initial release.
@@ -17,6 +16,7 @@ It is **very** important that each new APK file include the following updates:
 **Tip**
 
 You can learn more about APK versioning in the [Android developer docs](https://developer.android.com/studio/publish/versioning).
+
 </Tip>
 
 ## 2. Update your configuration file
@@ -27,6 +27,7 @@ Edit the `release` and `solana_mobile_dapp_publisher_portal` sections of your co
 **Tip**
 
 Be sure to include `new_in_version` details so users can know what to expect with the update!
+
 </Tip>
 
 ## 3. Mint a new release NFT
@@ -42,4 +43,3 @@ Submit the update to the Solana dApp Publisher Portal, where the new release wil
 ```bash
 npx dapp-store publish update -k <path_to_your_keypair> --requestor-is-authorized --complies-with-solana-dapp-store-policies
 ```
-

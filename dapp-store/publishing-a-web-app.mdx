@@ -3,7 +3,6 @@ title: "Publishing a Progressive Web App (PWA)"
 sidebarTitle: "Convert a PWA to an APK"
 ---
 
-
 ## PWAs on the dApp Store
 
 [Progressive Web Apps (PWAs)](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps) are web applications that use modern web capabilities to deliver an app-like experience to users.
@@ -32,7 +31,7 @@ By the end, you will have a functional, signed release APK that can be published
 
 - A PWA [web manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest) hosted at `https://your-pwa-url.com/manifest.json`
 
-### Template: Web Manifest 
+### Template: Web Manifest
 
 At minimum, a typical manifest file includes:
 
@@ -42,32 +41,31 @@ At minimum, a typical manifest file includes:
 
 You can use this template to quickly stand up a `manifest.json` on your website.
 
-```json  expandable
+```json expandable
 {
-    "name": "APP_NAME",
-    "short_name": "APP_NAME",
-    "scope": "/",
-    "start_url": "/",
-    "icons": [
-        {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "/android-chrome-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
-    "display": "standalone"
+  "name": "APP_NAME",
+  "short_name": "APP_NAME",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
 }
 ```
 
 For more information on web manifests, view this [documentation](https://web.dev/articles/add-manifest).
-
 
 ### 1. Installing Bubblewrap CLI
 
@@ -141,7 +139,7 @@ Any changes to the Android project will be deleted or overwritten by the `update
 
 #### Add supported langauges
 
-Before running the build command, you need to specify the languages your app supports. 
+Before running the build command, you need to specify the languages your app supports.
 
 <Warning>
 **WARNING**
@@ -149,11 +147,12 @@ Before running the build command, you need to specify the languages your app sup
 Do not skip this step!
 
 By default, Bubblewrap CLI incorrectly declares that your app supports all locales. This inaccuracy will be displayed on your dApp Store listing page.
+
 </Warning>
 
 In the generated Android project, edit the `build.gradle` and add:
 
-```java
+```groovy
 android {
     defaultConfig {
         ...
@@ -167,7 +166,6 @@ See the [Android documentation](https://developer.android.com/guide/topics/resou
 #### Build the APK
 
 The next step is to build initialized Android project and output a _signed release APK_. This APK is what you will submit for publishing on the dApp Store.
-
 
 In the same directory, run:
 
@@ -200,6 +198,7 @@ Generate the SHA256 fingerprint from the Keystore:
 ```bash
 keytool -list -v -keystore android.keystore
 ```
+
 </Step>
 <Step>
 Add the fingerprint to your TWA manifest:
@@ -207,6 +206,7 @@ Add the fingerprint to your TWA manifest:
 ```bash
 bubblewrap fingerprint add <SHA256_fingerprint>
 ```
+
 </Step>
 <Step>
 Generate the DAL `assetlinks.json` file:
@@ -216,6 +216,7 @@ bubblewrap fingerprint generateAssetLinks
 ```
 
 It should generate a file named `assetlinks.json` configured with the SHA256 fingerprint.
+
 </Step>
 <Step>
 Publish the generated `assetlinks.json` file at:
@@ -266,4 +267,3 @@ Once you have a signed APK, you can proceed with publishing as if you were publi
 Android app.
 
 **Follow the step by step [dApp publishing guide](/dapp-store/submit-new-app) to submit your signed release APK.**
-

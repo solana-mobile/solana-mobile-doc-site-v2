@@ -108,12 +108,12 @@ the paginated response is a list of Saga Genesis Token Assets and metadata.
 <Tab title="Javascript">
 
 ```javascript expandable
-const fs = require('fs');
+const fs = require("fs");
 const DAS_API_URL = "https://your.rpc.com/?api-key=<api-key>";
 const OUTPUT_FILE = `out.json`;
 
 const getAssetsByGroup = async () => {
-  let output = []
+  let output = [];
   let page = 0;
 
   while (true) {
@@ -142,7 +142,7 @@ const getAssetsByGroup = async () => {
       break;
     }
     for (const item of result.items) {
-      output.push({owner: item.ownership.owner})
+      output.push({ owner: item.ownership.owner });
     }
   }
 

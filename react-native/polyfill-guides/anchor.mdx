@@ -38,6 +38,7 @@ yarn add buffer
 ```shell npm
 npm install buffer
 ```
+
 </CodeGroup>
 
 Then, import the library in your app's entrypoint file (e.g `index.js`), before the Anchor library is imported.
@@ -48,7 +49,7 @@ global.Buffer = Buffer;
 
 Buffer.prototype.subarray = function subarray(
   begin: number | undefined,
-  end: number | undefined
+  end: number | undefined,
 ) {
   const result = Uint8Array.prototype.subarray.apply(this, [begin, end]);
   Object.setPrototypeOf(result, Buffer.prototype); // Explicitly add the `Buffer` prototype (adds `readUIntLE`!)
@@ -69,6 +70,7 @@ yarn add react-native-get-random-values
 ```shell npm
 npm install react-native-get-random-values
 ```
+
 </CodeGroup>
 
 Then, import the library in your app's entrypoint file (e.g `index.js`), before the Anchor library is imported.
@@ -107,6 +109,7 @@ yarn add text-encoding
 ```shell npm
 npm install text-encoding
 ```
+
 </CodeGroup>
 
 Then, populate the `global.TextEcoder` value in your app's entrypoint file (e.g `index.js`).

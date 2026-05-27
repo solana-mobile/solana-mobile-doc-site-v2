@@ -3,9 +3,11 @@ title: "Anchor Integration Guide"
 description: "This guide will show you how to integrate an Anchor Program into your React Native dApp, using the [Anchor Counter dApp](https://github.com/solana-mobile/tutorial-apps/tree/main/AnchorCounterDapp) as reference."
 ---
 
-import { Button } from '/snippets/button.mdx';
+import { Button } from "/snippets/button.mdx";
 
-<Button href="https://github.com/solana-mobile/tutorial-apps/tree/main/AnchorCounterDapp">Example App Repo</Button>
+<Button href="https://github.com/solana-mobile/tutorial-apps/tree/main/AnchorCounterDapp">
+  Example App Repo
+</Button>
 
 ## What you will learn
 
@@ -28,6 +30,7 @@ Add the Anchor library to your React Native Project:
 **CAUTION**
 
 React Native apps should use Anchor v0.28.0 because later versions of the library have a polyfill issue on React Native.
+
 </Warning>
 
 <CodeGroup>
@@ -121,7 +124,9 @@ Once your IDL has been generated, you can import it and create an instance of yo
 - Import your generated IDL file, in this case from `/target/types/basic_counter.ts`
 - Use the `anchorWallet` from the previous step to create an `AnchorProvider`.
 
-<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/components/counter/counter-data-access.tsx#L15">See example</Button>
+<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/components/counter/counter-data-access.tsx#L15">
+  See example
+</Button>
 
 ```tsx expandable
 import { BasicCounter as BasicCounterProgram } from "../../basic-counter/target/types/basic_counter";
@@ -154,7 +159,7 @@ const counterProgram = useMemo(() => {
   return new Program<BasicCounterProgram>(
     idl as BasicCounterProgram,
     counterProgramId,
-    provider
+    provider,
   );
 }, [counterProgramId, provider]);
 ```
@@ -212,7 +217,9 @@ This approach is flexible and allows you to fully utilize the Mobile Wallet Adap
 
 With an instantiated `Program`, you can also use the Anchor provided `rpc()` function to sign and submit an Anchor transaction to an RPC.
 
-<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/components/counter/counter-data-access.tsx#L89">See example</Button>
+<Button href="https://github.com/solana-mobile/tutorial-apps/blob/main/AnchorCounterDapp/src/components/counter/counter-data-access.tsx#L89">
+  See example
+</Button>
 
 ```tsx expandable
 const { counterProgram, counterPDA } = useCounterProgram();

@@ -3,26 +3,22 @@ title: "Deep dive: Building JSON RPC request methods"
 description: "This deep dive explains how to use underlying primitives in the `rpc-core` library to construct RPC requests for any methods that aren't provided by `SolanaRpcClient`."
 ---
 
-
 <Tip>
 **TIP**
 
 If you only need to use the common RPC methods already supported by `SolanaRpcClient`, read the [_RPC Client usage guide_](/android-native/rpc-requests).
+
 </Tip>
 
 ## Add dependencies
 
 The [`rpc-core`](https://github.com/solana-mobile/rpc-core) library provides core classes and abstractions to build and submit requests according to the JSON-RPC 2.0 specification.
 
-<CodeGroup>
-```js build.gradle.kts
-{
-`dependencies {
+```kotlin build.gradle.kts
+dependencies {
     implementation("com.solanamobile:rpc-core:${versions.KOTLIN_RPC_CORE_VERSION}")
-}`
 }
 ```
-</CodeGroup>
 
 ## Creating a JSON RPC Request
 
@@ -33,7 +29,7 @@ constructor also includes a `requestId` parameter, as per JSON-RPC spec.
 
 ### Example: `getLatestBlockhash` RPC request
 
-```js
+```kotlin
 fun createBlockhashRequest(commitment: String = "confirmed", requestId: String = "1") =
     JsonRpc20Request(
         // JSON RPC Method (ie: `getLatestBlockhash`, `getSignatureForAddresses`)
@@ -56,7 +52,7 @@ In the following example, we are defining the expected response of the `getLates
 
 ### Example: `getLatestBlockhash` RPC response
 
-```js
+```kotlin
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
@@ -70,14 +66,17 @@ class BlockhashInfo(
 )
 
 // Additionally, define an exception in case of failure during request
-class BlockhashException(message: String? = null, cause: Throwable? = null) : RuntimeException(message, cause)
+class BlockhashException(
+    message: String? = null,
+    cause: Throwable? = null,
+) : RuntimeException(message, cause)
 ```
 
 ## Implement `HttpNetworkDriver`
 
 The `rpc-core` library defines a `HttpNetworkDriver` interface that is used to make network requests.
 
-```js
+```kotlin
 interface HttpRequest {
     val url: String
     val method: String
@@ -93,7 +92,7 @@ interface HttpNetworkDriver {
 You can use a common networking package like the Ktor library to implement the `makeHttpRequest` method. The following
 is an example from the [Kotlin Jetpack Compose Scaffold sample app](https://github.com/solana-mobile/solana-kotlin-compose-scaffold/blob/main/app/src/main/java/com/example/solanakotlincomposescaffold/networking/HttpDriver.kt).
 
-```js expandable
+```kotlin expandable
 import com.solana.networking.HttpNetworkDriver
 import com.solana.networking.HttpRequest
 import io.ktor.client.request.*
@@ -121,7 +120,7 @@ class KtorHttpDriver : HttpNetworkDriver {
 After putting these parts together, use the `Rpc20Driver` class to point to an RPC uri, send
 the request, and receive a response.
 
-```js expandable
+```kotlin expandable
 // import com.example.solanakotlincomposescaffold.networking.KtorHttpDriver
 import com.solana.networking.Rpc20Driver
 import com.solana.rpccore.JsonRpc20Request
@@ -140,19 +139,22 @@ fun getLatestBlockhash(): Blockhash {
     val response = rpc.makeRequest(request, BlockhashResponse.serializer())
 
     response.error?.let { error ->
-        throw BlockhashException("Could not fetch latest blockhash: ${error.code}, ${error.message}")
+        throw BlockhashException(
+            "Could not fetch latest blockhash: ${error.code}, ${error.message}",
+        )
     }
 
     // Unwrap the response to receive the base58 blockhash string
     val base58Blockhash = response.result?.value?.blockhash
 
     // Return a `Blockhash` object from the web3-solana library
-    Blockhash.from(base58Blockhash
-        ?: throw BlockhashException("Could not fetch latest blockhash: UnknownError"))
+    Blockhash.from(
+        base58Blockhash
+            ?: throw BlockhashException("Could not fetch latest blockhash: UnknownError"),
+    )
 }
 ```
 
 ## Next steps
 
 - Browse the [full list](https://docs.solana.com/api/http) of Solana RPC HTTP Methods
-

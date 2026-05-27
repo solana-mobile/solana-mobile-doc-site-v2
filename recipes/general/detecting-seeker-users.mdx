@@ -21,12 +21,13 @@ The Platform Constants method checks device information using React Native's bui
 The Platform Constants API can be spoofed and should **not** be used for use cases where you need a guaranteed Seeker user.
 
 For use cases where you need a guarantee that you are interacting with a Seeker user, see [Method 2: Seeker Genesis Token Verification](#method-2-seeker-genesis-token-verification) instead.
+
 </Warning>
 
 ### Checking Platform Constants
 
 ```tsx
-import { Platform } from 'react-native';
+import { Platform } from "react-native";
 
 console.log(JSON.stringify(Platform.constants, null, 2));
 ```
@@ -58,7 +59,7 @@ To check if the user on a Seeker, you can check the `Model` constant:
 
 ```ts
 const isSeekerDevice = (): boolean => {
-  return Platform.constants.Model === 'Seeker';
+  return Platform.constants.Model === "Seeker";
 };
 ```
 
@@ -71,16 +72,15 @@ const isSeekerDevice = (): boolean => {
 
 ### Limitations
 
-**The main limitation is that this method is spoofable** - rooted devices or modified apps can change the Platform constants to mimic a Seeker device. 
+**The main limitation is that this method is spoofable** - rooted devices or modified apps can change the Platform constants to mimic a Seeker device.
 
 See the next method for a guaranteed way to check for interaction with a Seeker user.
 
-
 ## Method 2 - Seeker Genesis Token Verification
 
-For use cases where you need a guarantee that you are interacting with a Seeker user, verify that the user's wallet contains the Seeker Genesis Token (SGT). 
+For use cases where you need a guarantee that you are interacting with a Seeker user, verify that the user's wallet contains the Seeker Genesis Token (SGT).
 
-The SGT is a unique NFT that is minted to a user's wallet only *once* per Seeker device. Owning an SGT represents verified ownership of a Seeker device.
+The SGT is a unique NFT that is minted to a user's wallet only _once_ per Seeker device. Owning an SGT represents verified ownership of a Seeker device.
 
 Learn more about the [Seeker Genesis Token](/marketing/engaging-seeker-users).
 
@@ -89,12 +89,13 @@ Learn more about the [Seeker Genesis Token](/marketing/engaging-seeker-users).
 The verification process has **two main steps**:
 
 <Steps>
-<Step title="SIWS to prove wallet ownership">
-  Use Sign-in-with-Solana to prove the user owns the wallet
-</Step>
-<Step title="Check the wallet contains an SGT">
-  Once wallet ownership is proven, verify that the wallet contains a Seeker Genesis Token
-</Step>
+  <Step title="SIWS to prove wallet ownership">
+    Use Sign-in-with-Solana to prove the user owns the wallet
+  </Step>
+  <Step title="Check the wallet contains an SGT">
+    Once wallet ownership is proven, verify that the wallet contains a Seeker
+    Genesis Token
+  </Step>
 </Steps>
 
 #### Step 1 - Prove Wallet Ownership with SIWS
@@ -104,23 +105,23 @@ The verification process has **two main steps**:
 Use Mobile Wallet Adapter to request the user to sign the SIWS payload:
 
 ```tsx expandable
-import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 
 const APP_IDENTITY = {
-  name: 'Your React Native dApp',
-  uri: 'https://yourdapp.com',
-  icon: 'favicon.ico',
+  name: "Your React Native dApp",
+  uri: "https://yourdapp.com",
+  icon: "favicon.ico",
 };
 
 async function signSIWSPayload() {
   const result = await transact(async (wallet) => {
     const authorizationResult = await wallet.authorize({
-      cluster: 'solana:mainnet',
+      cluster: "solana:mainnet",
       identity: APP_IDENTITY,
       sign_in_payload: {
-        domain: 'yourdapp.com',
-        statement: 'Sign in to verify Seeker ownership',
-        uri: 'https://yourdapp.com',
+        domain: "yourdapp.com",
+        statement: "Sign in to verify Seeker ownership",
+        uri: "https://yourdapp.com",
       },
     });
 
@@ -151,7 +152,7 @@ async function verifySIWS(signInPayload, signInResult): Promise<boolean> {
     signature: new Uint8Array(signInResult.signature),
     signedMessage: new Uint8Array(signInResult.signedMessage),
   };
-  
+
   // Verify the signature against the original payload
   return verifySignIn(signInPayload, serialisedOutput);
 }
@@ -174,14 +175,14 @@ On your backend server, combine the SIWS verification and SGT ownership check to
 ```tsx
 // On your backend server
 async function verifySeekerUser(signInResult) {
-    // Verify SIWS signature
-    const siwsVerified = await verifySIWS(signInResult);
+  // Verify SIWS signature
+  const siwsVerified = await verifySIWS(signInResult);
 
-    // Check SGT ownership
-    const hasSGT = await checkWalletForSGT(signInResult.walletAddress);
+  // Check SGT ownership
+  const hasSGT = await checkWalletForSGT(signInResult.walletAddress);
 
-    // If both true, user is a verified owner of a Seeker device.
-    return siwsVerified && hasSGT;
+  // If both true, user is a verified owner of a Seeker device.
+  return siwsVerified && hasSGT;
 }
 ```
 
@@ -190,9 +191,10 @@ async function verifySeekerUser(signInResult) {
 <Warning>
 **WARNING**
 
-SGTs are transferrable between a user's wallet, so you must verify uniqueness by checking the SGT's unique mint address. 
+SGTs are transferrable between a user's wallet, so you must verify uniqueness by checking the SGT's unique mint address.
 
 For full details and best practices, see the [Transferability](/marketing/engaging-seeker-users#transferability) documentation.
+
 </Warning>
 
 - **Gated Content**: Restrict certain features or content to verified Seeker users.
