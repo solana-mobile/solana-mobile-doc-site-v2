@@ -1,10 +1,10 @@
 ---
 title: "SKR Staking"
-description: "Implement the core SKR staking flow: query balances, read stake state, stake, unstake, and withdraw."
+description: "Build SKR staking into your app."
 sidebarTitle: "SKR Staking"
 ---
 
-Build the core SKR staking flow for your app: query balances, stake, unstake, and withdraw SKR.
+Build the core [SKR](/solana-mobile-stack/skr) staking flow for your app: query balances, stake, unstake, and withdraw SKR.
 
 ## What you will build
 
@@ -22,18 +22,6 @@ Build the core SKR staking flow for your app: query balances, stake, unstake, an
 - Generated staking client (Codama or equivalent instruction builders/account fetchers)
 
 ## Shared setup
-
-### On-chain addresses
-
-```ts
-const STAKING_PROGRAM_ADDRESS = "SKRskrmtL83pcL4YqLWt6iPefDqwXQWHSw9S9vz94BZ";
-const SKR_MINT = "SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3";
-const STAKE_CONFIG_ADDRESS = "4HQy82s9CHTv1GsYKnANHMiHfhcqesYkK6sB3RDSYyqw";
-const STAKE_VAULT_ADDRESS = "8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8";
-const GUARDIAN_POOL_ADDRESS = "DPJ58trLsF9yPrBa2pk6UaRkvqW8hWUYjawe788WBuqr";
-```
-
-### Full setup (copy/paste)
 
 ```ts
 import {
@@ -60,37 +48,84 @@ import { STAKING_PROGRAM_ADDRESS } from "../generated/staking/programs";
 const rpc = createSolanaRpc("https://api.mainnet-beta.solana.com");
 
 // On-chain SKR staking program addresses.
-const SKR_MINT = address("SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3");
-const TOKEN_PROGRAM_ID = address("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+const ACCOUNT_ROLE = {
+  readonly: 0,
+  writable: 1,
+  writableSigner: 3,
+} as const;
 const ASSOCIATED_TOKEN_PROGRAM_ID = address(
   "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
 );
+const GUARDIAN_POOL_ADDRESS = address(
+  "DPJ58trLsF9yPrBa2pk6UaRkvqW8hWUYjawe788WBuqr",
+);
+const SHARE_PRICE_SCALE = 1_000_000_000n;
+const SKR_DECIMALS = 6;
+const SKR_MINT = address("SKRbvo6Gf7GondiT3BbTfuRDPqLWei4j2Qy2NPGZhW3");
 const STAKE_CONFIG_ADDRESS = address(
   "4HQy82s9CHTv1GsYKnANHMiHfhcqesYkK6sB3RDSYyqw",
 );
 const STAKE_VAULT_ADDRESS = address(
   "8isViKbwhuhFhsv2t8vaFL74pKCqaFPQXo1KkeQwZbB8",
 );
-const GUARDIAN_POOL_ADDRESS = address(
-  "DPJ58trLsF9yPrBa2pk6UaRkvqW8hWUYjawe788WBuqr",
-);
+const SYSTEM_PROGRAM_ID = address("11111111111111111111111111111111");
+const TOKEN_PROGRAM_ID = address("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 
-const SKR_DECIMALS = 6;
-const SHARE_PRICE_SCALE = 1_000_000_000n;
-
-const skrToRaw = (amount: number) =>
-  BigInt(Math.round(amount * 10 ** SKR_DECIMALS));
 const rawToSkr = (raw: bigint) => Number(raw) / 10 ** SKR_DECIMALS;
 const sharesToTokens = (shares: bigint, sharePrice: bigint) =>
   rawToSkr((shares * sharePrice) / SHARE_PRICE_SCALE);
-const tokensToShares = (amount: number, sharePrice: bigint) =>
+const tokensToShares = (amount: string, sharePrice: bigint) =>
   (skrToRaw(amount) * SHARE_PRICE_SCALE) / sharePrice;
+
+type InstructionAccount = {
+  address: Address;
+  role: number;
+};
+
+type WalletInstruction = {
+  accounts?: InstructionAccount[];
+  data?: Uint8Array;
+  programAddress: Address;
+};
+
+type SendTransaction = (instructions: WalletInstruction[]) => Promise<string>;
+
+function skrToRaw(amount: string) {
+  const normalizedAmount = amount.trim();
+  const [whole = "", fractional = ""] = normalizedAmount.split(".");
+
+  if (
+    normalizedAmount === "" ||
+    normalizedAmount.split(".").length > 2 ||
+    !/^\d+$/.test(whole) ||
+    !/^\d*$/.test(fractional) ||
+    fractional.length > SKR_DECIMALS
+  ) {
+    throw new Error("Enter an SKR amount with up to 6 decimal places.");
+  }
+
+  return (
+    BigInt(whole) * 10n ** BigInt(SKR_DECIMALS) +
+    BigInt(fractional.padEnd(SKR_DECIMALS, "0") || "0")
+  );
+}
 
 function makeDummySigner(addr: Address): TransactionSigner {
   return {
     address: addr,
     signTransactions: async (txs) => txs,
   } as unknown as TransactionSigner;
+}
+
+function toWalletInstruction(instruction: WalletInstruction) {
+  return {
+    accounts: instruction.accounts?.map((account) => ({
+      address: account.address,
+      role: account.role,
+    })),
+    data: instruction.data,
+    programAddress: instruction.programAddress,
+  };
 }
 
 async function deriveUserStake(
@@ -123,6 +158,25 @@ async function findAssociatedTokenAddress(owner: Address, mint: Address) {
   });
   return pda;
 }
+
+async function getTokenBalance(tokenAccount: Address) {
+  const account = await rpc
+    .getAccountInfo(tokenAccount, {
+      commitment: "confirmed",
+      encoding: "base64",
+    })
+    .send();
+
+  if (!account.value) {
+    return 0;
+  }
+
+  const balance = await rpc
+    .getTokenAccountBalance(tokenAccount, { commitment: "confirmed" })
+    .send();
+
+  return Number(balance.value.uiAmount ?? 0);
+}
 ```
 
 ## Core functions
@@ -133,18 +187,9 @@ async function findAssociatedTokenAddress(owner: Address, mint: Address) {
 async function queryBalances(user: Address) {
   const userAta = await findAssociatedTokenAddress(user, SKR_MINT);
 
-  const userSkr = await rpc
-    .getTokenAccountBalance(userAta, { commitment: "confirmed" })
-    .send();
-
-  // Staking escrow/vault balance.
-  const vault = await rpc
-    .getTokenAccountBalance(STAKE_VAULT_ADDRESS, { commitment: "confirmed" })
-    .send();
-
   return {
-    userSkrBalance: Number(userSkr.value.uiAmount ?? 0),
-    vaultSkrBalance: Number(vault.value.uiAmount ?? 0),
+    userSkrBalance: await getTokenBalance(userAta),
+    vaultSkrBalance: await getTokenBalance(STAKE_VAULT_ADDRESS),
   };
 }
 ```
@@ -194,8 +239,8 @@ async function fetchStakingState(user: Address) {
 ```ts
 async function stake(
   user: Address,
-  amount: number,
-  sendTransaction: (ixs: any[]) => Promise<string>,
+  amount: string,
+  sendTransaction: SendTransaction,
 ) {
   const userAta = await findAssociatedTokenAddress(user, SKR_MINT);
   const payer = makeDummySigner(user);
@@ -212,13 +257,7 @@ async function stake(
     amount: skrToRaw(amount),
   });
 
-  // Keep only address + role so wallet signing flow can attach signer metadata.
-  return sendTransaction([
-    {
-      ...ix,
-      accounts: ix.accounts?.map((a) => ({ address: a.address, role: a.role })),
-    },
-  ]);
+  return sendTransaction([toWalletInstruction(ix)]);
 }
 ```
 
@@ -227,9 +266,9 @@ async function stake(
 ```ts
 async function unstake(
   user: Address,
-  amount: number,
+  amount: string,
   sharePrice: bigint,
-  sendTransaction: (ixs: any[]) => Promise<string>,
+  sendTransaction: SendTransaction,
 ) {
   const userStakePda = await deriveUserStake(
     STAKE_CONFIG_ADDRESS,
@@ -249,12 +288,7 @@ async function unstake(
     shares: tokensToShares(amount, sharePrice),
   });
 
-  return sendTransaction([
-    {
-      ...ix,
-      accounts: ix.accounts?.map((a) => ({ address: a.address, role: a.role })),
-    },
-  ]);
+  return sendTransaction([toWalletInstruction(ix)]);
 }
 ```
 
@@ -270,21 +304,18 @@ function createIdempotentAtaIx(
   return {
     programAddress: ASSOCIATED_TOKEN_PROGRAM_ID,
     accounts: [
-      { address: payer, role: 3 }, // writable signer
-      { address: ata, role: 1 }, // writable
-      { address: owner, role: 0 }, // readonly
-      { address: mint, role: 0 }, // readonly
-      { address: address("11111111111111111111111111111111"), role: 0 },
-      { address: TOKEN_PROGRAM_ID, role: 0 },
+      { address: payer, role: ACCOUNT_ROLE.writableSigner },
+      { address: ata, role: ACCOUNT_ROLE.writable },
+      { address: owner, role: ACCOUNT_ROLE.readonly },
+      { address: mint, role: ACCOUNT_ROLE.readonly },
+      { address: SYSTEM_PROGRAM_ID, role: ACCOUNT_ROLE.readonly },
+      { address: TOKEN_PROGRAM_ID, role: ACCOUNT_ROLE.readonly },
     ],
     data: new Uint8Array([1]), // CreateIdempotent
   };
 }
 
-async function withdraw(
-  user: Address,
-  sendTransaction: (ixs: any[]) => Promise<string>,
-) {
+async function withdraw(user: Address, sendTransaction: SendTransaction) {
   const userAta = await findAssociatedTokenAddress(user, SKR_MINT);
   const userStakePda = await deriveUserStake(
     STAKE_CONFIG_ADDRESS,
@@ -302,16 +333,7 @@ async function withdraw(
     program: STAKING_PROGRAM_ADDRESS,
   });
 
-  return sendTransaction([
-    createAtaIx,
-    {
-      ...withdrawIx,
-      accounts: withdrawIx.accounts?.map((a) => ({
-        address: a.address,
-        role: a.role,
-      })),
-    },
-  ]);
+  return sendTransaction([createAtaIx, toWalletInstruction(withdrawIx)]);
 }
 ```
 
@@ -329,5 +351,5 @@ async function withdraw(
 
 - SKR staking sample folder: [Source code](https://github.com/solana-mobile/react-native-samples/tree/main/skr-staking)
 - SKR staking sample README: [Reference README](https://github.com/solana-mobile/react-native-samples/tree/main/skr-staking#readme)
-- Mobile Wallet Adapter docs: [MWA overview](https://docs.solanamobile.com/get-started/overview)
-- Developer setup docs: [Development setup](https://docs.solanamobile.com/get-started/development-setup)
+- Developer setup docs: [Development setup](/get-started/development-setup)
+- Mobile Wallet Adapter docs: [MWA overview](/get-started/overview)
