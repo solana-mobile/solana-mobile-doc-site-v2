@@ -432,26 +432,26 @@ The response returned will be a signed `Transaction` that can be submitted to an
 To request off-chain message signing, issue a `signMessages` request. In this case, a _message_ is any payload of bytes.
 
 ```tsx
-import {transact} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 
 // Convert 'Hello world!' to a byte array.
-const message = 'Hello world!'
+const message = "Hello world!";
 const messageBuffer = new Uint8Array(
-  message.split('').map(c => c.charCodeAt(0)),
+  message.split("").map((c) => c.charCodeAt(0)),
 );
 
 const signedMessages = await transact(async (wallet) => {
   // Authorize the wallet session.
   const authorizationResult = await wallet.authorize({
-      cluster: 'solana:devnet',
-      identity: APP_IDENTITY,
+    cluster: "solana:devnet",
+    identity: APP_IDENTITY,
   });
 
   // Request to sign the payload with the authorized account.
   const signedMessages = wallet.signMessages({
-    addresses: [authorizationResult.accounts[0].address].
-    payloads: [messageBuffer]
-  })
+    addresses: [authorizationResult.accounts[0].address],
+    payloads: [messageBuffer],
+  });
 
   return signedMessages;
 });

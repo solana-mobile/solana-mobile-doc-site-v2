@@ -21,7 +21,7 @@ In the root of your web application, invoke the `registerMwa` function.
 <Warning>
 **CAUTION**
 
-Ensure `registerMwa` is invoked in a non-SSR context. if you're using a framework with Server Side Rendering (e.g Next.js),
+`registerMwa` must run in the browser, not during server-side rendering. If you're using a framework with Server Side Rendering (e.g. Next.js), ensure it is invoked in a non-SSR context - for example, inside a `'use client'` component.
 
 </Warning>
 
