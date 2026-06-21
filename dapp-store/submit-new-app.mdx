@@ -7,88 +7,129 @@ description: "Use the [Solana dApp Publisher Portal](https://publish.solanamobil
 
 Ensure you have:
 
-- A release-ready APK file signed with your release key.
+- A release-ready APK, [signed with your release key](/dapp-store/build-and-sign-an-apk) and tested to install and launch on a supported device. Keep this key safe - every future update must be signed with the same one.
+- An original app you built - copied, repackaged, or clone/template apps are rejected during review.
 - App metadata prepared (name, description, screenshots, icon).
-- A Solana wallet browser extension (Phantom, Solflare, etc.) with sufficient SOL.
-- Reviewed the [Publisher Policy](#publisher-policy) and [Developer Agreement](#agreement)
+- A browser extension wallet (e.g. Phantom, Solflare, Backpack, Jupiter) funded with SOL - hardware wallets aren't supported.
+- Reviewed the [Publisher Policy](/dapp-store/publisher-policy) and [Developer Agreement](/dapp-store/agreement).
 
-## 1. Sign up for a Publisher Account
+## 1. Sign up for a publisher account
 
 - Navigate to the [Publisher Portal](https://publish.solanamobile.com) and sign up for an account.
-- Fill out your publisher profile and submit your KYC/KYB verification.
+- Fill out your publisher profile details and complete identity verification (KYC/KYB).
+
+<Note>
+**NOTE**
+
+KYC/KYB verification must be completed before you can submit a new app or publish an update to an existing app.
+
+</Note>
 
 ## 2. Connect your publisher wallet
 
-- Connect a Solana wallet via a browser extension wallet (e.g Phantom, Solflare, Backpack). This will be your _publisher wallet_.
-- Ensure the publisher wallet has sufficient SOL (~0.2 SOL) to cover transaction fees and ArDrive upload costs.
+- Connect a Solana wallet at the top left of the page. This will be your _publisher wallet_.
+- Ensure the publisher wallet has sufficient SOL (~0.2 SOL) to cover transaction fees and storage provider upload costs.
 
 <Warning>
 **WARNING**
 
-Your publisher wallet is required for all future submissions of this app. Do not lose access to it or you will not be able
-to make new submissions of this app.
+Publisher wallets are assigned per dApp, not per account - the wallet you connect here is permanently bound to this app and required for every future submission. Do not lose access to it, or you won't be able to publish updates.
 
 </Warning>
 
-## 3. Set a storage provider
+## 3. Add your dApp details
 
-Your storage provider selection determines where all your dApp assets (e.g APK file, Icon, Description, Preview Images/Videos, etc) are uploaded and stored during app submission.
-
-**ArDrive is recommended** for storage costs and ease of setup.
-
-Use the storage cost tool to estimate the SOL amount required for upload based on your app's size.
-
-<Frame>
-  <img src="/images/static/publishing_portal/storage-provider.png" />
-</Frame>
-
-## 4. Add your dApp details
-
-In the bottom-left menu, press "Add a dApp" > "New dApp" and a form will appear where you can input your app details.
+In the Publisher Portal, press **"Add a dApp"**, then select **"New dApp"**. A form will open where you can enter your app's details.
 
 <Frame>
   <img src="/images/static/publishing_portal/new-dapp-details.png" />
 </Frame>
 
-Save the form once you've filled out the details. These details can be changed before submission and updated in later submissions.
+Fill out the full listing, including:
 
-See [Listing Page Guidelines](#listing-page-guidelines) for detailed requirements.
+- **dApp Name**, **Subtitle**, and **Description**.
+- **Package Name** in reverse domain format (e.g. `com.example.app`). This permanently identifies your dApp and must stay the same across all future updates.
+- **dApp Icon** (512×512px) and **Banner** feature graphic (1200×600px) - both required.
 
-## 5. Submit your first release version
+Your name, icon, screenshots, and description should accurately represent the app users will install.
 
-After adding your dApp, navigate to the app's **Home** menu in the sidebar. In the top-right, press the "New Version" button to begin the APK upload process.
+### Contact details
 
-<Frame>
-  <img src="/images/static/publishing_portal/home-new-version.png" />
-</Frame>
+Both fields are required and must be valid, actively monitored email addresses - app review correspondence is sent here.
 
-After uploading your APK and pressing "Submit", you will be prompted to sign multiple messages and transactions. These are required for uploading assets to Arweave and minting your release NFT.
+- **Contact Email** - primary contact for the Solana dApp Store.
+- **Support Email** - receives user support requests.
+
+### Compliance links
+
+- **Terms of Use** and **Privacy Policy** - both required. Each must link to a dedicated page that hosts the actual policy (e.g. `https://yourdomain.com/privacy-policy`).
+- **App Website** - a live, public site for your app, or your studio/publisher site if you publish multiple apps. It must load and clearly relate to your app; `localhost`, parked, placeholder, or unreachable URLs are rejected.
 
 <Warning>
 **WARNING**
 
-Ensure you approve each signing request and you do not skip any or else certain assets could be missing from your app submission.
+Terms of Use and Privacy Policy links are verified during app review. Each must be its own dedicated page that loads and hosts the actual policy. The following are **rejected**:
+
+- **Root domain URLs** - e.g. `https://yourdomain.com/`. The URL must include a path beyond the root, such as `https://yourdomain.com/terms`.
+- **Anchor-only links** - e.g. `https://yourdomain.com/#policy`. The policy must exist on its own dedicated page, not as a section of another page.
+- **Combined pages** - e.g. one `https://yourdomain.com/legal` URL used for both. Terms of Use and Privacy Policy must be two separate, dedicated pages.
+- **Unreachable pages** - links that return an error or 404, or redirect back to the root domain.
+- **Unreadable pages** - the policy text must be legible. Near-zero contrast (e.g. black text on a black background) is rejected as an accessibility violation.
 
 </Warning>
+
+Once every required field is complete, the **Save** button in the top-right turns green. These details can be changed before submission and updated in later submissions.
+
+## 4. Mint your dApp
+
+On the **Home** page, press **"Mint App"** to begin the release flow.
+
+<Frame>
+  <img src="/images/static/publishing_portal/home-mint-app.png" />
+</Frame>
+
+Review your app's NFT details, then press **"Complete NFT Minting"** and confirm the transaction.
+
+<Frame>
+  <img src="/images/static/publishing_portal/app-minting.png" />
+</Frame>
+
+## 5. Create your first release
+
+Press **"New Version"** in the top-right and upload the production build you intend to ship and have tested end-to-end.
+
+<Frame>
+  <img src="/images/static/publishing_portal/home-no-releases.png" />
+</Frame>
+
+<Note>
+**NOTE**
+
+Reviewers install and run your app, so it must launch and its core features must work on a supported device, and it should request only the Android permissions it actually uses. It must deliver real in-app functionality rather than only redirecting users to an external site - web apps are supported when packaged as an Android app, see [Publishing a Web App](/recipes/general/publishing-a-web-app).
+
+</Note>
+
+Add your initial release notes in the box below, then press **"Submit"**. This uploads your APK to the storage provider and prepares the minting of your first release. You'll be prompted to sign multiple messages and transactions to complete the upload and minting.
 
 <Frame>
   <img src="/images/static/publishing_portal/dapp-apk-upload.png" />
 </Frame>
 
-Congratulations on submitting your first app! 🎉
+<Note>
+**NOTE**
 
-## After Submission
+Approve every signing request - skipping any can leave assets missing from your submission.
 
-Once submitted, your app automatically enters the app review queue and will go live immediately under an appropriate category once approved.
+</Note>
 
-### App Review
+<Check>**Congratulations on submitting your first app! 🎉**</Check>
 
-- Review results are sent to your developer email from `publishersupport@dappstore.solanamobile.com` within 3-5 business days.
-- Apps are reviewed in the order they are submitted.
-- If you haven't received a response after 5 business days, submit an **App Review Inquiry** in the `#dev-answers` channel on [Discord](http://discord.gg/solanamobile).
+## After submission
 
-### Get Support
+Once submitted, your app automatically enters the app review queue and goes live under an appropriate category once approved. Apps are reviewed in submission order, typically within **3-5 business days**, with the result sent to your **Contact Email**.
 
-For questions about publishing, app review, or launching on the dApp Store, see the [dApp Store Support](/dapp-store/support) page.
+<Frame>
+  <img src="/images/static/publishing_portal/release-in-review.png" />
+</Frame>
 
-Join the [Solana Mobile Discord](http://discord.gg/solanamobile), get the **Developer** role, and use the `#dev-answers` channel for assistance.
+Need to check on a submission or have a publishing question? See the [dApp Store Support](/dapp-store/support) page for review status inquiries and how to reach Solana Mobile on Discord.

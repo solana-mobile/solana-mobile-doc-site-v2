@@ -9,12 +9,12 @@ Log into the [Solana dApp Publisher Portal](https://publish.solanamobile.com) an
 
 ## 2. Update your app details
 
-If needed, you can make changes to your app details (e.g Name, Descriptions, Preview Assets, etc) in the "Details" page.
+Edit your app details (e.g. name, description, preview assets) on the **"Details"** page.
 
 <Note>
-**NOTE:**
+**NOTE**
 
-**These changes will only reflect in the dApp Store after a new release version is approved**
+Changes only appear in the dApp Store after a new release version is approved.
 
 </Note>
 
@@ -24,7 +24,7 @@ If needed, you can make changes to your app details (e.g Name, Descriptions, Pre
 
 ## 3. Submit an updated release version
 
-Navigate to your app's "Home" screen and press the "New Version" button.
+Navigate to your app's **"Home"** screen and press **"New Version"**.
 
 ### Submit an existing APK
 
@@ -35,30 +35,29 @@ the **"use existing APK"** option.
 
 If you want to submit a new APK, ensure:
 
+- You're submitting from the same publisher wallet used for the app's original submission.
 - The APK is signed with the same Android signing key you used for your initial release.
-- The `versionName` and `versionCode` value is properly incremented between each update.
+- The **package name** matches your original submission.
+- The `versionName` and `versionCode` are incremented from your previous release.
 - The "What's new" section is filled out. This section will be displayed to users in your dApp Store listing page.
 
-After you've completed the upload, press "Submit" and you'll be prompted to sign messages and transactions for uploading to Arweave and minting your Release NFT.
+<Warning>
+**WARNING**
+
+An update must match your original submission exactly - the same publisher wallet, package name, and signing certificate. A mismatch in any of these is rejected and can't be recovered on that submission; you'll need to resubmit from the original wallet, package name, and signing key.
+
+</Warning>
+
+After you've completed the upload, press **"Submit"**. You'll be prompted to sign messages and transactions for uploading to the storage provider and minting your release NFT.
 
 <Frame>
   <img src="/images/static/publishing_portal/dapp-update-upload.png" />
 </Frame>
 
-Congratulations on submitting an app update! 🎉
+<Check>**Congratulations on submitting an app update! 🎉**</Check>
 
 ## After submission
 
-Once submitted, the new release automatically enters the app review queue and will immediately go live once approved.
+Once submitted, the new release automatically enters the app review queue and goes live once approved. Releases are reviewed in submission order, typically within **3-5 business days**, with the result sent to your **Contact Email**.
 
-### App Review
-
-- Review results are sent to your developer email from `publishersupport@dappstore.solanamobile.com` within 3-5 business days.
-- Apps are reviewed in the order they are submitted.
-- If you haven't received a response after 5 business days, submit an **App Review Inquiry** in the `#dev-answers` channel on [Discord](http://discord.gg/solanamobile).
-
-### Get Support
-
-For questions about publishing, app review, or launching on the dApp Store, see the [dApp Store Support](/dapp-store/support) page.
-
-Join the [Solana Mobile Discord](http://discord.gg/solanamobile), get the **Developer** role, and use the `#dev-answers` channel for assistance.
+Need to check on a submission or have a publishing question? See the [dApp Store Support](/dapp-store/support) page for review status inquiries and how to reach Solana Mobile on Discord.
