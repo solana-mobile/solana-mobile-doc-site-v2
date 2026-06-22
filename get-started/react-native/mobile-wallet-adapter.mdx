@@ -22,26 +22,73 @@ The complete 2.0 spec is viewable [here](https://solana-mobile.github.io/mobile-
 - [**`@solana-mobile/mobile-wallet-adapter-protocol`**](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol)
   - Base library that implements the MWA client. Include this, but only import `transact` from the wrapper library.
 
+- [**`@solana-mobile/mobile-wallet-adapter-protocol-kit`**](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol-kit)
+  - Preferred wrapper for new apps that use `@solana/kit` primitives like `Transaction`.
+
 - [**`@solana-mobile/mobile-wallet-adapter-protocol-web3js`**](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol-web3js)
-  - A convenience wrapper for the base library that enables with `web3.js` primitives like `Transaction`.
+  - Wrapper for apps that use `@solana/web3.js` primitives like `Transaction` and `VersionedTransaction`.
+
+Install the base protocol package and the wrapper that matches your Solana library. Use `@solana/kit` for new apps.
+
+<Tabs>
+<Tab title="@solana/kit">
 
 <CodeGroup>
 
 ```shell yarn
 yarn add \
-  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
   @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-kit \
+  @solana/kit
 ```
 
 ```shell npm
 npm install \
-  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
   @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-kit \
+  @solana/kit
 ```
 
 </CodeGroup>
 
+</Tab>
+<Tab title="@solana/web3.js">
+
+<CodeGroup>
+
+```shell yarn
+yarn add \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
+  @solana/web3.js
+```
+
+```shell npm
+npm install \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
+  @solana/web3.js
+```
+
+</CodeGroup>
+
+</Tab>
+</Tabs>
+
 ### Import into a file
+
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+import {
+  KitMobileWallet,
+  transact,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-kit";
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
 
 ```tsx
 import {
@@ -50,9 +97,14 @@ import {
 } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 ```
 
+</Tab>
+</Tabs>
+
 ## Mobile Wallet API Methods
 
 Reference for the Mobile Wallet API for dApps to connect to wallets and receive signing services.
+
+Use `KitMobileWallet` for new apps built with `@solana/kit`. Use `Web3MobileWallet` when your app uses `@solana/web3.js`.
 
 ### transact
 
@@ -62,7 +114,7 @@ Starts a Mobile Wallet Adapter session with a locally installed MWA-compatible w
 
 ### Parameters
 
-`callback: (wallet: Web3MobileWallet) => TReturn` required
+`callback: (wallet: KitMobileWallet | Web3MobileWallet) => TReturn` required
 
 A callback triggered after session establishment, in which the dApp can issue MWA requests to the wallet app, using the `wallet` object.
 
@@ -88,11 +140,26 @@ The result will be a `Promise<TReturn>` with `TReturn` equal to what is returned
 
 ### Code sample
 
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+const result = await transact(async (wallet: KitMobileWallet) => {
+  /* ...Issue MWA requests... */ return "done";
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
 ```tsx
 const result = await transact(async (wallet: Web3MobileWallet) => {
   /* ...Issue MWA requests... */ return "done";
 });
 ```
+
+</Tab>
+</Tabs>
 
 ### Return:
 
@@ -100,7 +167,7 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
 console.log(result); // "done"
 ```
 
-## Web3MobileWallet.authorize
+## authorize
 
 Non-privileged method. Requests authorization from the connected wallet for access to privileged methods within the session.
 
@@ -166,19 +233,42 @@ The result will be a JSON object containing the following fields:
 
 ### Code sample:
 
+<Tabs>
+<Tab title="@solana/kit">
+
 ```tsx
-const result = await transact(async (wallet: Web3MobileWallet) => {
-    const authResult = wallet.authorize({
-      chain: 'solana:devnet',
-      identity: {
-        name: 'Example dApp',
-        uri:  'https://yourdapp.com'
-        icon: "favicon.ico", // Resolves to https://yourdapp.com/favicon.ico
-      },
-    }));
-    return authResult;
+const result = await transact(async (wallet: KitMobileWallet) => {
+  const authResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: {
+      name: "Example dApp",
+      uri: "https://yourdapp.com",
+      icon: "favicon.ico", // Resolves to https://yourdapp.com/favicon.ico
+    },
+  });
+  return authResult;
 });
 ```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {
+  const authResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: {
+      name: "Example dApp",
+      uri: "https://yourdapp.com",
+      icon: "favicon.ico", // Resolves to https://yourdapp.com/favicon.ico
+    },
+  });
+  return authResult;
+});
+```
+
+</Tab>
+</Tabs>
 
 ### Result:[​](/get-started/react-native/mobile-wallet-adapter/#result-1 "Direct link to Result:")
 
@@ -207,7 +297,7 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
 }
 ```
 
-## Web3MobileWallet.deauthorize
+## deauthorize
 
 Non-privileged method. This method will make the provided `auth_token` invalid for use (if it ever was valid).
 
@@ -225,6 +315,19 @@ The result will be an empty JSON object.
 
 ### Code sample:
 
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+const authToken = getPreviouslyStoredAuthToken();
+const result = await transact(async (wallet: KitMobileWallet) => {
+  return await wallet.deauthorize({ auth_token: authToken });
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
 ```tsx
 const authToken = getPreviouslyStoredAuthToken();
 const result = await transact(async (wallet: Web3MobileWallet) => {
@@ -232,13 +335,16 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
 });
 ```
 
+</Tab>
+</Tabs>
+
 ### Result:
 
 ```json
 {}
 ```
 
-## Web3MobileWallet.getCapabilities
+## getCapabilities
 
 Non-privileged method. This method enumerates the capabilities and limits of the wallet's MWA implementation.
 
@@ -257,11 +363,26 @@ The result will be a JSON object as defined in `authorize`, but the values may b
 
 ### Code sample:
 
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+const result = await transact(async (wallet: KitMobileWallet) => {
+  return await wallet.getCapabilities();
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
 ```tsx
 const result = await transact(async (wallet: Web3MobileWallet) => {
   return await wallet.getCapabilities();
 });
 ```
+
+</Tab>
+</Tabs>
 
 ### Result:[​](/reference/typescript/#result-1 "Direct link to Result:")
 
@@ -274,7 +395,7 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
 }
 ```
 
-## Web3MobileWallet.signAndSendTransactions
+## signAndSendTransactions
 
 Privileged method.
 
@@ -284,7 +405,7 @@ This method requests the wallet to sign the specified transactions with the priv
 
 `transactions: Transaction[]` required
 
-An array of one or more transactions to sign and send. The transaction are of type `Transaction` or `VersionedTransaction` from the [web3.js library](/reference/typescript/web3js).
+An array of one or more transactions to sign and send. With `@solana/kit`, each item can be a `Transaction` or `SignAndSendTransactionMessage`. With `@solana/web3.js`, each item can be a `Transaction` or `VersionedTransaction`.
 
 `minContextSlot: number`
 
@@ -292,18 +413,43 @@ The minimum slot number at which to perform preflight transaction checks.
 
 ### Result:
 
-- `string[]` - the corresponding base64-encoded transaction signatures.
+- `SignatureBytes[]` when using `@solana/kit`.
+- `TransactionSignature[]` when using `@solana/web3.js`.
 
 ### Code sample:
+
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+const result = await transact(async (wallet: KitMobileWallet) => {
+  const authResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
+
+  const transferTransactionMessage = getTransferTransactionMessage(authResult);
+
+  // Signs the transaction message with the private key of the authorized
+  // account and submits it to the network.
+  const transactionSignatures = await wallet.signAndSendTransactions({
+    transactions: [transferTransactionMessage],
+  });
+  return transactionSignatures;
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
 
 ```tsx
 const result = await transact(async (wallet: Web3MobileWallet) => {
   const authResult = await wallet.authorize({
-    cluster: 'devnet',
+    chain: "solana:devnet",
     identity: APP_IDENTITY,
-  }));
+  });
 
-  const publicKey = getPublicKeyFromAuth(authResult)
+  const publicKey = getPublicKeyFromAuth(authResult);
 
   // Create a web3.js Transaction that transfers
   // lamports to a randomly created address.
@@ -328,13 +474,16 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
 });
 ```
 
+</Tab>
+</Tabs>
+
 ### Result:
 
 ```json
 ["<transaction_signature>", ...],
 ```
 
-## Web3MobileWallet.signTransactions
+## signTransactions
 
 Privileged method. Request to sign the given transactions with the private keys for the requested authorized account.
 
@@ -342,22 +491,45 @@ Privileged method. Request to sign the given transactions with the private keys 
 
 `transactions: Transaction[]` required
 
-An array of one or more transactions to sign. The transaction are of type `Transaction` or `VersionedTransaction` from the [web3.js library](/reference/typescript/web3js).
+An array of one or more transactions to sign. With `@solana/kit`, each item is a `Transaction`. With `@solana/web3.js`, each item can be a `Transaction` or `VersionedTransaction`.
 
 ### Result:
 
-- `Transaction[]` - the corresponding Transactions signed with the private keys for the requested authorized account addresses.
+- The corresponding transactions signed with the private keys for the requested authorized account addresses.
 
 ### Code sample:
+
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+const result = await transact(async (wallet: KitMobileWallet) => {
+  const authResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
+
+  const transferTransaction = getTransferTransaction(authResult);
+
+  // Signs the transaction with the private key of the authorized account.
+  const signedTransactions = await wallet.signTransactions({
+    transactions: [transferTransaction],
+  });
+  return signedTransactions;
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
 
 ```tsx
 const result = await transact(async (wallet: Web3MobileWallet) => {
   const authResult = await wallet.authorize({
-    cluster: 'devnet',
+    chain: "solana:devnet",
     identity: APP_IDENTITY,
-  }));
+  });
 
-  const publicKey = getPublicKeyFromAuth(authResult)
+  const publicKey = getPublicKeyFromAuth(authResult);
 
   // Create a web3.js Transaction that transfers
   // lamports to a randomly created address.
@@ -374,13 +546,16 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
   );
 
   // Signs the Transactions with the private key of the account
-  // corresponding to `publicKey`
+  // corresponding to `publicKey`.
   const signedTransactions = await wallet.signTransactions({
-        transactions: [randomTransferTransaction],
+    transactions: [randomTransferTransaction],
   });
   return signedTransactions;
 });
 ```
+
+</Tab>
+</Tabs>
 
 ### Result:
 
@@ -388,7 +563,7 @@ const result = await transact(async (wallet: Web3MobileWallet) => {
 [<signed_transaction>, ...],
 ```
 
-## Web3MobileWallet.signMessages
+## signMessages
 
 Privileged method. Request to sign the given messages payloads with the private keys for the requested authorized account.
 
@@ -408,15 +583,18 @@ One or more byte arrays where each byte array is a message payload to sign.
 
 ### Code sample:
 
+<Tabs>
+<Tab title="@solana/kit">
+
 ```tsx
- const result = return await transact(async (wallet: Web3MobileWallet) => {
-  // First, request for authorization from the wallet.
+const result = await transact(async (wallet: KitMobileWallet) => {
+  // First, request authorization from the wallet.
   const authorizationResult = await authorizeSession(wallet);
 
-  // Construct a message byte array
-  const message = 'Hello world!';
+  // Construct a message byte array.
+  const message = "Hello world!";
   const messageBuffer = new Uint8Array(
-    message.split('').map(c => c.charCodeAt(0)),
+    message.split("").map((c) => c.charCodeAt(0)),
   );
 
   // Sign the payload with the provided address from authorization.
@@ -428,6 +606,33 @@ One or more byte arrays where each byte array is a message payload to sign.
   return signedMessages;
 });
 ```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+const result = await transact(async (wallet: Web3MobileWallet) => {
+  // First, request authorization from the wallet.
+  const authorizationResult = await authorizeSession(wallet);
+
+  // Construct a message byte array.
+  const message = "Hello world!";
+  const messageBuffer = new Uint8Array(
+    message.split("").map((c) => c.charCodeAt(0)),
+  );
+
+  // Sign the payload with the provided address from authorization.
+  const signedMessages = await wallet.signMessages({
+    addresses: [authorizationResult.address],
+    payloads: [messageBuffer],
+  });
+
+  return signedMessages;
+});
+```
+
+</Tab>
+</Tabs>
 
 ### Result:
 

@@ -10,25 +10,58 @@ Mobile Wallet Adapter 2.0 is the newest and current version of the Mobile Wallet
 
 ## Add dependencies
 
-Solana Mobile has published two React Native libraries to use Mobile Wallet Adapter.
+Solana Mobile has published React Native libraries to use Mobile Wallet Adapter.
 
 - [`@solana-mobile/mobile-wallet-adapter-protocol`](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol) is the core library that implements the Mobile Wallet Adapter protocol for React Native.
-- [`@solana-mobile/mobile-wallet-adapter-protocol-web3js`](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol-web3js) is a convenience wrapper package around the core library that enables use of common types from `@solana/web3.js` – such as `Transaction` and `Uint8Array`.
+- [`@solana-mobile/mobile-wallet-adapter-protocol-kit`](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol-kit) is the preferred wrapper for new apps that use `@solana/kit`.
+- [`@solana-mobile/mobile-wallet-adapter-protocol-web3js`](https://github.com/solana-mobile/mobile-wallet-adapter/tree/main/js/packages/mobile-wallet-adapter-protocol-web3js) is the wrapper for apps that use `@solana/web3.js`.
 
 These libraries provide a convenient API to connect, issue signing requests to a locally installed wallet app, and receive responses.
 
-<CodeGroup> 
-```bash yarn
-yarn add @solana-mobile/mobile-wallet-adapter-protocol-web3js \
-             @solana-mobile/mobile-wallet-adapter-protocol
+<Tabs>
+<Tab title="@solana/kit">
+
+<CodeGroup>
+
+```shell yarn
+yarn add \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-kit \
+  @solana/kit
 ```
 
-```bash npm
-npm install @solana-mobile/mobile-wallet-adapter-protocol-web3js \
-            @solana-mobile/mobile-wallet-adapter-protocol \
+```shell npm
+npm install \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-kit \
+  @solana/kit
 ```
 
 </CodeGroup>
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+<CodeGroup>
+
+```shell yarn
+yarn add \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
+  @solana/web3.js
+```
+
+```shell npm
+npm install \
+  @solana-mobile/mobile-wallet-adapter-protocol \
+  @solana-mobile/mobile-wallet-adapter-protocol-web3js \
+  @solana/web3.js
+```
+
+</CodeGroup>
+
+</Tab>
+</Tabs>
 
 ## Establishing an MWA session
 
@@ -36,11 +69,28 @@ npm install @solana-mobile/mobile-wallet-adapter-protocol-web3js \
   API Reference
 </Button>
 
-To establish a session, or request to 'connect', with an MWA wallet, use the `transact` method provided by `@solana-mobile/mobile-wallet-adapter-protocol-web3js`.
+To establish a session, or request to 'connect', with an MWA wallet, use the `transact` method from the wrapper that matches your Solana library.
 
 Calling `transact` dispatches an assocication intent to a locally installed MWA wallet app and prompts the user to approve or reject the connection request.
 
 Once session is established, the user can begin issuing MWA requests and receiving responses from the wallet app within the provided `callback`.
+
+<Tabs>
+<Tab title="@solana/kit">
+
+```tsx
+import {
+  KitMobileWallet,
+  transact,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-kit";
+
+await transact(async (wallet: KitMobileWallet) => {
+  /* ...In callback, send requests to `wallet`... */
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
 
 ```tsx
 import {
@@ -53,20 +103,23 @@ await transact(async (wallet: Web3MobileWallet) => {
 });
 ```
 
-<Tip>
-Use the `transact` function from `@solana-mobile/mobile-wallet-adapter-protocol-web3js` rather than `@solana-mobile/mobile-wallet-adapter-protocol`.
+</Tab>
+</Tabs>
 
-The former provides convenient wrappers around common `web3.js` Solana types like `Transaction` while the latter provides base64 encoded byte payloads.
+<Tip>
+Use a wrapper package rather than importing `transact` from `@solana-mobile/mobile-wallet-adapter-protocol` directly.
+
+For new apps, prefer `@solana-mobile/mobile-wallet-adapter-protocol-kit`. Use `@solana-mobile/mobile-wallet-adapter-protocol-web3js` when your app already uses `@solana/web3.js`.
 
 </Tip>
 
 ## Connecting to a wallet
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize">
+<Button href="/get-started/react-native/mobile-wallet-adapter#authorize">
   API Reference
 </Button>
 
-After session establishment, you can connect to the wallet by issuing an [`authorize`](/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize) request. This authorization step is required if you want to request signing services from the wallet.
+After session establishment, you can connect to the wallet by issuing an [`authorize`](/get-started/react-native/mobile-wallet-adapter#authorize) request. This authorization step is required if you want to request signing services from the wallet.
 
 Define the _App Identity_ of your dApp so that the wallet app can properly display your dApp info to the user.
 
@@ -74,28 +127,56 @@ Define the _App Identity_ of your dApp so that the wallet app can properly displ
 - `uri`: The web URL associated with your app.
 - `icon`: A path to your app icon relative to the app uri above.
 
-```tsx
-import {transact, Web3MobileWallet} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+<Tabs>
+<Tab title="@solana/kit">
 
+```tsx
 export const APP_IDENTITY = {
-  name: 'React Native dApp',
-  uri:  'https://yourdapp.com'
+  name: "React Native dApp",
+  uri: "https://yourdapp.com",
+  icon: "favicon.ico", // Full path resolves to https://yourdapp.com/favicon.ico
+};
+
+const authorizationResult = await transact(async (wallet: KitMobileWallet) => {
+  const authorizationResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
+
+  /* After approval, signing requests are available in the session. */
+
+  return authorizationResult;
+});
+
+console.log("Connected to: " + authorizationResult.accounts[0].address);
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+export const APP_IDENTITY = {
+  name: "React Native dApp",
+  uri: "https://yourdapp.com",
   icon: "favicon.ico", // Full path resolves to https://yourdapp.com/favicon.ico
 };
 
 const authorizationResult = await transact(async (wallet: Web3MobileWallet) => {
-    const authorizationResult = await wallet.authorize({
-        cluster: 'solana:devnet',
-        identity: APP_IDENTITY,
-    });
+  const authorizationResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
 
-    /* After approval, signing requests are available in the session. */
+  /* After approval, signing requests are available in the session. */
 
-    return authorizationResult;
+  return authorizationResult;
 });
 
-console.log("Connected to: " + authorizationResult.accounts[0].address)
+console.log("Connected to: " + authorizationResult.accounts[0].address);
 ```
+
+</Tab>
+</Tabs>
 
 **Authorization Result**
 
@@ -112,7 +193,7 @@ type AuthorizationResult = Readonly<{
 }>;
 ```
 
-See the [SDK reference](/get-started/react-native/mobile-wallet-adapter#web3mobilewalletauthorize) for a full explanation of the `AuthorizationResult` response type.
+See the [SDK reference](/get-started/react-native/mobile-wallet-adapter#authorize) for a full explanation of the `AuthorizationResult` response type.
 
 ### Connecting with an `auth_token`
 
@@ -120,12 +201,38 @@ For subsequent sessions with the wallet app, you can skip the authorization step
 
 If valid, the user is able to skip the connection approval dialog for authorization.
 
-```tsx
-import {transact, Web3MobileWallet} from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+<Tabs>
+<Tab title="@solana/kit">
 
+```tsx
 export const APP_IDENTITY = {
-  name: 'React Native dApp',
-  uri:  'https://yourdapp.com'
+  name: "React Native dApp",
+  uri: "https://yourdapp.com",
+  icon: "./favicon.ico",
+};
+
+// If we have one, retrieve an authToken from a previous authorization.
+const storedAuthToken = maybeGetStoredAuthToken(); // dummy placeholder function
+
+await transact(async (wallet: KitMobileWallet) => {
+  // If we have a previously stored authToken, we can pass it into `authorize`.
+  const authorizationResult = await wallet.authorize({
+    auth_token: storedAuthToken ? storedAuthToken : undefined,
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
+
+  // Rest of transact code goes below...
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+export const APP_IDENTITY = {
+  name: "React Native dApp",
+  uri: "https://yourdapp.com",
   icon: "./favicon.ico",
 };
 
@@ -133,28 +240,34 @@ export const APP_IDENTITY = {
 const storedAuthToken = maybeGetStoredAuthToken(); // dummy placeholder function
 
 await transact(async (wallet: Web3MobileWallet) => {
-    // If we have a previously stored authToken, we can pass it into `authorize`.
-    const authorizationResult = await wallet.authorize({
-        chain: 'solana:devnet',
-        identity: APP_IDENTITY,
-        auth_token: storedAuthToken ? storedAuthToken: undefined,
-    });
+  // If we have a previously stored authToken, we can pass it into `authorize`.
+  const authorizationResult = await wallet.authorize({
+    auth_token: storedAuthToken ? storedAuthToken : undefined,
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
 
-    // Rest of transact code goes below...
+  // Rest of transact code goes below...
 });
 ```
 
+</Tab>
+</Tabs>
+
 ### Deauthorizing a wallet
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletdeauthorize">
+<Button href="/get-started/react-native/mobile-wallet-adapter#deauthorize">
   API Reference
 </Button>
 
 A dApp can revoke authorization or "disconnect" from a wallet by sending a `deauthorize` request.
 The wallet invalidate the provided `authToken`.
 
+<Tabs>
+<Tab title="@solana/kit">
+
 ```tsx
-await transact(async (wallet) => {
+await transact(async (wallet: KitMobileWallet) => {
   if (!previouslyStoredAuthToken) {
     return;
   }
@@ -164,6 +277,23 @@ await transact(async (wallet) => {
 });
 ```
 
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+await transact(async (wallet: Web3MobileWallet) => {
+  if (!previouslyStoredAuthToken) {
+    return;
+  }
+
+  // Pass in the prior auth token to invalidate it.
+  await wallet.deauthorize({ auth_token: previouslyStoredAuthToken });
+});
+```
+
+</Tab>
+</Tabs>
+
 ## Sign in with Solana
 
 To connect to a wallet and simultaneously verify the user's ownership of the wallet, use the [_Sign in with Solana_](https://github.com/phantom/sign-in-with-solana?tab=readme-ov-file#introduction) feature.
@@ -172,21 +302,46 @@ _SIWS_ combines the `authorize` and `signMessage` step and returns a `SolanaSign
 To initiate _SIWS_, include the optional `sign_in_payload` parameter in the `authorize` request. If provided, the wallet
 will display a dedicated _SIWS_ UI and prompt the user to sign in by signing the `statement` message.
 
+<Tabs>
+<Tab title="@solana/kit">
+
 ```tsx
-const signInResult = await transact(async (wallet: Web3MobileWallet) => {
+const signInResult = await transact(async (wallet: KitMobileWallet) => {
   const authorizationResult = await wallet.authorize({
-    chain: 'solana:devnet',
+    chain: "solana:devnet",
     identity: APP_IDENTITY,
     sign_in_payload: {
-      domain: 'yourdomain.com',
-      statement: 'Sign into React Native Sample App',
-      uri: 'https://yourdomain.com',
+      domain: "yourdomain.com",
+      statement: "Sign into React Native Sample App",
+      uri: "https://yourdomain.com",
     },
   });
 
   return authorizationResult.sign_in_result;
-}
+});
 ```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+const signInResult = await transact(async (wallet: Web3MobileWallet) => {
+  const authorizationResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+    sign_in_payload: {
+      domain: "yourdomain.com",
+      statement: "Sign into React Native Sample App",
+      uri: "https://yourdomain.com",
+    },
+  });
+
+  return authorizationResult.sign_in_result;
+});
+```
+
+</Tab>
+</Tabs>
 
 ### Verifying the sign-in result
 
@@ -222,7 +377,7 @@ See the [Phantom SIWS docs](https://github.com/phantom/sign-in-with-solana?tab=r
 
 ## Signing and sending a transaction
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignandsendtransactions">
+<Button href="/get-started/react-native/mobile-wallet-adapter#signandsendtransactions">
   API Reference
 </Button>
 
@@ -232,46 +387,78 @@ the wallet will handle both signing the transactions then submitting them to the
 This request sends an unsigned transaction to the wallet. If authorized, the wallet will then sign the transaction and send it to the network with its own implementation.
 
 <Tabs>
-<Tab title="Versioned Transactions">
+<Tab title="@solana/kit">
 
 ```tsx
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 import {
-  sendTransaction,
-  clusterApiUrl,
-  Connection,
-  VersionedTransaction,
-  confirmTransaction,
-} from "@solana/web3.js";
+  KitMobileWallet,
+  transact,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-kit";
 
-const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-const txSignature = await transact((wallet) => {
-  // Authorize the wallet session
+const signature = await transact(async (wallet: KitMobileWallet) => {
+  // Authorize the wallet session.
   const authorizationResult = await wallet.authorize({
-    cluster: "solana:devnet",
+    chain: "solana:devnet",
     identity: APP_IDENTITY,
   });
 
-  // Convert base64 address to web3.js PublicKey class
+  const transactionMessage = getTransferTransactionMessage(authorizationResult);
+
+  // Send the unsigned transaction, the wallet will sign and submit it to the network,
+  // returning the transaction signature.
+  const transactionSignatures = await wallet.signAndSendTransactions({
+    transactions: [transactionMessage],
+  });
+
+  return transactionSignatures[0];
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+import {
+  clusterApiUrl,
+  Connection,
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
+import {
+  transact,
+  Web3MobileWallet,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
+import { toByteArray } from "react-native-quick-base64";
+
+const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+const latestBlockhash = await connection.getLatestBlockhash();
+const txSignature = await transact(async (wallet: Web3MobileWallet) => {
+  // Authorize the wallet session.
+  const authorizationResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
+
+  // Convert base64 address to web3.js PublicKey class.
   const authorizedPubkey = new PublicKey(
     toByteArray(authorizationResult.accounts[0].address),
   );
 
-  // Construct an instruction to transfer 1,000,000 lamports to a randomly generated account
-  const randomKeypair = Keypair.generate();
+  // Construct an instruction to transfer 1,000,000 lamports.
   const instructions = [
     SystemProgram.transfer({
       fromPubkey: authorizedPubkey,
-      toPubkey: randomKeypair.publicKey,
+      toPubkey: toPublicKey,
       lamports: 1_000_000,
     }),
   ];
 
-  // Construct the Versioned message and transaction.
   const txMessage = new TransactionMessage({
+    instructions,
     payerKey: authorizedPubkey,
     recentBlockhash: latestBlockhash.blockhash,
-    instructions,
   }).compileToV0Message();
 
   const transferTx = new VersionedTransaction(txMessage);
@@ -299,87 +486,65 @@ if (confirmationResult.value.err) {
 ```
 
 </Tab>
-<Tab title="Legacy Transactions">
-
-```tsx
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
-import {
-  sendTransaction,
-  clusterApiUrl,
-  Connection,
-  Transaction,
-  confirmTransaction,
-} from "@solana/web3.js";
-
-const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-const txSignature = await transact((wallet) => {
-  /* ...building transaction code... */
-
-  const transferTx = new Transaction({
-    ...latestBlockhash,
-    feePayer: authorizedPubkey,
-  }).add(
-    SystemProgram.transfer({
-      fromPubkey: authorizedPubkey,
-      toPubkey: toPublicKey,
-      lamports: 1_000_000,
-    }),
-  );
-
-  // Send the unsigned transaction, the wallet will sign and submit it to the network,
-  // returning the transaction signature.
-  const transactionSignatures = await wallet.signAndSendTransactions({
-    transactions: [transferTx],
-  });
-
-  return transactionSignatures[0];
-});
-
-// Confirm the transaction was successful.
-const confirmationResult = await connection.confirmTransaction(
-  txSignature,
-  "confirmed",
-);
-
-if (confirmationResult.value.err) {
-  throw new Error(JSON.stringify(confirmationResult.value.err));
-} else {
-  console.log("Transaction successfully submitted!");
-}
-```
-
-</Tab>
 </Tabs>
 
-The result from sending a transaction is a base58 transaction signature (or transaction ID). This transaction signature can be used to uniquely identify your transaction on the ledger.
+The result from sending a transaction is a transaction signature. The `@solana/kit` wrapper returns signature bytes, and the `@solana/web3.js` wrapper returns a base58 transaction signature.
 
-Using `confirmTransaction`, you can check that the transaction was `confirmed` by the network. For other commitment levels, read about [Commitment Status](https://docs.solana.com/cluster/commitments).
+Use your RPC client to check that the transaction was confirmed by the network. For other commitment levels, read about [Commitment Status](https://docs.solana.com/cluster/commitments).
 
 ## Signing Transactions
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsigntransactions">
+<Button href="/get-started/react-native/mobile-wallet-adapter#signtransactions">
   API Reference
 </Button>
 
 Alternatively, you can request the wallet to just sign a transaction by issuing a `signTransactions` request.
 
 <Tabs>
-<Tab title="Versioned Transactions">
+<Tab title="@solana/kit">
 
 ```tsx
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
-import { toByteArray } from "react-native-quick-base64";
+import {
+  KitMobileWallet,
+  transact,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-kit";
+
+const unsignedTx = getTransferTransaction();
+
+const signedTx = await transact(async (wallet: KitMobileWallet) => {
+  // Request to sign the transaction.
+  const signedTxs = await wallet.signTransactions({
+    transactions: [unsignedTx],
+  });
+
+  return signedTxs[0];
+});
+```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+import {
+  transact,
+  Web3MobileWallet,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
+import {
+  clusterApiUrl,
+  Connection,
+  VersionedTransaction,
+} from "@solana/web3.js";
 
 // Connect to an RPC endpoint and get the latest blockhash, to include in
 // the transaction.
 const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 const latestBlockhash = await connection.getLatestBlockhash();
 
-const signedTx = await transact(async (wallet) => {
+const signedTx = await transact(async (wallet: Web3MobileWallet) => {
   /* ...transaction code from above... */
   const transferTx = new VersionedTransaction(txMessage);
 
-  // Request to sign the transaction
+  // Request to sign the transaction.
   const signedTxs = await wallet.signTransactions({
     transactions: [transferTx],
   });
@@ -389,50 +554,26 @@ const signedTx = await transact(async (wallet) => {
 ```
 
 </Tab>
-<Tab title="Legacy Transactions">
-
-```tsx
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
-import {
-  Keypair,
-  clusterApiUrl,
-  Connection,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
-
-// Connect to an RPC endpoint and get the latest blockhash, to include in
-// the transaction.
-const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-const latestBlockhash = await connection.getLatestBlockhash();
-
-const signedTx = await transact(async (wallet) => {
-  /* ...transaction code from above... */
-
-  // Sign and return the transactions.
-  const signedTransactions = await wallet.signTransactions({
-    transactions: [randomTransferTransaction],
-  });
-
-  return signedTransactions[0];
-});
-```
-
-</Tab>
 </Tabs>
 
-The response returned will be a signed `Transaction` that can be submitted to an RPC endpoint with the `sendTransaction` function from the `Connection` class.
+The response returned will be a signed transaction that can be submitted to an RPC endpoint.
 
 ## Signing messages
 
-<Button href="/get-started/react-native/mobile-wallet-adapter#web3mobilewalletsignmessages">
+<Button href="/get-started/react-native/mobile-wallet-adapter#signmessages">
   API Reference
 </Button>
 
 To request off-chain message signing, issue a `signMessages` request. In this case, a _message_ is any payload of bytes.
 
+<Tabs>
+<Tab title="@solana/kit">
+
 ```tsx
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
+import {
+  KitMobileWallet,
+  transact,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-kit";
 
 // Convert 'Hello world!' to a byte array.
 const message = "Hello world!";
@@ -440,10 +581,10 @@ const messageBuffer = new Uint8Array(
   message.split("").map((c) => c.charCodeAt(0)),
 );
 
-const signedMessages = await transact(async (wallet) => {
+const signedMessages = await transact(async (wallet: KitMobileWallet) => {
   // Authorize the wallet session.
   const authorizationResult = await wallet.authorize({
-    cluster: "solana:devnet",
+    chain: "solana:devnet",
     identity: APP_IDENTITY,
   });
 
@@ -456,6 +597,41 @@ const signedMessages = await transact(async (wallet) => {
   return signedMessages;
 });
 ```
+
+</Tab>
+<Tab title="@solana/web3.js">
+
+```tsx
+import {
+  transact,
+  Web3MobileWallet,
+} from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
+
+// Convert 'Hello world!' to a byte array.
+const message = "Hello world!";
+const messageBuffer = new Uint8Array(
+  message.split("").map((c) => c.charCodeAt(0)),
+);
+
+const signedMessages = await transact(async (wallet: Web3MobileWallet) => {
+  // Authorize the wallet session.
+  const authorizationResult = await wallet.authorize({
+    chain: "solana:devnet",
+    identity: APP_IDENTITY,
+  });
+
+  // Request to sign the payload with the authorized account.
+  const signedMessages = wallet.signMessages({
+    addresses: [authorizationResult.accounts[0].address],
+    payloads: [messageBuffer],
+  });
+
+  return signedMessages;
+});
+```
+
+</Tab>
+</Tabs>
 
 The response returned will be an `Uint8Array[]`, where each item corresponds to the signed message input.
 
