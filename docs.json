@@ -32,6 +32,11 @@
     }
   },
   "favicon": "/favicon.ico",
+  "integrations": {
+    "gtm": {
+      "tagId": "GTM-KT4PN29R"
+    }
+  },
   "navigation": {
     "tabs": [
       {
