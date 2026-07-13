@@ -371,6 +371,10 @@
       "destination": "/dapp-store/tou"
     },
     {
+      "source": "/dapp-store/publishing-a-web-app",
+      "destination": "/recipes/general/publishing-a-web-app"
+    },
+    {
       "source": "/developers/community",
       "destination": "/get-started/community"
     },
